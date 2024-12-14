@@ -1,0 +1,17 @@
+version: "3.9"
+
+services:
+  database:
+    image: postgres:17
+    restart: always
+    ports:
+      - "5431:5432"
+    environment:
+      POSTGRES_PASSWORD: not_so_secret
+      POSTGRES_USER: postgres
+      POSTGRES_DB: dev
+    volumes:
+      - database_volume:/var/lib/postgresql
+
+volumes:
+  database_volume:
