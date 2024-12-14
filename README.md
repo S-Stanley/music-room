@@ -1,11 +1,19 @@
 # Music-room
 
+#### How to start the project for production ?
+
+Juste run
+
+```
+./scripts/up.sh
+```
+
 #### How to start the project for developement ?
 
 First run the database
 
 ```
-./scripts/up.sh
+docker-compose up --build -d database
 ```
 
 Then install the necessary package for the api

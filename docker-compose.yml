@@ -12,6 +12,13 @@ services:
       POSTGRES_DB: dev
     volumes:
       - database_volume:/var/lib/postgresql
+  api:
+    build: services/api
+    restart: always
+    environment:
+      DATABASE_URL: "postgresql://postgres:not_so_secret@database:5431/dev"
+    ports:
+      - "5001:5001"
 
 volumes:
   database_volume:
