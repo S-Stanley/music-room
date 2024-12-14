@@ -1,0 +1,13 @@
+{
+  "name": "@music-room",
+  "version": "1.0.0",
+  "description": "#### How to start ?",
+  "main": "index.js",
+  "workspaces": ["services/api"],
+  "scripts": {
+    "start:api": "node ./services/api/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
