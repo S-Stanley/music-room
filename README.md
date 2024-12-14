@@ -3,7 +3,7 @@
 #### How to start ?
 
 ```
-docker-compose up --build -d
+./scripts/up.sh
 ```
 
 #### How to access local postgres ?
