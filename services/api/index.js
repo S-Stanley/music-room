@@ -19,7 +19,7 @@ app.post("/users/email/signin", async(req, res) => {
   try {
     if (!req.body?.email){
       return res.status(400).json({
-        error: "missing argument: email"
+        error: "Missing argument: email"
       })
     };
     const user = await prisma.user.findUnique({
@@ -39,7 +39,7 @@ app.post("/users/email/signin", async(req, res) => {
   } catch (e) {
     console.error(e);
     return res.status(500).json({
-      error: "server error"
+      error: "Server error"
     });
   }
 });
