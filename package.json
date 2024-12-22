@@ -6,6 +6,7 @@
   "workspaces": ["services/api"],
   "scripts": {
     "start:api": "node ./services/api/index.js",
+    "test:api": "npx vitest",
     "migrate:dev": "npm run migrate:dev --workspace=@music-room/api"
   },
   "keywords": [],

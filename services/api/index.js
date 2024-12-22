@@ -33,6 +33,7 @@ app.post("/users/email/signin", async(req, res) => {
       })
     }
     return res.status(200).json({
+      id: user?.id,
       email: user?.email,
     });
   } catch (e) {
@@ -46,3 +47,5 @@ app.post("/users/email/signin", async(req, res) => {
 app.listen(port, () => {
   console.info(`API running on ${port}`)
 });
+
+export default app;
