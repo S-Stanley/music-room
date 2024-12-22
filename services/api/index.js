@@ -44,6 +44,48 @@ app.post("/users/email/signin", async(req, res) => {
   }
 });
 
+app.post("/users/email/signup", async(req, res) => {
+  console.info("User trying to login with email");
+  try {
+    console.log(req.body)
+    if (!req.body?.email){
+      return res.status(400).json({
+        error: "Missing argument: email"
+      })
+    };
+    if (!req.body?.password){
+      return res.status(400).json({
+        error: "Missing argument: password"
+      })
+    };
+    const user = await prisma.user.findUnique({
+      where: {
+        email: req.body?.email,
+      }
+    });
+    if (user){
+      return res.status(400).json({
+        error: "User already exist"
+      })
+    }
+    const userToCreate = await prisma.user.create({
+      data: {
+        email: req.body.email,
+        password: req.body.password,
+      }
+    })
+    return res.status(201).json({
+      id: userToCreate?.id,
+      email: userToCreate?.email,
+    });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({
+      error: "Server error"
+    });
+  }
+});
+
 app.listen(port, () => {
   console.info(`API running on ${port}`)
 });
