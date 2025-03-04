@@ -20,6 +20,12 @@ struct SignInScreen: View {
             
             TextFieldItem(text: "Email")
             TextFieldItem(text: "Password")
+            
+            ButtonItem(
+                text: "Sing in",
+                isActive: true,
+                action: {}
+            )
         }
         .padding(.horizontal, 20)
     }

@@ -23,6 +23,12 @@ struct SignUpScreen: View {
             TextFieldItem(text: "Name")
             TextFieldItem(text: "Email")
             TextFieldItem(text: "Password")
+            
+            ButtonItem(
+                text: "Sing up",
+                isActive: true,
+                action: {}
+            )
         }
         .padding(.horizontal, 20)
     }
