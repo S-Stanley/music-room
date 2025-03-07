@@ -8,9 +8,7 @@
 import SwiftUI
 
 struct SignInScreen: View {
-    @State private var email: String = ""
-    @State private var errorMessage: String?
-    let onLoginSuccess: () -> Void  // ✅ Callback pour remonter l'info
+    @ObservedObject var authViewModel: AuthViewModel  // ✅ Utilisation du ViewModel
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -22,18 +20,21 @@ struct SignInScreen: View {
                 .foregroundColor(Color.gray)
                 .padding(.bottom, 40)
 
-            TextField("Email", text: $email)
+            TextField("Email", text: $authViewModel.email)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .autocapitalization(.none)
                 .keyboardType(.emailAddress)
 
-            if let errorMessage = errorMessage {
+            SecureField("Password", text: $authViewModel.password)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+
+            if let errorMessage = authViewModel.errorMessage {
                 Text(errorMessage)
                     .foregroundColor(.red)
                     .font(.caption)
             }
 
-            Button(action: signIn) {
+            Button(action: authViewModel.signIn) {
                 Text("Sign in")
                     .frame(maxWidth: .infinity)
                     .padding()
@@ -44,39 +45,5 @@ struct SignInScreen: View {
         }
         .padding(.horizontal, 20)
     }
-
-    func signIn() {
-        guard let url = URL(string: "http://localhost:5001/users/email/signin") else { return }
-
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-
-        let password = "pass"
-        let body = "email=\(email)&password=\(password)"
-        request.httpBody = body.data(using: .utf8)
-
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            DispatchQueue.main.async {
-                if let error = error {
-                    self.errorMessage = "Erreur: \(error.localizedDescription)"
-                    return
-                }
-
-                guard let httpResponse = response as? HTTPURLResponse else {
-                    self.errorMessage = "Réponse invalide du serveur"
-                    return
-                }
-
-                if httpResponse.statusCode == 200 {
-                    print("Connexion réussie !")
-                    onLoginSuccess() // ✅ Informe `Authentification` qu'on est connecté
-                } else if httpResponse.statusCode == 400 {
-                    self.errorMessage = "Email ou mot de passe invalide"
-                } else {
-                    self.errorMessage = "Erreur inconnue (\(httpResponse.statusCode))"
-                }
-            }
-        }.resume()
-    }
 }
+

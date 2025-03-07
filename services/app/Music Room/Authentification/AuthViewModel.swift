@@ -8,9 +8,12 @@
 import SwiftUI
 
 class AuthViewModel: ObservableObject {
+    @Published var email: String = ""
+    @Published var password: String = ""
+    @Published var errorMessage: String?
     @Published var isAuthenticated: Bool = false
 
-    func signIn(email: String, password: String) {
+    func signIn() {
         guard let url = URL(string: "http://localhost:5001/users/email/signin") else { return }
 
         var request = URLRequest(url: url)
@@ -23,25 +26,26 @@ class AuthViewModel: ObservableObject {
         URLSession.shared.dataTask(with: request) { data, response, error in
             DispatchQueue.main.async {
                 if let error = error {
-                    print("Erreur: \(error.localizedDescription)")
+                    self.errorMessage = "Erreur: \(error.localizedDescription)"
                     return
                 }
 
                 guard let httpResponse = response as? HTTPURLResponse else {
-                    print("Réponse invalide du serveur")
+                    self.errorMessage = "Réponse invalide du serveur"
                     return
                 }
 
-                print("Statut HTTP:", httpResponse.statusCode)
-
                 if httpResponse.statusCode == 200 {
                     print("Connexion réussie !")
-                    self.isAuthenticated = true  // ✅ Change l'état global
+                    self.isAuthenticated = true  // ✅ Met à jour l'état global de connexion
+                } else if httpResponse.statusCode == 400 {
+                    self.errorMessage = "Email ou mot de passe invalide"
                 } else {
-                    print("Erreur d'authentification")
+                    self.errorMessage = "Erreur inconnue (\(httpResponse.statusCode))"
                 }
             }
         }.resume()
     }
 }
+
 

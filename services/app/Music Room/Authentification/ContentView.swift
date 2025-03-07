@@ -9,11 +9,12 @@ import SwiftUI
 import SwiftData
 
 struct Authentification: View {
+    @StateObject private var authViewModel = AuthViewModel()
+
     @State private var selectedOption: String = "Sign in"
-    @State private var isAuthenticated: Bool = false
 
     var body: some View {
-        if isAuthenticated {
+        if authViewModel.isAuthenticated {
             HomeScreen()
         } else {
             VStack(spacing: 24) {
@@ -26,9 +27,7 @@ struct Authentification: View {
 
                 switch selectedOption {
                 case "Sign in":
-                    SignInScreen(onLoginSuccess: {
-                        isAuthenticated = true
-                    })
+                    SignInScreen(authViewModel: authViewModel)
                 case "Sign up":
                     SignUpScreen()
                 default:
@@ -42,6 +41,7 @@ struct Authentification: View {
         }
     }
 }
+
 
 #Preview {
     Authentification()
