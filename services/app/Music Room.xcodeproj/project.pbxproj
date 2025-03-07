@@ -12,11 +12,13 @@
 		E430186B2D0F6F7700E239AD /* SignUpScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = E430186A2D0F6F7700E239AD /* SignUpScreen.swift */; };
 		E430186D2D0F701000E239AD /* TextFieldItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E430186C2D0F701000E239AD /* TextFieldItem.swift */; };
 		E43018712D0F73AC00E239AD /* SignInScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = E43018702D0F73AC00E239AD /* SignInScreen.swift */; };
+		E454FF292D7AFC8C00FAD268 /* Home.swift in Sources */ = {isa = PBXBuildFile; fileRef = E454FF282D7AFC8C00FAD268 /* Home.swift */; };
 		E47AF0DD2D0B662200C3444F /* Music_RoomApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E47AF0DC2D0B662200C3444F /* Music_RoomApp.swift */; };
 		E47AF0DF2D0B662200C3444F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E47AF0DE2D0B662200C3444F /* ContentView.swift */; };
 		E47AF0E12D0B662200C3444F /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = E47AF0E02D0B662200C3444F /* Item.swift */; };
 		E47AF0E32D0B662400C3444F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E47AF0E22D0B662400C3444F /* Assets.xcassets */; };
 		E47AF0E62D0B662400C3444F /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E47AF0E52D0B662400C3444F /* Preview Assets.xcassets */; };
+		E47B1D122D7B04A2000F2758 /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E47B1D112D7B04A2000F2758 /* AuthViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,12 +27,14 @@
 		E430186A2D0F6F7700E239AD /* SignUpScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpScreen.swift; sourceTree = "<group>"; };
 		E430186C2D0F701000E239AD /* TextFieldItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldItem.swift; sourceTree = "<group>"; };
 		E43018702D0F73AC00E239AD /* SignInScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInScreen.swift; sourceTree = "<group>"; };
+		E454FF282D7AFC8C00FAD268 /* Home.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Home.swift; sourceTree = "<group>"; };
 		E47AF0D92D0B662200C3444F /* Music Room.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Music Room.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E47AF0DC2D0B662200C3444F /* Music_RoomApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Music_RoomApp.swift; sourceTree = "<group>"; };
 		E47AF0DE2D0B662200C3444F /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		E47AF0E02D0B662200C3444F /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
 		E47AF0E22D0B662400C3444F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E47AF0E52D0B662400C3444F /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		E47B1D112D7B04A2000F2758 /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -51,6 +55,7 @@
 				E47AF0DE2D0B662200C3444F /* ContentView.swift */,
 				E43018702D0F73AC00E239AD /* SignInScreen.swift */,
 				E430186A2D0F6F7700E239AD /* SignUpScreen.swift */,
+				E47B1D112D7B04A2000F2758 /* AuthViewModel.swift */,
 			);
 			path = Authentification;
 			sourceTree = "<group>";
@@ -84,6 +89,7 @@
 		E47AF0DB2D0B662200C3444F /* Music Room */ = {
 			isa = PBXGroup;
 			children = (
+				E454FF282D7AFC8C00FAD268 /* Home.swift */,
 				E43018602D0F665500E239AD /* Authentification */,
 				E47AF0DC2D0B662200C3444F /* Music_RoomApp.swift */,
 				E47AF0E02D0B662200C3444F /* Item.swift */,
@@ -171,10 +177,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E47B1D122D7B04A2000F2758 /* AuthViewModel.swift in Sources */,
 				E47AF0DF2D0B662200C3444F /* ContentView.swift in Sources */,
 				E43018692D0F6C2700E239AD /* ButtonItem.swift in Sources */,
 				E47AF0E12D0B662200C3444F /* Item.swift in Sources */,
 				E430186D2D0F701000E239AD /* TextFieldItem.swift in Sources */,
+				E454FF292D7AFC8C00FAD268 /* Home.swift in Sources */,
 				E47AF0DD2D0B662200C3444F /* Music_RoomApp.swift in Sources */,
 				E43018652D0F66A400E239AD /* NavigationBar.swift in Sources */,
 				E430186B2D0F6F7700E239AD /* SignUpScreen.swift in Sources */,

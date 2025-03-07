@@ -10,30 +10,36 @@ import SwiftData
 
 struct Authentification: View {
     @State private var selectedOption: String = "Sign in"
-    
-    var body: some View {
-        VStack(spacing: 24) {
-            
-            Text("Music Room")
-                .font(.largeTitle)
-                .fontWeight(.bold)
-                .padding(.top, 30)
-            
-            NavigationBar(selectedOption: $selectedOption)
+    @State private var isAuthenticated: Bool = false
 
-            switch selectedOption {
-            case "Sign in":
-                SignInScreen()
-            case "Sign up":
-                SignUpScreen()
-            default:
-                Text("Unknown action")
+    var body: some View {
+        if isAuthenticated {
+            HomeScreen()
+        } else {
+            VStack(spacing: 24) {
+                Text("Music Room")
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
+                    .padding(.top, 30)
+
+                NavigationBar(selectedOption: $selectedOption)
+
+                switch selectedOption {
+                case "Sign in":
+                    SignInScreen(onLoginSuccess: {
+                        isAuthenticated = true
+                    })
+                case "Sign up":
+                    SignUpScreen()
+                default:
+                    Text("Unknown action")
+                }
+
+                Spacer()
             }
-            
-            Spacer()
+            .padding()
+            .background(Color.gray.opacity(0.05).edgesIgnoringSafeArea(.all))
         }
-        .padding()
-        .background(Color.gray.opacity(0.05).edgesIgnoringSafeArea(.all))
     }
 }
 

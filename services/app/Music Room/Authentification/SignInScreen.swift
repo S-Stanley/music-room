@@ -10,6 +10,7 @@ import SwiftUI
 struct SignInScreen: View {
     @State private var email: String = ""
     @State private var errorMessage: String?
+    let onLoginSuccess: () -> Void  // ✅ Callback pour remonter l'info
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -51,7 +52,8 @@ struct SignInScreen: View {
         request.httpMethod = "POST"
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 
-        let body = "email=\(email)"
+        let password = "pass"
+        let body = "email=\(email)&password=\(password)"
         request.httpBody = body.data(using: .utf8)
 
         URLSession.shared.dataTask(with: request) { data, response, error in
@@ -68,16 +70,13 @@ struct SignInScreen: View {
 
                 if httpResponse.statusCode == 200 {
                     print("Connexion réussie !")
+                    onLoginSuccess() // ✅ Informe `Authentification` qu'on est connecté
                 } else if httpResponse.statusCode == 400 {
-                    self.errorMessage = "L'email n'existe pas ou est invalide"
+                    self.errorMessage = "Email ou mot de passe invalide"
                 } else {
                     self.errorMessage = "Erreur inconnue (\(httpResponse.statusCode))"
                 }
             }
         }.resume()
     }
-}
-
-#Preview {
-    SignInScreen()
 }
