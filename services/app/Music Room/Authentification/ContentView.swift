@@ -29,7 +29,7 @@ struct Authentification: View {
                 case "Sign in":
                     SignInScreen(authViewModel: authViewModel)
                 case "Sign up":
-                    SignUpScreen()
+                    SignUpScreen(authViewModel: authViewModel)
                 default:
                     Text("Unknown action")
                 }
