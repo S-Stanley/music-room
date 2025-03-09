@@ -1,5 +1,6 @@
 import express from "express";
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcrypt';
 
 const app = express();
 const port = process.env.port || 5001;
@@ -68,10 +69,11 @@ app.post("/users/email/signup", async(req, res) => {
         error: "User already exist"
       })
     }
+    const hashedPassword = await bcrypt.hash(req.body.password, 7);
     const userToCreate = await prisma.user.create({
       data: {
         email: req.body.email,
-        password: req.body.password,
+        password: hashedPassword,
       }
     })
     return res.status(201).json({

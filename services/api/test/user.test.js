@@ -37,7 +37,7 @@ describe("User login with email", () => {
   });
 });
 
-describe("User signun with email", () => {
+describe("User signup with email", () => {
   const email = faker.internet.email();
   it("test that user can signup", async () => {
     const res = await request.post(
