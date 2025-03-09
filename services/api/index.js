@@ -23,6 +23,11 @@ app.post("/users/email/signin", async(req, res) => {
         error: "Missing argument: email"
       })
     };
+    if (!req.body?.password){
+      return res.status(400).json({
+        error: "Missing argument: password"
+      })
+    };
     const user = await prisma.user.findUnique({
       where: {
         email: req.body?.email,
@@ -31,6 +36,11 @@ app.post("/users/email/signin", async(req, res) => {
     if (!user){
       return res.status(400).json({
         error: "Unknow email"
+      })
+    }
+    if (!await bcrypt.compare(req.body.password, user.password)){
+      return res.status(400).json({
+        error: "Invalid identifiant"
       })
     }
     return res.status(200).json({
