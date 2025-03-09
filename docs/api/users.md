@@ -5,9 +5,10 @@
 * Endpoint: `/users/email/signin`
 * Data a envoyer:
     * email
+    * password
 * Reponse
     * 200 -> Identifiant corrects
-    * 400 -> L'email n'existe pas, ou n'a pas ete recu par le serveur
+    * 400 -> L'email n'existe pas, ou l'email ou le password n'a pas ete recu par le serveur
 
 Example de requete:
 

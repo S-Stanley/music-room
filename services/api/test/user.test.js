@@ -8,21 +8,33 @@ const request = supertest(server);
 const _DEFAULT_USER_ = {
   id: "f6cb6e9e-7e19-485c-a4b2-fc10128e4b71",
   email: "user@music.room",
+  password: "123",
 };
 
 describe("User login with email", () => {
   it("test that user can login", async () => {
     const res = await request.post(
       "/users/email/signin"
-    ).send(`email=${_DEFAULT_USER_.email}`);
+    )
+    .type('form')
+    .send({
+      email: _DEFAULT_USER_.email,
+      password: _DEFAULT_USER_.password,
+    });
     expect(res.status).toEqual(200);
     expect(res.type).toEqual(expect.stringContaining("json"));
-    expect(res.body).toEqual(_DEFAULT_USER_)
+    expect(res.body.email).toEqual(_DEFAULT_USER_.email)
+    expect(res.body.id).toEqual(_DEFAULT_USER_.id)
   });
   it("Email does not exist", async () => {
     const res = await request.post(
       "/users/email/signin"
-    ).send(`email="fake@email.com"`);
+    )
+    .type('form')
+    .send({
+        email: "fake@email.com",
+        password: "wrong pass"
+    });
     expect(res.status).toEqual(400);
     expect(res.type).toEqual(expect.stringContaining("json"));
     expect(res.body).toEqual({ error: "Unknow email" })
@@ -37,7 +49,7 @@ describe("User login with email", () => {
   });
 });
 
-describe("User signun with email", () => {
+describe("User signup with email", () => {
   const email = faker.internet.email();
   it("test that user can signup", async () => {
     const res = await request.post(

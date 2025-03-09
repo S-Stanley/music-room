@@ -1,5 +1,6 @@
 import express from "express";
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcrypt';
 
 const app = express();
 const port = process.env.port || 5001;
@@ -22,6 +23,11 @@ app.post("/users/email/signin", async(req, res) => {
         error: "Missing argument: email"
       })
     };
+    if (!req.body?.password){
+      return res.status(400).json({
+        error: "Missing argument: password"
+      })
+    };
     const user = await prisma.user.findUnique({
       where: {
         email: req.body?.email,
@@ -30,6 +36,11 @@ app.post("/users/email/signin", async(req, res) => {
     if (!user){
       return res.status(400).json({
         error: "Unknow email"
+      })
+    }
+    if (!await bcrypt.compare(req.body.password, user.password)){
+      return res.status(400).json({
+        error: "Invalid identifiant"
       })
     }
     return res.status(200).json({
@@ -68,10 +79,11 @@ app.post("/users/email/signup", async(req, res) => {
         error: "User already exist"
       })
     }
+    const hashedPassword = await bcrypt.hash(req.body.password, 7);
     const userToCreate = await prisma.user.create({
       data: {
         email: req.body.email,
-        password: req.body.password,
+        password: hashedPassword,
       }
     })
     return res.status(201).json({
