@@ -4,7 +4,6 @@ import bcrypt from 'bcrypt';
 
 const app = express();
 const port = process.env.port || 5001;
-
 const prisma = new PrismaClient();
 
 app.use(express.urlencoded({extended: false}));
