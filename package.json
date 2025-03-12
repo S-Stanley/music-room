@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "#### How to start ?",
   "main": "index.js",
-  "workspaces": ["services/api"],
+  "workspaces": [
+    "services/api"
+  ],
   "scripts": {
     "start:api": "node ./services/api/index.js",
     "test:api": "npx vitest",
@@ -11,5 +13,8 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.1"
+  }
 }

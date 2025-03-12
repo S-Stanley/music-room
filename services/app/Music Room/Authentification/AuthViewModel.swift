@@ -37,7 +37,7 @@ class AuthViewModel: ObservableObject {
 
                 if httpResponse.statusCode == 200 {
                     print("Connexion réussie !")
-                    self.isAuthenticated = true  // ✅ Met à jour l'état global de connexion
+                    self.isAuthenticated = true
                 } else if httpResponse.statusCode == 400 {
                     self.errorMessage = "Email ou mot de passe invalide"
                 } else {
@@ -78,7 +78,7 @@ class AuthViewModel: ObservableObject {
                 switch httpResponse.statusCode {
                     case 201:
                         print("Inscription réussie ✅")
-                        self.isAuthenticated = true  // Navigation vers HomeScreen
+                        self.isAuthenticated = true
                     case 400:
                         self.errorMessage = "Cet email est déjà utilisé ❌"
                     case 500:

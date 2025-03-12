@@ -15,6 +15,7 @@ struct Authentification: View {
 
     var body: some View {
         if authViewModel.isAuthenticated {
+            MainTabView()
             HomeScreen()
         } else {
             VStack(spacing: 24) {
