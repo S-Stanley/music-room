@@ -31,3 +31,15 @@ Example de requete:
 ```bash
 curl localhost:5001/users/email/signup/ -X POST  -d email=user_to_create@music.room -d password=123
 ```
+
+#### Avoir les infos d'un utilisateur
+
+* Endpoint: `/users/:user_id`
+* Reponse
+    * 200 -> Les infos de l'utilisateur
+    * 400 -> Le format de l'id n'est pas le bon ou l'user_id n'existe pas
+
+
+```bash
+curl localhost:5001/users/f6cb6e9e-7e19-485c-a4b2-fc10128e4b71
+```

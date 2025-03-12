@@ -1,6 +1,7 @@
 import express from "express";
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
+import { validate as uuidValidate } from 'uuid';
 
 const app = express();
 const port = process.env.port || 5001;
@@ -12,6 +13,36 @@ app.get("/up", (req, res) => {
   res.status(200).send({
     status: "OK",
   });
+});
+
+app.get("/users/:user_id", async(req, res) => {
+  console.log("Reading user info");
+  try {
+    if (!uuidValidate(req.params.user_id)){
+      return res.status(400).send({
+        error: "User_id is not uuid format",
+      });
+    }
+    const user = await prisma.user.findUnique({
+      where: {
+        id: req.params.user_id
+      }
+    });
+    if (!user){
+      return res.status(400).send({
+        error: "Unknow user",
+      });
+    }
+    return res.status(200).send({
+      id: user?.id,
+      email: user?.email,
+    });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({
+      error: "Server error"
+    });
+  }
 });
 
 app.post("/users/email/signin", async(req, res) => {

@@ -11,6 +11,31 @@ const _DEFAULT_USER_ = {
   password: "123",
 };
 
+describe("GET users/:user_id", () => {
+  it("Return user info", async() => {
+    const req = await request.get(
+      `/users/${_DEFAULT_USER_.id}`
+    );
+    expect(req.status).toEqual(200);
+    expect(req.body.email).toEqual(_DEFAULT_USER_.email)
+    expect(req.body.id).toEqual(_DEFAULT_USER_.id)
+  });
+  it("User does not exist", async() => {
+    const req = await request.get(
+      "/users/93eab5fd-fe33-4f1d-92bf-48c00970f772"
+    );
+    expect(req.status).toEqual(400);
+    expect(req.body).toEqual({ error: "Unknow user" })
+  });
+  it("User id is not UUID format", async() => {
+    const req = await request.get(
+      "/users/not-uuid-format"
+    );
+    expect(req.status).toEqual(400);
+    expect(req.body).toEqual({ error: "User_id is not uuid format" })
+  });
+});
+
 describe("User login with email", () => {
   it("test that user can login", async () => {
     const res = await request.post(
