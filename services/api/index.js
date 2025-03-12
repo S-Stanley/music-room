@@ -1,7 +1,7 @@
 import express from "express";
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
-import { validate as uuidValidate } from 'uuid';
+import { validate as uuidValidate, v4 as uuidv4 } from 'uuid';
 
 const app = express();
 const port = process.env.port || 5001;
@@ -73,9 +73,19 @@ app.post("/users/email/signin", async(req, res) => {
         error: "Invalid identifiant"
       })
     }
+    const token = uuidv4();
+    await prisma.user.update({
+      where: {
+        id: user?.id
+      },
+      data: {
+        token: token,
+      }
+    });
     return res.status(200).json({
       id: user?.id,
       email: user?.email,
+      token: token,
     });
   } catch (e) {
     console.error(e);
@@ -109,16 +119,19 @@ app.post("/users/email/signup", async(req, res) => {
         error: "User already exist"
       })
     }
+    const token = uuidv4();
     const hashedPassword = await bcrypt.hash(req.body.password, 7);
     const userToCreate = await prisma.user.create({
       data: {
         email: req.body.email,
         password: hashedPassword,
+        token: token,
       }
-    })
+    });
     return res.status(201).json({
       id: userToCreate?.id,
       email: userToCreate?.email,
+      token: userToCreate?.token,
     });
   } catch (e) {
     console.error(e);

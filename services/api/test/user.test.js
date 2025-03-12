@@ -50,7 +50,9 @@ describe("User login with email", () => {
     expect(res.type).toEqual(expect.stringContaining("json"));
     expect(res.body.email).toEqual(_DEFAULT_USER_.email)
     expect(res.body.id).toEqual(_DEFAULT_USER_.id)
+    expect(res.body.token).toBeDefined();
   });
+
   it("Email does not exist", async () => {
     const res = await request.post(
       "/users/email/signin"
@@ -88,6 +90,7 @@ describe("User signup with email", () => {
     expect(res.status).toEqual(201);
     expect(res.type).toEqual(expect.stringContaining("json"));
     expect(res.body.email).toEqual(email);
+    expect(res.body.token).toBeDefined();
   });
   it("Email already exist", async () => {
     const res = await request.post(
