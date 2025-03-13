@@ -9,47 +9,89 @@ import SwiftUI
 
 struct Profile: View {
     @ObservedObject var authViewModel: AuthViewModel
-
+    @State private var isPopUpPassword: Bool = false
+    @State private var isPopUpEmail: Bool = false
+    
     var body: some View {
-        VStack {
-            Image(systemName: "person.fill")
-                .font(.system(size: 100))
-
-            HStack {
-                Text("Email")
-                    .font(.title2)
-                Spacer()
-                Button(action: {
-                        //action
-                }) {
-                    Image(systemName: "pencil")
+        ZStack { // Pour pouvoir afficher la popup au-dessus
+            VStack(alignment: .leading, spacing: 20) {
+                
+                // Avatar
+                HStack {
+                    Spacer()
+                    Image(systemName: "person.fill")
+                        .resizable()
+                        .frame(width: 100, height: 100)
+                        .foregroundColor(.blue)
+                    Spacer()
                 }
-            }
-
-            if authViewModel.isAuthenticated {
-                InformationUser(text: authViewModel.email)
-            } else {
-                InformationUser(text: "Chargement...")
-            }
-
-            HStack {
-                Text("Password")
-                    .font(.title2)
-                Spacer()
-                Button(action: {
-                        //action
-                }) {
-                    Image(systemName: "pencil")
+                
+                // EMAIL
+                HStack {
+                    Text("Email")
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                    Spacer()
+                    Button(action: {
+                        isPopUpEmail = true
+                    }) {
+                        Image(systemName: "pencil")
+                            .foregroundColor(.blue)
+                    }
                 }
-            }
+                
+                if authViewModel.isAuthenticated {
+                    InformationUser(text: authViewModel.email)
+                } else {
+                    InformationUser(text: "Chargement...")
+                }
 
-            InformationUser(text: "********")
+                // PASSWORD
+                HStack {
+                    Text("Password")
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                    Spacer()
+                    Button(action: {
+                        isPopUpPassword = true
+                    }) {
+                        Image(systemName: "pencil")
+                            .foregroundColor(.blue)
+                    }
+                }
+                
+                InformationUser(text: "********")
+                
+                Spacer()
+            }
+            .padding(.horizontal, 20)
+            .padding(.top, 40)
+            .background(Color.gray.opacity(0.05).edgesIgnoringSafeArea(.all))
+            .onAppear {
+                authViewModel.loadUserInfo()
+            }
+            
+            if isPopUpPassword {
+                PopUpChangeInfo(
+                    isPresented: $isPopUpPassword,
+                    onConfirm: { newPassword in
+                        
+                    },
+                    isPassword: true,
+                    title: "Change your Password"
+                )
+            }
+            if isPopUpEmail {
+                PopUpChangeInfo(
+                    isPresented: $isPopUpEmail,
+                    onConfirm: { newPassword in
+                        
+                    },
+                    isPassword: false,
+                    title: "Change your Email"
+                )
+            }
         }
-        .onAppear {
-            authViewModel.loadUserInfo()
-        }
-        .padding(.horizontal, 40)
-        .padding(.top, 40)
     }
 }
 

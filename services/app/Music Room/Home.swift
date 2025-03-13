@@ -29,16 +29,15 @@ struct HomeScreen: View {
                             .font(.title)
                         Spacer()
                         
-                        // NavigationLink autour du bouton "Join"
                         NavigationLink(destination: SessionScreen(nameSession: session, nameAdmin: "Admin")) {
                             Text("Join")
                                 .foregroundColor(.blue)
                                 .padding(.horizontal)
                         }
-                        .buttonStyle(PlainButtonStyle()) // Empêche le style de bouton par défaut qui peut interférer
+                        .buttonStyle(PlainButtonStyle())
                     }
                     .padding()
-                    .background(Color.white) // Fond blanc pour chaque élément
+                    .background(Color.white)
                     .cornerRadius(10)
                     .shadow(radius: 5)
                 }

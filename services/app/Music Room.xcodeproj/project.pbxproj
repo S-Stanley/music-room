@@ -13,6 +13,7 @@
 		E430186D2D0F701000E239AD /* TextFieldItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E430186C2D0F701000E239AD /* TextFieldItem.swift */; };
 		E43018712D0F73AC00E239AD /* SignInScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = E43018702D0F73AC00E239AD /* SignInScreen.swift */; };
 		E43ABE0D2D83127D009624E9 /* SessionScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = E43ABE0C2D83127D009624E9 /* SessionScreen.swift */; };
+		E43ABE0F2D83305A009624E9 /* PopUpChangeInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = E43ABE0E2D83305A009624E9 /* PopUpChangeInfo.swift */; };
 		E43D21FB2D81BF73007BB44D /* NavBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E43D21FA2D81BF73007BB44D /* NavBar.swift */; };
 		E43D21FD2D81C355007BB44D /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = E43D21FC2D81C355007BB44D /* Profile.swift */; };
 		E43D22022D81C4DD007BB44D /* InformationUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = E43D22012D81C4DD007BB44D /* InformationUser.swift */; };
@@ -33,6 +34,7 @@
 		E430186C2D0F701000E239AD /* TextFieldItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldItem.swift; sourceTree = "<group>"; };
 		E43018702D0F73AC00E239AD /* SignInScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInScreen.swift; sourceTree = "<group>"; };
 		E43ABE0C2D83127D009624E9 /* SessionScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionScreen.swift; sourceTree = "<group>"; };
+		E43ABE0E2D83305A009624E9 /* PopUpChangeInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopUpChangeInfo.swift; sourceTree = "<group>"; };
 		E43D21FA2D81BF73007BB44D /* NavBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavBar.swift; sourceTree = "<group>"; };
 		E43D21FC2D81C355007BB44D /* Profile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Profile.swift; sourceTree = "<group>"; };
 		E43D22012D81C4DD007BB44D /* InformationUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InformationUser.swift; sourceTree = "<group>"; };
@@ -85,6 +87,7 @@
 			children = (
 				E43D22012D81C4DD007BB44D /* InformationUser.swift */,
 				E43D22032D821182007BB44D /* BoxSession.swift */,
+				E43ABE0E2D83305A009624E9 /* PopUpChangeInfo.swift */,
 			);
 			path = ui;
 			sourceTree = "<group>";
@@ -206,6 +209,7 @@
 				E43D21FD2D81C355007BB44D /* Profile.swift in Sources */,
 				E47AF0DF2D0B662200C3444F /* ContentView.swift in Sources */,
 				E43018692D0F6C2700E239AD /* ButtonItem.swift in Sources */,
+				E43ABE0F2D83305A009624E9 /* PopUpChangeInfo.swift in Sources */,
 				E43ABE0D2D83127D009624E9 /* SessionScreen.swift in Sources */,
 				E47AF0E12D0B662200C3444F /* Item.swift in Sources */,
 				E430186D2D0F701000E239AD /* TextFieldItem.swift in Sources */,
