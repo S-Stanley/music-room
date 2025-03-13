@@ -7,7 +7,9 @@
 
 import SwiftUI
 
-struct MainTabView: View {
+struct NavigationScreen: View {
+    @StateObject var authViewModel = AuthViewModel()
+
     var body: some View {
         TabView {
             HomeScreen()
@@ -15,13 +17,24 @@ struct MainTabView: View {
                     Image(systemName: "house.fill")
                     Text("Accueil")
                 }
-            
-            Profile()
+
+            Profile(authViewModel: authViewModel)
                 .tabItem {
                     Image(systemName: "person.fill")
                     Text("Profil")
                 }
         }
+        .onAppear {
+            // Vérifier si l'utilisateur est authentifié lors du lancement de la vue
+            authViewModel.loadUserInfo()
+        }
     }
 }
+
+
+#Preview {
+    NavigationScreen()
+}
+
+
 

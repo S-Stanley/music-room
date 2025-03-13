@@ -11,15 +11,12 @@ struct InformationUser: View {
     var text: String
     
     var body: some View {
-        Button(action: {
-            //action
-        }) {
-            Text(text)
-                .frame(width: 300, height: 40)
-                .background(Color.gray)
-                .foregroundColor(.white)
-                .cornerRadius(8)
-        }
+        Text(text)
+            .frame(width: 300, height: 40)
+            .background(Color.gray)
+            .foregroundColor(.white)
+            .cornerRadius(8)
+
     }
 }
 

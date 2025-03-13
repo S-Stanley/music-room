@@ -8,25 +8,54 @@
 import SwiftUI
 
 struct Profile: View {
+    @ObservedObject var authViewModel: AuthViewModel
+
     var body: some View {
         VStack {
             Image(systemName: "person.fill")
                 .font(.system(size: 100))
-            Text("Email")
-                .font(.title2)
-                .padding()
-            
-            InformationUser(text: "Email")
-            
-            Text("Password")
-                .font(.title2)
-                .padding()
-            
+
+            HStack {
+                Text("Email")
+                    .font(.title2)
+                Spacer()
+                Button(action: {
+                        //action
+                }) {
+                    Image(systemName: "pencil")
+                }
+            }
+
+            if authViewModel.isAuthenticated {
+                InformationUser(text: authViewModel.email)
+            } else {
+                InformationUser(text: "Chargement...")
+            }
+
+            HStack {
+                Text("Password")
+                    .font(.title2)
+                Spacer()
+                Button(action: {
+                        //action
+                }) {
+                    Image(systemName: "pencil")
+                }
+            }
+
             InformationUser(text: "********")
         }
+        .onAppear {
+            authViewModel.loadUserInfo()
+        }
+        .padding(.horizontal, 40)
+        .padding(.top, 40)
     }
 }
 
+
+
 #Preview {
-    Profile()
+    @Previewable @StateObject var authViewModel = AuthViewModel()
+    Profile(authViewModel: authViewModel)
 }

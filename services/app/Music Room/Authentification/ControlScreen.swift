@@ -8,10 +8,22 @@
 import SwiftUI
 
 struct ControlScreen: View {
+    @State private var isHomeView: Bool = true
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack {
+            if isHomeView {
+                HomeScreen()
+            } else {
+                Profile()
+            }
+            
+            MainTabView()
+        }
+        .padding()
     }
 }
+
 
 #Preview {
     ControlScreen()

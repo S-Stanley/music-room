@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct Session: View {
+struct BoxSession: View {
     var name: String
     var onJoin: () -> Void
     
@@ -38,11 +38,4 @@ struct Session: View {
                 .cornerRadius(12) // Coins arrondis
                 .padding(.horizontal, 20)
     }
-}
-
-#Preview {
-    Session(
-        name: "Name 1"
-        onJoin: {}
-    )
 }

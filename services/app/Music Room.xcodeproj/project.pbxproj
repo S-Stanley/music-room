@@ -12,9 +12,11 @@
 		E430186B2D0F6F7700E239AD /* SignUpScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = E430186A2D0F6F7700E239AD /* SignUpScreen.swift */; };
 		E430186D2D0F701000E239AD /* TextFieldItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E430186C2D0F701000E239AD /* TextFieldItem.swift */; };
 		E43018712D0F73AC00E239AD /* SignInScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = E43018702D0F73AC00E239AD /* SignInScreen.swift */; };
+		E43ABE0D2D83127D009624E9 /* SessionScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = E43ABE0C2D83127D009624E9 /* SessionScreen.swift */; };
 		E43D21FB2D81BF73007BB44D /* NavBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E43D21FA2D81BF73007BB44D /* NavBar.swift */; };
 		E43D21FD2D81C355007BB44D /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = E43D21FC2D81C355007BB44D /* Profile.swift */; };
 		E43D22022D81C4DD007BB44D /* InformationUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = E43D22012D81C4DD007BB44D /* InformationUser.swift */; };
+		E43D22042D821182007BB44D /* BoxSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = E43D22032D821182007BB44D /* BoxSession.swift */; };
 		E454FF292D7AFC8C00FAD268 /* Home.swift in Sources */ = {isa = PBXBuildFile; fileRef = E454FF282D7AFC8C00FAD268 /* Home.swift */; };
 		E47AF0DD2D0B662200C3444F /* Music_RoomApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E47AF0DC2D0B662200C3444F /* Music_RoomApp.swift */; };
 		E47AF0DF2D0B662200C3444F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E47AF0DE2D0B662200C3444F /* ContentView.swift */; };
@@ -30,9 +32,11 @@
 		E430186A2D0F6F7700E239AD /* SignUpScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpScreen.swift; sourceTree = "<group>"; };
 		E430186C2D0F701000E239AD /* TextFieldItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldItem.swift; sourceTree = "<group>"; };
 		E43018702D0F73AC00E239AD /* SignInScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInScreen.swift; sourceTree = "<group>"; };
+		E43ABE0C2D83127D009624E9 /* SessionScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionScreen.swift; sourceTree = "<group>"; };
 		E43D21FA2D81BF73007BB44D /* NavBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavBar.swift; sourceTree = "<group>"; };
 		E43D21FC2D81C355007BB44D /* Profile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Profile.swift; sourceTree = "<group>"; };
 		E43D22012D81C4DD007BB44D /* InformationUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InformationUser.swift; sourceTree = "<group>"; };
+		E43D22032D821182007BB44D /* BoxSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoxSession.swift; sourceTree = "<group>"; };
 		E454FF282D7AFC8C00FAD268 /* Home.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Home.swift; sourceTree = "<group>"; };
 		E47AF0D92D0B662200C3444F /* Music Room.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Music Room.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E47AF0DC2D0B662200C3444F /* Music_RoomApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Music_RoomApp.swift; sourceTree = "<group>"; };
@@ -80,6 +84,7 @@
 			isa = PBXGroup;
 			children = (
 				E43D22012D81C4DD007BB44D /* InformationUser.swift */,
+				E43D22032D821182007BB44D /* BoxSession.swift */,
 			);
 			path = ui;
 			sourceTree = "<group>";
@@ -103,15 +108,16 @@
 		E47AF0DB2D0B662200C3444F /* Music Room */ = {
 			isa = PBXGroup;
 			children = (
-				E43D21FE2D81C3B5007BB44D /* ui */,
-				E43D21FC2D81C355007BB44D /* Profile.swift */,
-				E454FF282D7AFC8C00FAD268 /* Home.swift */,
 				E43018602D0F665500E239AD /* Authentification */,
+				E43D21FE2D81C3B5007BB44D /* ui */,
+				E43D21FA2D81BF73007BB44D /* NavBar.swift */,
+				E43D21FC2D81C355007BB44D /* Profile.swift */,
+				E43ABE0C2D83127D009624E9 /* SessionScreen.swift */,
+				E454FF282D7AFC8C00FAD268 /* Home.swift */,
 				E47AF0DC2D0B662200C3444F /* Music_RoomApp.swift */,
 				E47AF0E02D0B662200C3444F /* Item.swift */,
 				E47AF0E22D0B662400C3444F /* Assets.xcassets */,
 				E47AF0E42D0B662400C3444F /* Preview Content */,
-				E43D21FA2D81BF73007BB44D /* NavBar.swift */,
 			);
 			path = "Music Room";
 			sourceTree = "<group>";
@@ -194,11 +200,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E43D22042D821182007BB44D /* BoxSession.swift in Sources */,
 				E43D22022D81C4DD007BB44D /* InformationUser.swift in Sources */,
 				E47B1D122D7B04A2000F2758 /* AuthViewModel.swift in Sources */,
 				E43D21FD2D81C355007BB44D /* Profile.swift in Sources */,
 				E47AF0DF2D0B662200C3444F /* ContentView.swift in Sources */,
 				E43018692D0F6C2700E239AD /* ButtonItem.swift in Sources */,
+				E43ABE0D2D83127D009624E9 /* SessionScreen.swift in Sources */,
 				E47AF0E12D0B662200C3444F /* Item.swift in Sources */,
 				E430186D2D0F701000E239AD /* TextFieldItem.swift in Sources */,
 				E454FF292D7AFC8C00FAD268 /* Home.swift in Sources */,

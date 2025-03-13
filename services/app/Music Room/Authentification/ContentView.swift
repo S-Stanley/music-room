@@ -15,8 +15,7 @@ struct Authentification: View {
 
     var body: some View {
         if authViewModel.isAuthenticated {
-            MainTabView()
-            HomeScreen()
+            NavigationScreen()
         } else {
             VStack(spacing: 24) {
                 Text("Music Room")
@@ -24,7 +23,7 @@ struct Authentification: View {
                     .fontWeight(.bold)
                     .padding(.top, 30)
 
-                NavigationBar(selectedOption: $selectedOption)
+                NavigationBar(selectedOption: $selectedOption, text: "Sign in", text2: "Sign up")
 
                 switch selectedOption {
                 case "Sign in":

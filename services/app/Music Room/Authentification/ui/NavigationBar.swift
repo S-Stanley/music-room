@@ -8,22 +8,24 @@
 import SwiftUI
 
 struct NavigationBar: View {
-    @Binding var selectedOption: String // Liaison avec Authentification
+    @Binding var selectedOption: String
+    var text: String
+    var text2: String
     
     var body: some View {
         HStack(spacing: 20) {
             ButtonItem(
-                text: "Sign in",
-                isActive: selectedOption == "Sign in",
+                text: text,
+                isActive: selectedOption == text,
                 action: {
-                    selectedOption = "Sign in" // Mise à jour de l'état
+                    selectedOption = text
                 }
             )
             ButtonItem(
-                text: "Sign up",
-                isActive: selectedOption == "Sign up",
+                text: text2,
+                isActive: selectedOption == text2,
                 action: {
-                    selectedOption = "Sign up" // Mise à jour de l'état
+                    selectedOption = text2
                 }
             )
         }
@@ -38,6 +40,8 @@ struct NavigationBar: View {
 #Preview {
     NavigationBar(
         selectedOption: Binding<String>
-            .constant("Sign in")
+            .constant("Sign in"),
+        text: "",
+        text2: ""
     )
 }
