@@ -14,6 +14,8 @@
 		E43018712D0F73AC00E239AD /* SignInScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = E43018702D0F73AC00E239AD /* SignInScreen.swift */; };
 		E43ABE0D2D83127D009624E9 /* SessionScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = E43ABE0C2D83127D009624E9 /* SessionScreen.swift */; };
 		E43ABE0F2D83305A009624E9 /* PopUpChangeInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = E43ABE0E2D83305A009624E9 /* PopUpChangeInfo.swift */; };
+		E43ABE112D843D29009624E9 /* CreationSessionScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = E43ABE102D843D29009624E9 /* CreationSessionScreen.swift */; };
+		E43ABE132D844197009624E9 /* ButtonActionItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E43ABE122D844197009624E9 /* ButtonActionItem.swift */; };
 		E43D21FB2D81BF73007BB44D /* NavBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E43D21FA2D81BF73007BB44D /* NavBar.swift */; };
 		E43D21FD2D81C355007BB44D /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = E43D21FC2D81C355007BB44D /* Profile.swift */; };
 		E43D22022D81C4DD007BB44D /* InformationUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = E43D22012D81C4DD007BB44D /* InformationUser.swift */; };
@@ -35,6 +37,8 @@
 		E43018702D0F73AC00E239AD /* SignInScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInScreen.swift; sourceTree = "<group>"; };
 		E43ABE0C2D83127D009624E9 /* SessionScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionScreen.swift; sourceTree = "<group>"; };
 		E43ABE0E2D83305A009624E9 /* PopUpChangeInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopUpChangeInfo.swift; sourceTree = "<group>"; };
+		E43ABE102D843D29009624E9 /* CreationSessionScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreationSessionScreen.swift; sourceTree = "<group>"; };
+		E43ABE122D844197009624E9 /* ButtonActionItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonActionItem.swift; sourceTree = "<group>"; };
 		E43D21FA2D81BF73007BB44D /* NavBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavBar.swift; sourceTree = "<group>"; };
 		E43D21FC2D81C355007BB44D /* Profile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Profile.swift; sourceTree = "<group>"; };
 		E43D22012D81C4DD007BB44D /* InformationUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InformationUser.swift; sourceTree = "<group>"; };
@@ -85,6 +89,7 @@
 		E43D21FE2D81C3B5007BB44D /* ui */ = {
 			isa = PBXGroup;
 			children = (
+				E43ABE122D844197009624E9 /* ButtonActionItem.swift */,
 				E43D22012D81C4DD007BB44D /* InformationUser.swift */,
 				E43D22032D821182007BB44D /* BoxSession.swift */,
 				E43ABE0E2D83305A009624E9 /* PopUpChangeInfo.swift */,
@@ -114,6 +119,7 @@
 				E43018602D0F665500E239AD /* Authentification */,
 				E43D21FE2D81C3B5007BB44D /* ui */,
 				E43D21FA2D81BF73007BB44D /* NavBar.swift */,
+				E43ABE102D843D29009624E9 /* CreationSessionScreen.swift */,
 				E43D21FC2D81C355007BB44D /* Profile.swift */,
 				E43ABE0C2D83127D009624E9 /* SessionScreen.swift */,
 				E454FF282D7AFC8C00FAD268 /* Home.swift */,
@@ -213,9 +219,11 @@
 				E43ABE0D2D83127D009624E9 /* SessionScreen.swift in Sources */,
 				E47AF0E12D0B662200C3444F /* Item.swift in Sources */,
 				E430186D2D0F701000E239AD /* TextFieldItem.swift in Sources */,
+				E43ABE132D844197009624E9 /* ButtonActionItem.swift in Sources */,
 				E454FF292D7AFC8C00FAD268 /* Home.swift in Sources */,
 				E47AF0DD2D0B662200C3444F /* Music_RoomApp.swift in Sources */,
 				E43D21FB2D81BF73007BB44D /* NavBar.swift in Sources */,
+				E43ABE112D843D29009624E9 /* CreationSessionScreen.swift in Sources */,
 				E43018652D0F66A400E239AD /* NavigationBar.swift in Sources */,
 				E430186B2D0F6F7700E239AD /* SignUpScreen.swift in Sources */,
 				E43018712D0F73AC00E239AD /* SignInScreen.swift in Sources */,

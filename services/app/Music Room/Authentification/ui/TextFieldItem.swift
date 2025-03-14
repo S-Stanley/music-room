@@ -9,7 +9,7 @@ import SwiftUI
 
 struct TextFieldItem: View {
     var text: String
-    @State private var input: String = ""
+    @Binding var input: String
     
     var body: some View {
         VStack {
@@ -17,21 +17,20 @@ struct TextFieldItem: View {
                     text,
                     text: $input
             )
-            .padding() // Ajoute un espace intérieur pour le confort
-                        .frame(maxWidth: .infinity) // Prend toute la largeur disponible
-                        .frame(height: 50) // Définit une hauteur fixe
-                        .border(Color(red: 235/255, green: 235/255, blue: 235/255), width: 1)
-                         // Ajoute un fond gris clair
-                        .cornerRadius(8) // Coins arrondis
-                        .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 5)
-//            .textFieldStyle(RoundedBorderTextFieldStyle)
+            .padding()
+            .frame(maxWidth: .infinity)
+            .frame(height: 50)
+            .border(Color(red: 235/255, green: 235/255, blue: 235/255), width: 1)
+            .cornerRadius(8)
+            .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 5)
         }
-//        .padding()
     }
 }
 
 #Preview {
+    @Previewable @State var sessionName: String = ""
     TextFieldItem(
-        text: "Name"
+        text: "Name",
+        input: $sessionName
     )
 }

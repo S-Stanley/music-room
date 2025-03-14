@@ -16,7 +16,7 @@ struct InformationUser: View {
             .background(Color.gray)
             .foregroundColor(.white)
             .cornerRadius(8)
-
+                
     }
 }
 

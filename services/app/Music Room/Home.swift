@@ -45,17 +45,15 @@ struct HomeScreen: View {
                 
                 Spacer()
                 
-                Button(action: {
-                    // Action à déclencher
-                }) {
-                    Text("Create session")
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 8)
-                        .background(Color.blue)
-                        .foregroundColor(.white)
-                        .cornerRadius(8)
-                }
-                .padding()
+                NavigationLink(destination: CreationSessionScreen()) {
+                        Text("Create session")
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 8)
+                            .background(Color.blue)
+                            .foregroundColor(.white)
+                            .cornerRadius(8)
+                    }
+                    .padding()
             }
         }
     }
