@@ -15,13 +15,12 @@ class AuthViewModel: ObservableObject {
 
 
     func loadUserInfo() {
-        if let token = UserDefaults.standard.string(forKey: "auth_token"), !token.isEmpty {
+        if let user = User.load() {
             self.isAuthenticated = true
-            self.email = UserDefaults.standard.string(forKey: "user_email") ?? "Email non trouvé"
+            self.email = user.email
         }
     }
 
-    // Méthode pour la connexion (signIn)
     func signIn() {
         guard let url = URL(string: "http://localhost:5001/users/email/signin") else { return }
 
@@ -44,28 +43,28 @@ class AuthViewModel: ObservableObject {
                     return
                 }
 
-                if httpResponse.statusCode == 200 {
-                    if let data = data {
-                        let responseString = String(data: data, encoding: .utf8)
-                        print("Réponse brute: \(responseString ?? "")")
+                switch httpResponse.statusCode {
+                    case 200:
+                        if let data = data {
+                            let decoder = JSONDecoder()
+                            do {
+                                let response = try decoder.decode(SignInResponse.self, from: data)
+                                if let id = response.id, let email = response.email, let token = response.token {
+                                    let user = User(id: id, email: email, token: token)
+                                    user.save()
+                                    print("Utilisateur enregistré :", User.load() ?? "Aucun utilisateur trouvé")
 
-                        // Tentative de décodage
-                        let decoder = JSONDecoder()
-                        do {
-                            let response = try decoder.decode(SignInResponse.self, from: data)
-                            // Stocke le token et mets à jour l'état de l'authentification
-                            UserDefaults.standard.set(response.token, forKey: "auth_token")
-                            UserDefaults.standard.set(response.email, forKey: "user_email")
-                            self.isAuthenticated = true
-                            self.email = response.email ?? "Email non trouvé"
-                        } catch {
-                            self.errorMessage = "Erreur lors de la décodification de la réponse : \(error.localizedDescription)"
-                            print("Erreur lors de la décodification: \(error.localizedDescription)")
+                                    self.isAuthenticated = true
+                                    self.email = email
+                                }
+                            } catch {
+                                self.errorMessage = "Erreur lors du décodage de la réponse"
+                                print("Erreur de décodage: \(error.localizedDescription)")
+                            }
                         }
-                    }
-                } else if httpResponse.statusCode == 400 {
+                case 400:
                     self.errorMessage = "Email ou mot de passe invalide"
-                } else {
+                default:
                     self.errorMessage = "Erreur inconnue (\(httpResponse.statusCode))"
                 }
             }
@@ -103,10 +102,20 @@ class AuthViewModel: ObservableObject {
                     case 201:
                         print("Inscription réussie ✅")
                         self.isAuthenticated = true
-                        // Enregistrer l'email et token dans UserDefaults après inscription
-                        UserDefaults.standard.set(self.email, forKey: "user_email")
-                        UserDefaults.standard.set("dummyToken", forKey: "auth_token") // Remplacer par le token réel si disponible
-                        self.email = self.email // Mise à jour de l'email affiché
+                        
+                        if let data = data {
+                            let decoder = JSONDecoder()
+                            do {
+                                let response = try decoder.decode(SignInResponse.self, from: data)
+                                UserDefaults.standard.set(response.email, forKey: "user_email")
+                                UserDefaults.standard.set(response.token, forKey: "auth_token")
+                                UserDefaults.standard.set(response.id, forKey: "user_id")
+                                self.email = response.email ?? "Email non trouvé"
+                            } catch {
+                                self.errorMessage = "Erreur lors du décodage de la réponse"
+                                print("Erreur de décodage: \(error.localizedDescription)")
+                            }
+                        }
                     case 400:
                         self.errorMessage = "Cet email est déjà utilisé ❌"
                     case 500:
@@ -117,6 +126,42 @@ class AuthViewModel: ObservableObject {
             }
         }.resume()
     }
+    
+    //PAS ENCORE UTILE
+    func fetchUserProfile() {
+        guard let user = User.load() else {
+            self.errorMessage = "Utilisateur non authentifié"
+            return
+        }
+
+        guard let url = URL(string: "http://localhost:5001/users/\(user.id)") else { return }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.setValue(user.token, forHTTPHeaderField: "token")
+        print("Envoi du token :", user.token)
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            DispatchQueue.main.async {
+                if let error = error {
+                    self.errorMessage = "Erreur: \(error.localizedDescription)"
+                    return
+                }
+                
+                guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200, let data = data else {
+                    self.errorMessage = "Impossible de récupérer les infos utilisateur"
+                    return
+                }
+
+                do {
+                    let userInfo = try JSONDecoder().decode(SignInResponse.self, from: data)
+                    self.email = userInfo.email ?? "Email inconnu"
+                } catch {
+                    self.errorMessage = "Erreur de décodage"
+                }
+            }
+        }.resume()
+    }
+
 }
 
 struct SignInResponse: Codable {

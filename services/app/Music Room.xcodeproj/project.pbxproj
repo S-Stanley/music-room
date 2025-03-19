@@ -16,6 +16,7 @@
 		E43ABE0F2D83305A009624E9 /* PopUpChangeInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = E43ABE0E2D83305A009624E9 /* PopUpChangeInfo.swift */; };
 		E43ABE112D843D29009624E9 /* CreationSessionScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = E43ABE102D843D29009624E9 /* CreationSessionScreen.swift */; };
 		E43ABE132D844197009624E9 /* ButtonActionItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E43ABE122D844197009624E9 /* ButtonActionItem.swift */; };
+		E43ABE682D8AD2C4009624E9 /* UserDefaultHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = E43ABE672D8AD2C4009624E9 /* UserDefaultHeader.swift */; };
 		E43D21FB2D81BF73007BB44D /* NavBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E43D21FA2D81BF73007BB44D /* NavBar.swift */; };
 		E43D21FD2D81C355007BB44D /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = E43D21FC2D81C355007BB44D /* Profile.swift */; };
 		E43D22022D81C4DD007BB44D /* InformationUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = E43D22012D81C4DD007BB44D /* InformationUser.swift */; };
@@ -39,6 +40,7 @@
 		E43ABE0E2D83305A009624E9 /* PopUpChangeInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopUpChangeInfo.swift; sourceTree = "<group>"; };
 		E43ABE102D843D29009624E9 /* CreationSessionScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreationSessionScreen.swift; sourceTree = "<group>"; };
 		E43ABE122D844197009624E9 /* ButtonActionItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonActionItem.swift; sourceTree = "<group>"; };
+		E43ABE672D8AD2C4009624E9 /* UserDefaultHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultHeader.swift; sourceTree = "<group>"; };
 		E43D21FA2D81BF73007BB44D /* NavBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavBar.swift; sourceTree = "<group>"; };
 		E43D21FC2D81C355007BB44D /* Profile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Profile.swift; sourceTree = "<group>"; };
 		E43D22012D81C4DD007BB44D /* InformationUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InformationUser.swift; sourceTree = "<group>"; };
@@ -119,6 +121,7 @@
 				E43018602D0F665500E239AD /* Authentification */,
 				E43D21FE2D81C3B5007BB44D /* ui */,
 				E43D21FA2D81BF73007BB44D /* NavBar.swift */,
+				E43ABE672D8AD2C4009624E9 /* UserDefaultHeader.swift */,
 				E43ABE102D843D29009624E9 /* CreationSessionScreen.swift */,
 				E43D21FC2D81C355007BB44D /* Profile.swift */,
 				E43ABE0C2D83127D009624E9 /* SessionScreen.swift */,
@@ -217,6 +220,7 @@
 				E43018692D0F6C2700E239AD /* ButtonItem.swift in Sources */,
 				E43ABE0F2D83305A009624E9 /* PopUpChangeInfo.swift in Sources */,
 				E43ABE0D2D83127D009624E9 /* SessionScreen.swift in Sources */,
+				E43ABE682D8AD2C4009624E9 /* UserDefaultHeader.swift in Sources */,
 				E47AF0E12D0B662200C3444F /* Item.swift in Sources */,
 				E430186D2D0F701000E239AD /* TextFieldItem.swift in Sources */,
 				E43ABE132D844197009624E9 /* ButtonActionItem.swift in Sources */,

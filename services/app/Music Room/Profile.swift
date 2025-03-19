@@ -81,6 +81,7 @@ struct Profile: View {
                     title: "Change your Password"
                 )
             }
+            
             if isPopUpEmail {
                 PopUpChangeInfo(
                     isPresented: $isPopUpEmail,
@@ -94,8 +95,6 @@ struct Profile: View {
         }
     }
 }
-
-
 
 #Preview {
     @Previewable @StateObject var authViewModel = AuthViewModel()
