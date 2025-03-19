@@ -6,7 +6,7 @@ Should be call with `token` of user in headers
 
 #### Se connecter avec un email
 
-* Endpoint: `/users/email/signin`
+* Endpoint: POST `/users/email/signin`
 * Data a envoyer:
     * email
     * password
@@ -22,7 +22,7 @@ curl localhost:5001/users/email/signin/ -X POST  -d email=user@music.room
 
 #### S'inscrire avec un email
 
-* Endpoint: `/users/email/signiup`
+* Endpoint: POST `/users/email/signiup`
 * Data a envoyer:
     * email
     * password
@@ -47,4 +47,16 @@ curl localhost:5001/users/email/signup/ -X POST  -d email=user_to_create@music.r
 
 ```bash
 curl localhost:5001/users/f6cb6e9e-7e19-485c-a4b2-fc10128e4b71 -H token:c055fb5c-7d35-42a8-b4e7-a20a706d999b
+```
+
+#### Modifier les info d'un utilisateur [PROTECTED]
+
+* Endpoint: POST `/users/info`
+* Header: token
+* Reponse
+  * 200 -> Utilisateur modifie
+
+
+```bash
+curl -X POST localhost:5001/users/info -H token:c055fb5c-7d35-42a8-b4e7-a20a706d999b -d email=test@email.com 
 ```
