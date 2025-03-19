@@ -51,6 +51,33 @@ app.get("/up", (req, res) => {
   });
 });
 
+app.post("/users/info", async(req, res) => {
+	try {
+		const userUpdated = await prisma.user.update({
+			where: {
+				id: res.locals.user?.id,
+			},
+			data: {
+				email: req.body?.email ?? undefined,
+				password: req.body?.password
+					? await bcrypt.hash(req.body?.password, 7) 
+					: undefined,
+			}
+		});
+		return res.status(200).send({
+			id: userUpdated?.id,
+			email: userUpdated?.email,
+			password: userUpdated?.password,
+			token: userUpdated?.token,
+		});
+	} catch (e) {
+		console.error(e);
+    return res.status(500).json({
+      error: "Server error"
+    });
+	}
+});
+
 app.get("/users/:user_id", async(req, res) => {
   console.log("Reading user info");
   try {
