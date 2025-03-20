@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SignInScreen: View {
-    @ObservedObject var authViewModel: AuthViewModel  // ✅ Utilisation du ViewModel
+    @ObservedObject var authViewModel: AuthViewModel
 
     var body: some View {
         VStack(alignment: .leading) {

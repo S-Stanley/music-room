@@ -75,18 +75,19 @@ struct Profile: View {
                 PopUpChangeInfo(
                     isPresented: $isPopUpPassword,
                     onConfirm: { newPassword in
-                        
+                        authViewModel.updatePassword(newPassword: newPassword)
                     },
                     isPassword: true,
                     title: "Change your Password"
                 )
             }
+
             
             if isPopUpEmail {
                 PopUpChangeInfo(
                     isPresented: $isPopUpEmail,
-                    onConfirm: { newPassword in
-                        
+                    onConfirm: { newEmail in
+                        authViewModel.updateEmail(newEmail: newEmail.lowercased()) // Force l'email en minuscule
                     },
                     isPassword: false,
                     title: "Change your Email"

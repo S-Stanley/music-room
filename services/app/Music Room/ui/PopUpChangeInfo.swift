@@ -27,11 +27,17 @@ struct PopUpChangeInfo: View {
                     .padding(.top, 10)
                 if (isPassword) {
                     SecureField("New Password", text: $newPassword)
+                        .onChange(of: newPassword) {
+                                    newPassword = newPassword.lowercased()
+                                }
                         .padding()
                         .background(Color(.systemGray6))
                         .cornerRadius(8)
                 } else {
                     TextField("New Email", text: $newPassword)
+                        .onChange(of: newPassword) {
+                                    newPassword = newPassword.lowercased()
+                                }
                         .padding()
                         .background(Color(.systemGray6))
                         .cornerRadius(8)
