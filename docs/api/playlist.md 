@@ -1,0 +1,19 @@
+# Playlists
+
+#### Create playlist
+
+
+* Endpoint: POST `/playlist`
+* Data a envoyer:
+    * name
+    * type: "PUBLIC" ou "PRIVATE"
+* Reponse
+    * 201 -> Playlist cree
+    * 400 -> Name ou type n'as pas ete envoye, type n'as pas le bon format
+    * 500 -> Erreur serveur
+
+Example de requete:
+
+```bash
+curl -X POST localhost:5001/playlist/ -H token:c055fb5c-7d35-42a8-b4e7-a20a706d999b -d name=playlist -d type=PUBLIC
+```

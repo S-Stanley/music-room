@@ -8,6 +8,7 @@ const port = process.env.port || 5001;
 const prisma = new PrismaClient();
 
 import { usersRouter } from "./users.js";
+import { playlistRouter } from "./playlist.js";
 
 app.use(express.urlencoded({extended: false}));
 
@@ -49,6 +50,7 @@ app.use("/", async(req, res, next) => {
 
 
 app.use("/users", usersRouter);
+app.use("/playlist", playlistRouter);
 
 app.get("/up", (req, res) => {
   res.status(200).send({
