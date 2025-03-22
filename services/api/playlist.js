@@ -10,6 +10,40 @@ const PlaylistTypeEnum = {
   PRIVATE: "PRIVATE",
 };
 
+const _PAGINATION_MAX_TAKE = 50;
+
+router.get("/", async (req, res) => {
+  console.info("User is reading all playlist");
+  try {
+    const { skip, take } = req.query;
+    if (
+      (skip && isNaN(skip))
+      || (take && isNaN(take))
+    ){
+      return res.status(400).json({
+        error: "skip and take query params should be parseable to Int"
+      });
+    }
+    const allPlaylists = await prisma.playlist.findMany({
+      select: {
+        id: true,
+        name: true,
+        type: true,
+      },
+      skip: parseInt(skip ?? 0, 10),
+      take: (!take || parseInt(take, 10) > _PAGINATION_MAX_TAKE)
+        ? _PAGINATION_MAX_TAKE
+        : parseInt(take),
+    });
+    return res.status(200).json(allPlaylists); 
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({
+      error: "Server error"
+    }); 
+  }
+});
+
 router.post("/", async(req, res) => {
   console.info("User is creating playlist");
   try {
