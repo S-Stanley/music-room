@@ -7,6 +7,7 @@
 * Data a envoyer:
     * name
     * type: "PUBLIC" ou "PRIVATE"
+    * password: only for private playlist
 * Reponse
     * 201 -> Playlist cree
     * 400 -> Name ou type n'as pas ete envoye, type n'as pas le bon format
