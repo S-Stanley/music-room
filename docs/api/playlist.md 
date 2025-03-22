@@ -2,8 +2,7 @@
 
 #### Create playlist
 
-
-* Endpoint: POST `/playlist`
+* Endpoint: POST `/playlist` [PROTECTED]
 * Data a envoyer:
     * name
     * type: "PUBLIC" ou "PRIVATE"
@@ -17,4 +16,21 @@ Example de requete:
 
 ```bash
 curl -X POST localhost:5001/playlist/ -H token:c055fb5c-7d35-42a8-b4e7-a20a706d999b -d name=playlist -d type=PUBLIC
+```
+
+#### List all playlists
+
+* Endpoint: GET `/playlist` [PROTECTED]
+* URL params
+    * skip: default is 0
+    * take: max and default are 50
+* Reponse
+    * 200 -> Return all playlists
+    * 400 -> skip or take query params are not parseable to Int
+    * 500 -> Erreur serveur
+
+Example de requete:
+
+```bash
+curl localhost:5001/playlist/?take=10&skip=0 -H token:c055fb5c-7d35-42a8-b4e7-a20a706d999b
 ```
