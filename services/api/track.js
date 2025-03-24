@@ -1,0 +1,32 @@
+import express from "express";
+import { PrismaClient } from '@prisma/client';
+
+const router = express.Router();
+const prisma = new PrismaClient();
+
+router.get("/search", async(req, res) => {
+  try {
+    const { q } = req.query;
+  console.info("User in searching a track with:", q);
+    if (!q){
+      return res.status(400).json({
+        error: "Search cannot be empty"
+      });
+    }
+    const fetchDeezerAPI = await fetch(`https://api.deezer.com/search?q=${q}`);
+    if (fetchDeezerAPI?.status !== 200){
+      console.error(await fetchDeezerAPI.json());
+      return res.status(500).json({
+        error: "Error on our side..."
+      });
+    }
+    return res.status(200).json((await fetchDeezerAPI.json())?.data); 
+  } catch (e){
+    console.error(e); 
+    return res.status(500).json({
+      error: "Server error"
+    }); 
+  }
+});
+
+export const trackRouter = router;;
