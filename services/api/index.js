@@ -9,6 +9,7 @@ const prisma = new PrismaClient();
 
 import { usersRouter } from "./users.js";
 import { playlistRouter } from "./playlist.js";
+import { trackRouter } from "./track.js";
 
 app.use(express.urlencoded({extended: false}));
 
@@ -51,6 +52,7 @@ app.use("/", async(req, res, next) => {
 
 app.use("/users", usersRouter);
 app.use("/playlist", playlistRouter);
+app.use("/track", trackRouter);
 
 app.get("/up", (req, res) => {
   res.status(200).send({
