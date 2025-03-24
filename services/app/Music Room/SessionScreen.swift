@@ -8,14 +8,15 @@
 import SwiftUI
 
 struct SessionScreen: View {
-    var nameSession = "Session 1"
-    var nameAdmin = "Admin"
+    var nameSession: String
+    var nameAdmin: String
     
     @State private var selectedScreen: String = "Playlist"
-    
+    @Environment(\.presentationMode) var presentationMode  // Permet de revenir à l'écran précédent
+    @ObservedObject var authViewModel = AuthViewModel()
+
     var body: some View {
         VStack {
-    
             HStack {
                 VStack(alignment: .leading) {
                     Text(nameSession)
@@ -68,11 +69,33 @@ struct SessionScreen: View {
 
             Spacer()
 
+            // Ajouter le bouton Quitter la session
+            Button(action: {
+                quitterLaSession()
+            }) {
+                Text("Quitter la session")
+                    .padding()
+                    .background(Color.red)
+                    .foregroundColor(.white)
+                    .cornerRadius(8)
+            }
+            .padding()
         }
         .padding()
         .background(Color.gray.opacity(0.05).edgesIgnoringSafeArea(.all))
+        .navigationBarBackButtonHidden(true)
+    }
+
+    // Fonction pour quitter la session
+    func quitterLaSession() {
+        // Ajouter ici la logique pour quitter la session.
+        // Par exemple, supprimer l'utilisateur de la session active, etc.
+
+        // Après cela, retour à l'écran précédent
+        presentationMode.wrappedValue.dismiss()
     }
 }
+
 
 struct PlaylistScreen: View {
     var body: some View {
@@ -89,9 +112,4 @@ struct MusicScreen: View {
            
         }
     }
-}
-
-
-#Preview {
-    SessionScreen()
 }

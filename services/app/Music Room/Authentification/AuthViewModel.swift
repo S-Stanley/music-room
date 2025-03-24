@@ -12,7 +12,7 @@ class AuthViewModel: ObservableObject {
     @Published var password: String = ""
     @Published var errorMessage: String?
     @Published var isAuthenticated: Bool = false
-
+    @Published var activeSessions: [Session] = []
 
     func loadUserInfo() {
         if let user = User.load() {
@@ -140,7 +140,7 @@ class AuthViewModel: ObservableObject {
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        request.setValue(user.token, forHTTPHeaderField: "token") // Envoi du token dans l'en-tête
+        request.setValue(user.token, forHTTPHeaderField: "token")
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
         
         let body = "email=\(newEmail)"
@@ -233,43 +233,116 @@ class AuthViewModel: ObservableObject {
         }.resume()
     }
 
-    
-    //PAS ENCORE UTILE
-    func fetchUserProfile() {
+    func createSession(name: String, type: String, password: String?, completion: @escaping (Bool) -> Void) {
         guard let user = User.load() else {
-            self.errorMessage = "Utilisateur non authentifié"
+            completion(false)
+            return
+        }
+        
+        guard let url = URL(string: "http://localhost:5001/playlist/") else { return }
+
+        print("Nom de session: \(name), Type: \(type)")
+        print("Requête envoyée à l'API")
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue(user.token, forHTTPHeaderField: "token")
+        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+
+        var body = "name=\(name)&type=\(type)"
+        if let password = password, type == "PRIVATE" {
+            body += "&password=\(password)"
+        }
+        
+        request.httpBody = body.data(using: .utf8)
+
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            DispatchQueue.main.async {
+                if let error = error {
+                    print("Erreur: \(error.localizedDescription)")
+                    completion(false)
+                    return
+                }
+                
+                guard let httpResponse = response as? HTTPURLResponse else {
+                    completion(false)
+                    return
+                }
+
+                if httpResponse.statusCode == 201 {
+                    print("Session créée avec succès ✅")
+                    completion(true)
+                } else {
+                    print("Erreur lors de la création: \(httpResponse.statusCode)")
+                    completion(false)
+                }
+            }
+        }.resume()
+    }
+
+
+
+
+    func fetchActiveSessions(completion: @escaping (Bool, String?) -> Void) {
+        guard let user = User.load() else {
+            completion(false, "Utilisateur non authentifié")
             return
         }
 
-        guard let url = URL(string: "http://localhost:5001/users/\(user.id)") else { return }
+        guard let url = URL(string: "http://localhost:5001/playlist/?take=50&skip=0") else {
+            completion(false, "URL invalide")
+            return
+        }
 
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.setValue(user.token, forHTTPHeaderField: "token")
-        print("Envoi du token :", user.token)
+
         URLSession.shared.dataTask(with: request) { data, response, error in
             DispatchQueue.main.async {
                 if let error = error {
-                    self.errorMessage = "Erreur: \(error.localizedDescription)"
-                    return
-                }
-                
-                guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200, let data = data else {
-                    self.errorMessage = "Impossible de récupérer les infos utilisateur"
+                    print("❌ Erreur de requête: \(error.localizedDescription)")
+                    completion(false, "Erreur: \(error.localizedDescription)")
                     return
                 }
 
-                do {
-                    let userInfo = try JSONDecoder().decode(SignInResponse.self, from: data)
-                    self.email = userInfo.email ?? "Email inconnu"
-                } catch {
-                    self.errorMessage = "Erreur de décodage"
+                guard let httpResponse = response as? HTTPURLResponse, let data = data else {
+                    print("❌ Réponse invalide du serveur")
+                    completion(false, "Réponse invalide du serveur")
+                    return
+                }
+
+                print("✅ Statut HTTP: \(httpResponse.statusCode)")
+                print("📥 Réponse JSON brute: \(String(data: data, encoding: .utf8) ?? "Aucune donnée")")
+
+                if httpResponse.statusCode == 200 {
+                    do {
+                        let sessions = try JSONDecoder().decode([Session].self, from: data)
+                        self.activeSessions = sessions
+                        completion(true, nil)
+                    } catch {
+                        print("❌ Erreur de décodage JSON: \(error.localizedDescription)")
+                        completion(false, "Erreur de décodage JSON")
+                    }
+                } else {
+                    print("❌ Erreur serveur: \(httpResponse.statusCode)")
+                    completion(false, "Erreur serveur (\(httpResponse.statusCode))")
                 }
             }
         }.resume()
     }
 
 }
+
+
+struct Session: Identifiable, Decodable {
+    let id: String
+    let name: String
+    let type: String
+    let password: String?// 🔹 Modifier "admin" en "type"
+}
+
+
 
 struct SignInResponse: Codable {
     let id: String?

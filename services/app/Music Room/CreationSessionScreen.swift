@@ -8,67 +8,82 @@
 import SwiftUI
 
 struct CreationSessionScreen: View {
-    @State private var isPrivateSession: Bool = false
+    @ObservedObject var authViewModel = AuthViewModel()
     @State private var sessionName: String = ""
-    @State private var password: String = ""
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 24) {
-            Text("Create your session")
-                .font(.largeTitle)
-                .fontWeight(.bold)
-                .padding(.top, 20)
-            
-            TextFieldItem(
-                text: "Name session",
-                input: $sessionName
-            )
-            
-            Button(action: {
-                isPrivateSession.toggle()
-            }) {
-                HStack {
-                    ZStack {
-                        Rectangle()
-                            .stroke(Color.blue, lineWidth: 2)
-                            .frame(width: 24, height: 24)
-                            .cornerRadius(4)
+    @State private var sessionType: String = "PUBLIC"
+    @State private var password: String = "" // Ajout du mot de passe
+    @State private var errorMessage: String?
+    @State private var isSessionCreated = false
+    @State private var createdSessionName: String = ""
+    @State private var createdAdminName: String = "Admin"
 
-                        if isPrivateSession {
-                            Image(systemName: "checkmark")
-                                .foregroundColor(.blue)
+    var body: some View {
+        NavigationStack {
+            VStack {
+                Text("Create a Session")
+                    .font(.title)
+                    .padding()
+
+                TextField("Session Name", text: $sessionName)
+                    .padding()
+                    .background(Color(.systemGray6))
+                    .cornerRadius(8)
+
+                Picker("Session Type", selection: $sessionType) {
+                    Text("Public").tag("PUBLIC")
+                    Text("Private").tag("PRIVATE")
+                }
+                .pickerStyle(SegmentedPickerStyle())
+                .padding()
+
+                // Affiche le champ mot de passe uniquement si la session est privée
+                if sessionType == "PRIVATE" {
+                    SecureField("Enter password", text: $password)
+                        .padding()
+                        .background(Color(.systemGray6))
+                        .cornerRadius(8)
+                }
+
+                if let errorMessage = errorMessage {
+                    Text(errorMessage)
+                        .foregroundColor(.red)
+                        .padding()
+                }
+
+                Button(action: {
+                    let sessionPassword = sessionType == "PRIVATE" ? password : nil
+                    
+                    authViewModel.createSession(name: sessionName, type: sessionType, password: sessionPassword) { success in
+                        if success {
+                            createdSessionName = sessionName
+                            isSessionCreated = true
+                        } else {
+                            errorMessage = "Failed to create session"
                         }
                     }
-                    
-                    Text("Private session")
-                        .font(.title3)
-                        .fontWeight(.medium)
-                        .foregroundColor(.black)
+                }) {
+                    Text("Create")
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                }
+                .padding()
+                
+                // Navigation conditionnelle vers SessionScreen
+                NavigationLink(destination: SessionScreen(nameSession: createdSessionName, nameAdmin: createdAdminName), isActive: $isSessionCreated) {
+                    EmptyView()
                 }
             }
-            .buttonStyle(PlainButtonStyle())
-            
-        
-            if isPrivateSession {
-                TextFieldItem(
-                    text: "Password",
-                    input: $password
-                )
-            }
-            
-            ButtonActionItem(
-                text: "Create session",
-                isActive: true,
-                action: {}
-            )
-            
-            Spacer()
+            .padding()
         }
-        .padding(.horizontal, 24)
-        .padding(.top, 40)
-        .background(Color.gray.opacity(0.05).edgesIgnoringSafeArea(.all))
     }
 }
+
+
+
+
 
 #Preview {
     CreationSessionScreen()

@@ -8,56 +8,166 @@
 import SwiftUI
 
 struct HomeScreen: View {
-    let sessions = [
-            "Session 1",
-            "Session 2",
-            "Session 3",
-            "Session 4",
-            "Session 5"
-        ]
-    
+    @ObservedObject var authViewModel = AuthViewModel()
+    @State private var showPasswordField = false // Pour afficher le champ de mot de passe
+    @State private var password = "" // Mot de passe saisi par l'utilisateur
+    @State private var selectedSession: Session? // La session sélectionnée pour rejoindre
+    @State private var passwordErrorMessage = "" // Message d'erreur si mot de passe incorrect
+    @State private var isPasswordCorrect = false // Pour gérer la navigation après validation du mot de passe
+
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack {
                 Text("Session in progress")
                     .font(.title)
                     .padding()
-                
-                List(sessions, id: \.self) { session in
-                    HStack {
-                        Text(session)
-                            .font(.title)
-                        Spacer()
-                        
-                        NavigationLink(destination: SessionScreen(nameSession: session, nameAdmin: "Admin")) {
-                            Text("Join")
-                                .foregroundColor(.blue)
-                                .padding(.horizontal)
+
+                // Vérification si des sessions actives existent
+                if authViewModel.activeSessions.isEmpty {
+                    Text("No active sessions")
+                        .foregroundColor(.gray)
+                        .padding()
+                } else {
+                    List(authViewModel.activeSessions) { session in
+                        HStack {
+                            Text(session.name)
+                                .font(.title3)
+
+                            Spacer()
+
+                           
+                            if session.type == "PRIVATE" {
+                                Image(systemName: "lock")
+                                Button(action: {
+                                    // Enregistrer la session sélectionnée
+                                    self.selectedSession = session
+                                    // Afficher le champ de mot de passe
+                                    self.showPasswordField = true
+                                }) {
+                                    Text("Join")
+                                        .foregroundColor(.blue)
+                                        .padding(.horizontal)
+                                }
+                            } else {
+                                NavigationLink(destination: SessionScreen(nameSession: session.name, nameAdmin: "Admin")) {
+                                    Text("Join")
+                                        .foregroundColor(.blue)
+                                        .padding(.horizontal)
+                                }
+                            }
                         }
-                        .buttonStyle(PlainButtonStyle())
+                        .padding()
+                        .background(Color.white)
+                        .cornerRadius(10)
+                        .shadow(radius: 5)
                     }
-                    .padding()
-                    .background(Color.white)
-                    .cornerRadius(10)
-                    .shadow(radius: 5)
+                    .listStyle(PlainListStyle())
                 }
-                .listStyle(PlainListStyle())
-                
+
                 Spacer()
-                
+
+                // Bouton pour créer une nouvelle session
                 NavigationLink(destination: CreationSessionScreen()) {
-                        Text("Create session")
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 8)
-                            .background(Color.blue)
-                            .foregroundColor(.white)
-                            .cornerRadius(8)
+                    Text("Create session")
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 8)
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                }
+                .padding()
+            }
+            .onAppear {
+                // Récupérer les sessions actives depuis l'API
+                authViewModel.fetchActiveSessions { success, error in
+                    if !success {
+                        print("Erreur: \(error ?? "Inconnue")")
+                    }
+                }
+            }
+
+            // Afficher le champ de mot de passe si nécessaire
+            .sheet(isPresented: $showPasswordField) {
+                VStack {
+                    SecureField("Enter password", text: $password)
+                        .padding()
+                        .background(Color(.systemGray6))
+                        .cornerRadius(8)
+                        .padding()
+
+                    if !passwordErrorMessage.isEmpty {
+                        Text(passwordErrorMessage)
+                            .foregroundColor(.red)
+                            .padding()
+                    }
+
+                    Button("Join Session") {
+                        checkPassword()
                     }
                     .padding()
+                    .background(Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(8)
+                    .padding()
+                }
+                .padding()
+            }
+        }
+    }
+
+    // Fonction pour vérifier le mot de passe
+    func checkPassword() {
+        guard let session = selectedSession else {
+            print("Session not found")
+            return
+        }
+
+        // Simuler l'appel API pour récupérer les détails de la session par ID
+        fetchSessionByID(sessionId: session.id) { sessionDetails in
+            guard let sessionDetails = sessionDetails else {
+                passwordErrorMessage = "Session not found"
+                print("Session not found")
+                return
+            }
+
+            // Comparaison des mots de passe après nettoyage (retirer les espaces et comparer en minuscule)
+            let normalizedPassword = password.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+            let normalizedSessionPassword = sessionDetails.password?.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+
+            print("Session password: \(sessionDetails.password ?? "nil")")
+            print("Entered password: \(password)")
+
+            // Vérifier si les mots de passe correspondent
+            if normalizedPassword == normalizedSessionPassword {
+                // Mot de passe correct
+                isPasswordCorrect = true
+                showPasswordField = false // Masquer le champ de mot de passe
+                print("Password is correct")
+                // Naviguer vers la session
+                // Vous pouvez naviguer ici vers la session réelle, par exemple avec une NavigationLink
+            } else {
+                passwordErrorMessage = "Incorrect password"
+                print("Password mismatch")
+            }
+        }
+    }
+
+    // Fonction pour récupérer la session par ID via API
+    func fetchSessionByID(sessionId: String, completion: @escaping (Session?) -> Void) {
+        // Simuler l'appel à l'API pour récupérer les détails de la session
+        // Dans un vrai cas, vous ferez une requête API pour obtenir les détails de la session par son ID.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            // Rechercher la session correspondant à l'ID dans la liste des sessions actives
+            if let session = authViewModel.activeSessions.first(where: { $0.id == sessionId }) {
+                completion(session)
+            } else {
+                completion(nil)
             }
         }
     }
 }
+
+
 
 #Preview {
     HomeScreen()
