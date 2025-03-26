@@ -15,9 +15,14 @@ class AuthViewModel: ObservableObject {
     @Published var activeSessions: [Session] = []
 
     func loadUserInfo() {
-        if let user = User.load() {
+        if let savedUser = User.load() {
             self.isAuthenticated = true
-            self.email = user.email
+            self.email = savedUser.email
+            print("🔄 Utilisateur chargé: \(savedUser.email)")
+        } else {
+            self.isAuthenticated = false
+            self.email = ""
+            print("⚠️ Aucun utilisateur trouvé")
         }
     }
 
@@ -46,20 +51,22 @@ class AuthViewModel: ObservableObject {
                 switch httpResponse.statusCode {
                     case 200:
                         if let data = data {
-                            let decoder = JSONDecoder()
                             do {
-                                let response = try decoder.decode(SignInResponse.self, from: data)
+                                let response = try JSONDecoder().decode(SignInResponse.self, from: data)
                                 if let id = response.id, let email = response.email, let token = response.token {
                                     let user = User(id: id, email: email, token: token)
                                     user.save()
-                                    print("Utilisateur enregistré :", User.load() ?? "Aucun utilisateur trouvé")
-
-                                    self.isAuthenticated = true
-                                    self.email = email
+                                    
+                                    print("✅ Utilisateur enregistré :", email)
+                                    
+                                    DispatchQueue.main.async {
+                                        self.isAuthenticated = true
+                                        self.email = email
+                                    }
                                 }
                             } catch {
                                 self.errorMessage = "Erreur lors du décodage de la réponse"
-                                print("Erreur de décodage: \(error.localizedDescription)")
+                                print("❌ Erreur de décodage: \(error.localizedDescription)")
                             }
                         }
                 case 400:
@@ -102,15 +109,21 @@ class AuthViewModel: ObservableObject {
                     case 201:
                         print("Inscription réussie ✅")
                         self.isAuthenticated = true
-                        
+
                         if let data = data {
                             let decoder = JSONDecoder()
                             do {
                                 let response = try decoder.decode(SignInResponse.self, from: data)
-                                UserDefaults.standard.set(response.email, forKey: "user_email")
-                                UserDefaults.standard.set(response.token, forKey: "auth_token")
-                                UserDefaults.standard.set(response.id, forKey: "user_id")
-                                self.email = response.email ?? "Email non trouvé"
+                                // Vérifiez si le token est bien présent
+                                if let token = response.token {
+                                    UserDefaults.standard.set(response.email, forKey: "user_email")
+                                    UserDefaults.standard.set(token, forKey: "auth_token")
+                                    UserDefaults.standard.set(response.id, forKey: "user_id")
+                                    self.email = response.email ?? "Email non trouvé"
+                                    self.loadUserInfo()
+                                } else {
+                                    self.errorMessage = "Le token est manquant dans la réponse."
+                                }
                             } catch {
                                 self.errorMessage = "Erreur lors du décodage de la réponse"
                                 print("Erreur de décodage: \(error.localizedDescription)")
@@ -126,6 +139,7 @@ class AuthViewModel: ObservableObject {
             }
         }.resume()
     }
+
     
     func updateEmail(newEmail: String) {
         guard let user = User.load() else {
@@ -214,7 +228,7 @@ class AuthViewModel: ObservableObject {
                 switch httpResponse.statusCode {
                     case 200:
                         print("Mot de passe mis à jour avec succès ✅")
-                        self.password = newPassword // Mettre à jour l'interface utilisateur
+                        self.password = newPassword
                         
                         // Sauvegarde les nouvelles infos de l'utilisateur (même si ici c'est juste le mot de passe)
                         let updatedUser = User(id: user.id, email: user.email, token: user.token)
@@ -339,10 +353,8 @@ struct Session: Identifiable, Decodable {
     let id: String
     let name: String
     let type: String
-    let password: String?// 🔹 Modifier "admin" en "type"
+    let password: String?
 }
-
-
 
 struct SignInResponse: Codable {
     let id: String?

@@ -104,12 +104,3 @@ struct PlaylistScreen: View {
         }
     }
 }
-
-struct MusicScreen: View {
-    var body: some View {
-        VStack  {
-            Text("Music")
-           
-        }
-    }
-}

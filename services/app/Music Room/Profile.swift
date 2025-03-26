@@ -22,7 +22,7 @@ struct Profile: View {
                     Image(systemName: "person.fill")
                         .resizable()
                         .frame(width: 100, height: 100)
-                        .foregroundColor(.blue)
+                        .foregroundColor(.black)
                     Spacer()
                 }
                 
@@ -87,7 +87,7 @@ struct Profile: View {
                 PopUpChangeInfo(
                     isPresented: $isPopUpEmail,
                     onConfirm: { newEmail in
-                        authViewModel.updateEmail(newEmail: newEmail.lowercased()) // Force l'email en minuscule
+                        authViewModel.updateEmail(newEmail: newEmail.lowercased())
                     },
                     isPassword: false,
                     title: "Change your Email"
