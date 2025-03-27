@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct Profile: View {
-    @ObservedObject var authViewModel: AuthViewModel
+struct ProfileScreen: View {
+    @ObservedObject var profileViewModel: ProfileViewModel
     @State private var isPopUpPassword: Bool = false
     @State private var isPopUpEmail: Bool = false
     
@@ -40,8 +40,8 @@ struct Profile: View {
                     }
                 }
                 
-                if authViewModel.isAuthenticated {
-                    InformationUser(text: authViewModel.email)
+                if profileViewModel.isAuthenticated {
+                    InformationUser(text: profileViewModel.email)
                 } else {
                     InformationUser(text: "Chargement...")
                 }
@@ -68,14 +68,14 @@ struct Profile: View {
             .padding(.top, 40)
             .background(Color.gray.opacity(0.05).edgesIgnoringSafeArea(.all))
             .onAppear {
-                authViewModel.loadUserInfo()
+                profileViewModel.loadUserInfo()
             }
             
             if isPopUpPassword {
                 PopUpChangeInfo(
                     isPresented: $isPopUpPassword,
                     onConfirm: { newPassword in
-                        authViewModel.updatePassword(newPassword: newPassword)
+                        profileViewModel.updatePassword(newPassword: newPassword)
                     },
                     isPassword: true,
                     title: "Change your Password"
@@ -87,7 +87,7 @@ struct Profile: View {
                 PopUpChangeInfo(
                     isPresented: $isPopUpEmail,
                     onConfirm: { newEmail in
-                        authViewModel.updateEmail(newEmail: newEmail.lowercased())
+                        profileViewModel.updateEmail(newEmail: newEmail.lowercased())
                     },
                     isPassword: false,
                     title: "Change your Email"
@@ -98,6 +98,6 @@ struct Profile: View {
 }
 
 #Preview {
-    @Previewable @StateObject var authViewModel = AuthViewModel()
-    Profile(authViewModel: authViewModel)
+    @Previewable @StateObject var profileViewModel = ProfileViewModel()
+    ProfileScreen(profileViewModel: profileViewModel)
 }

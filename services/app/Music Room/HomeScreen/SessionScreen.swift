@@ -13,7 +13,6 @@ struct SessionScreen: View {
     
     @State private var selectedScreen: String = "Playlist"
     @Environment(\.presentationMode) var presentationMode  // Permet de revenir à l'écran précédent
-    @ObservedObject var authViewModel = AuthViewModel()
 
     var body: some View {
         VStack {

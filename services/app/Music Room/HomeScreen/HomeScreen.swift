@@ -8,12 +8,12 @@
 import SwiftUI
 
 struct HomeScreen: View {
-    @ObservedObject var authViewModel = AuthViewModel()
-    @State private var showPasswordField = false // Pour afficher le champ de mot de passe
-    @State private var password = "" // Mot de passe saisi par l'utilisateur
-    @State private var selectedSession: Session? // La session sélectionnée pour rejoindre
-    @State private var passwordErrorMessage = "" // Message d'erreur si mot de passe incorrect
-    @State private var isPasswordCorrect = false // Pour gérer la navigation après validation du mot de passe
+    @ObservedObject var homeViewModel = HomeViewModel()
+    @State private var showPasswordField = false
+    @State private var password = ""
+    @State private var selectedSession: Session?
+    @State private var passwordErrorMessage = ""
+    @State private var isPasswordCorrect = false
 
     var body: some View {
         NavigationStack {
@@ -23,12 +23,12 @@ struct HomeScreen: View {
                     .padding()
 
                 // Vérification si des sessions actives existent
-                if authViewModel.activeSessions.isEmpty {
+                if homeViewModel.activeSessions.isEmpty {
                     Text("No active sessions")
                         .foregroundColor(.gray)
                         .padding()
                 } else {
-                    List(authViewModel.activeSessions) { session in
+                    List(homeViewModel.activeSessions) { session in
                         HStack {
                             Text(session.name)
                                 .font(.title3)
@@ -39,9 +39,7 @@ struct HomeScreen: View {
                             if session.type == "PRIVATE" {
                                 Image(systemName: "lock")
                                 Button(action: {
-                                    // Enregistrer la session sélectionnée
                                     self.selectedSession = session
-                                    // Afficher le champ de mot de passe
                                     self.showPasswordField = true
                                 }) {
                                     Text("Join")
@@ -66,7 +64,6 @@ struct HomeScreen: View {
 
                 Spacer()
 
-                // Bouton pour créer une nouvelle session
                 NavigationLink(destination: CreationSessionScreen()) {
                     Text("Create session")
                         .padding(.horizontal, 12)
@@ -79,14 +76,13 @@ struct HomeScreen: View {
             }
             .onAppear {
                 // Récupérer les sessions actives depuis l'API
-                authViewModel.fetchActiveSessions { success, error in
+                homeViewModel.fetchActiveSessions { success, error in
                     if !success {
                         print("Erreur: \(error ?? "Inconnue")")
                     }
                 }
             }
 
-            // Afficher le champ de mot de passe si nécessaire
             .sheet(isPresented: $showPasswordField) {
                 VStack {
                     SecureField("Enter password", text: $password)
@@ -158,7 +154,7 @@ struct HomeScreen: View {
         // Dans un vrai cas, vous ferez une requête API pour obtenir les détails de la session par son ID.
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
             // Rechercher la session correspondant à l'ID dans la liste des sessions actives
-            if let session = authViewModel.activeSessions.first(where: { $0.id == sessionId }) {
+            if let session = homeViewModel.activeSessions.first(where: { $0.id == sessionId }) {
                 completion(session)
             } else {
                 completion(nil)

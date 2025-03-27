@@ -18,14 +18,16 @@
 		E43ABE132D844197009624E9 /* ButtonActionItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E43ABE122D844197009624E9 /* ButtonActionItem.swift */; };
 		E43ABE682D8AD2C4009624E9 /* UserDefaultHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = E43ABE672D8AD2C4009624E9 /* UserDefaultHeader.swift */; };
 		E43D21FB2D81BF73007BB44D /* NavBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E43D21FA2D81BF73007BB44D /* NavBar.swift */; };
-		E43D21FD2D81C355007BB44D /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = E43D21FC2D81C355007BB44D /* Profile.swift */; };
+		E43D21FD2D81C355007BB44D /* ProfileScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = E43D21FC2D81C355007BB44D /* ProfileScreen.swift */; };
 		E43D22022D81C4DD007BB44D /* InformationUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = E43D22012D81C4DD007BB44D /* InformationUser.swift */; };
 		E43D22042D821182007BB44D /* BoxSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = E43D22032D821182007BB44D /* BoxSession.swift */; };
-		E454FF292D7AFC8C00FAD268 /* Home.swift in Sources */ = {isa = PBXBuildFile; fileRef = E454FF282D7AFC8C00FAD268 /* Home.swift */; };
+		E454FF292D7AFC8C00FAD268 /* HomeScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = E454FF282D7AFC8C00FAD268 /* HomeScreen.swift */; };
 		E456F5CA2D9203EF00E1640F /* MusicScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = E456F5C92D9203EF00E1640F /* MusicScreen.swift */; };
 		E456F5CC2D92041200E1640F /* MusicViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E456F5CB2D92041200E1640F /* MusicViewModel.swift */; };
+		E456F5CF2D93EDCE00E1640F /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E456F5CE2D93EDCE00E1640F /* ProfileViewModel.swift */; };
+		E456F5D32D955D3200E1640F /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E456F5D22D955D3200E1640F /* HomeViewModel.swift */; };
 		E47AF0DD2D0B662200C3444F /* Music_RoomApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E47AF0DC2D0B662200C3444F /* Music_RoomApp.swift */; };
-		E47AF0DF2D0B662200C3444F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E47AF0DE2D0B662200C3444F /* ContentView.swift */; };
+		E47AF0DF2D0B662200C3444F /* AuthentificationScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = E47AF0DE2D0B662200C3444F /* AuthentificationScreen.swift */; };
 		E47AF0E12D0B662200C3444F /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = E47AF0E02D0B662200C3444F /* Item.swift */; };
 		E47AF0E32D0B662400C3444F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E47AF0E22D0B662400C3444F /* Assets.xcassets */; };
 		E47AF0E62D0B662400C3444F /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E47AF0E52D0B662400C3444F /* Preview Assets.xcassets */; };
@@ -44,15 +46,17 @@
 		E43ABE122D844197009624E9 /* ButtonActionItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonActionItem.swift; sourceTree = "<group>"; };
 		E43ABE672D8AD2C4009624E9 /* UserDefaultHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultHeader.swift; sourceTree = "<group>"; };
 		E43D21FA2D81BF73007BB44D /* NavBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavBar.swift; sourceTree = "<group>"; };
-		E43D21FC2D81C355007BB44D /* Profile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Profile.swift; sourceTree = "<group>"; };
+		E43D21FC2D81C355007BB44D /* ProfileScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileScreen.swift; sourceTree = "<group>"; };
 		E43D22012D81C4DD007BB44D /* InformationUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InformationUser.swift; sourceTree = "<group>"; };
 		E43D22032D821182007BB44D /* BoxSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoxSession.swift; sourceTree = "<group>"; };
-		E454FF282D7AFC8C00FAD268 /* Home.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Home.swift; sourceTree = "<group>"; };
+		E454FF282D7AFC8C00FAD268 /* HomeScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeScreen.swift; sourceTree = "<group>"; };
 		E456F5C92D9203EF00E1640F /* MusicScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicScreen.swift; sourceTree = "<group>"; };
 		E456F5CB2D92041200E1640F /* MusicViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicViewModel.swift; sourceTree = "<group>"; };
+		E456F5CE2D93EDCE00E1640F /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
+		E456F5D22D955D3200E1640F /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		E47AF0D92D0B662200C3444F /* Music Room.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Music Room.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E47AF0DC2D0B662200C3444F /* Music_RoomApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Music_RoomApp.swift; sourceTree = "<group>"; };
-		E47AF0DE2D0B662200C3444F /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		E47AF0DE2D0B662200C3444F /* AuthentificationScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthentificationScreen.swift; sourceTree = "<group>"; };
 		E47AF0E02D0B662200C3444F /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
 		E47AF0E22D0B662400C3444F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E47AF0E52D0B662400C3444F /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
@@ -74,7 +78,7 @@
 			isa = PBXGroup;
 			children = (
 				E43018612D0F667100E239AD /* ui */,
-				E47AF0DE2D0B662200C3444F /* ContentView.swift */,
+				E47AF0DE2D0B662200C3444F /* AuthentificationScreen.swift */,
 				E43018702D0F73AC00E239AD /* SignInScreen.swift */,
 				E430186A2D0F6F7700E239AD /* SignUpScreen.swift */,
 				E47B1D112D7B04A2000F2758 /* AuthViewModel.swift */,
@@ -99,8 +103,38 @@
 				E43D22012D81C4DD007BB44D /* InformationUser.swift */,
 				E43D22032D821182007BB44D /* BoxSession.swift */,
 				E43ABE0E2D83305A009624E9 /* PopUpChangeInfo.swift */,
+				E43D21FA2D81BF73007BB44D /* NavBar.swift */,
 			);
 			path = ui;
+			sourceTree = "<group>";
+		};
+		E456F5CD2D93ED7700E1640F /* MusicScreen */ = {
+			isa = PBXGroup;
+			children = (
+				E456F5C92D9203EF00E1640F /* MusicScreen.swift */,
+				E456F5CB2D92041200E1640F /* MusicViewModel.swift */,
+			);
+			path = MusicScreen;
+			sourceTree = "<group>";
+		};
+		E456F5D02D93EF5600E1640F /* ProfileScreen */ = {
+			isa = PBXGroup;
+			children = (
+				E456F5CE2D93EDCE00E1640F /* ProfileViewModel.swift */,
+				E43D21FC2D81C355007BB44D /* ProfileScreen.swift */,
+			);
+			path = ProfileScreen;
+			sourceTree = "<group>";
+		};
+		E456F5D12D955D1200E1640F /* HomeScreen */ = {
+			isa = PBXGroup;
+			children = (
+				E454FF282D7AFC8C00FAD268 /* HomeScreen.swift */,
+				E456F5D22D955D3200E1640F /* HomeViewModel.swift */,
+				E43ABE102D843D29009624E9 /* CreationSessionScreen.swift */,
+				E43ABE0C2D83127D009624E9 /* SessionScreen.swift */,
+			);
+			path = HomeScreen;
 			sourceTree = "<group>";
 		};
 		E47AF0D02D0B662200C3444F = {
@@ -122,20 +156,16 @@
 		E47AF0DB2D0B662200C3444F /* Music Room */ = {
 			isa = PBXGroup;
 			children = (
+				E456F5D12D955D1200E1640F /* HomeScreen */,
+				E456F5D02D93EF5600E1640F /* ProfileScreen */,
 				E43018602D0F665500E239AD /* Authentification */,
 				E43D21FE2D81C3B5007BB44D /* ui */,
-				E43D21FA2D81BF73007BB44D /* NavBar.swift */,
+				E456F5CD2D93ED7700E1640F /* MusicScreen */,
 				E43ABE672D8AD2C4009624E9 /* UserDefaultHeader.swift */,
-				E43ABE102D843D29009624E9 /* CreationSessionScreen.swift */,
-				E43D21FC2D81C355007BB44D /* Profile.swift */,
-				E43ABE0C2D83127D009624E9 /* SessionScreen.swift */,
-				E454FF282D7AFC8C00FAD268 /* Home.swift */,
 				E47AF0DC2D0B662200C3444F /* Music_RoomApp.swift */,
 				E47AF0E02D0B662200C3444F /* Item.swift */,
 				E47AF0E22D0B662400C3444F /* Assets.xcassets */,
 				E47AF0E42D0B662400C3444F /* Preview Content */,
-				E456F5C92D9203EF00E1640F /* MusicScreen.swift */,
-				E456F5CB2D92041200E1640F /* MusicViewModel.swift */,
 			);
 			path = "Music Room";
 			sourceTree = "<group>";
@@ -221,8 +251,9 @@
 				E43D22042D821182007BB44D /* BoxSession.swift in Sources */,
 				E43D22022D81C4DD007BB44D /* InformationUser.swift in Sources */,
 				E47B1D122D7B04A2000F2758 /* AuthViewModel.swift in Sources */,
-				E43D21FD2D81C355007BB44D /* Profile.swift in Sources */,
-				E47AF0DF2D0B662200C3444F /* ContentView.swift in Sources */,
+				E43D21FD2D81C355007BB44D /* ProfileScreen.swift in Sources */,
+				E47AF0DF2D0B662200C3444F /* AuthentificationScreen.swift in Sources */,
+				E456F5D32D955D3200E1640F /* HomeViewModel.swift in Sources */,
 				E456F5CA2D9203EF00E1640F /* MusicScreen.swift in Sources */,
 				E43018692D0F6C2700E239AD /* ButtonItem.swift in Sources */,
 				E43ABE0F2D83305A009624E9 /* PopUpChangeInfo.swift in Sources */,
@@ -232,10 +263,11 @@
 				E47AF0E12D0B662200C3444F /* Item.swift in Sources */,
 				E430186D2D0F701000E239AD /* TextFieldItem.swift in Sources */,
 				E43ABE132D844197009624E9 /* ButtonActionItem.swift in Sources */,
-				E454FF292D7AFC8C00FAD268 /* Home.swift in Sources */,
+				E454FF292D7AFC8C00FAD268 /* HomeScreen.swift in Sources */,
 				E47AF0DD2D0B662200C3444F /* Music_RoomApp.swift in Sources */,
 				E43D21FB2D81BF73007BB44D /* NavBar.swift in Sources */,
 				E43ABE112D843D29009624E9 /* CreationSessionScreen.swift in Sources */,
+				E456F5CF2D93EDCE00E1640F /* ProfileViewModel.swift in Sources */,
 				E43018652D0F66A400E239AD /* NavigationBar.swift in Sources */,
 				E430186B2D0F6F7700E239AD /* SignUpScreen.swift in Sources */,
 				E43018712D0F73AC00E239AD /* SignInScreen.swift in Sources */,

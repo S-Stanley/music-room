@@ -8,7 +8,7 @@
 import SwiftUI
 import SwiftData
 
-struct Authentification: View {
+struct AuthentificationScreen: View {
     @StateObject private var authViewModel = AuthViewModel()
 
     @State private var selectedOption: String = "Sign in"
@@ -44,6 +44,6 @@ struct Authentification: View {
 
 
 #Preview {
-    Authentification()
+    AuthentificationScreen()
         .modelContainer(for: Item.self, inMemory: true)
 }

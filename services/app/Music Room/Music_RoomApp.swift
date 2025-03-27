@@ -24,7 +24,7 @@ struct Music_RoomApp: App {
     }()
     var body: some Scene {
         WindowGroup {
-            Authentification()
+            AuthentificationScreen()
         }
         .modelContainer(sharedModelContainer)
     }

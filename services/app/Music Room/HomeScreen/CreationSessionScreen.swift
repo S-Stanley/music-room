@@ -8,10 +8,10 @@
 import SwiftUI
 
 struct CreationSessionScreen: View {
-    @ObservedObject var authViewModel = AuthViewModel()
+    @ObservedObject var homeViewModel = HomeViewModel()
     @State private var sessionName: String = ""
     @State private var sessionType: String = "PUBLIC"
-    @State private var password: String = "" // Ajout du mot de passe
+    @State private var password: String = ""
     @State private var errorMessage: String?
     @State private var isSessionCreated = false
     @State private var createdSessionName: String = ""
@@ -53,7 +53,7 @@ struct CreationSessionScreen: View {
                 Button(action: {
                     let sessionPassword = sessionType == "PRIVATE" ? password : nil
                     
-                    authViewModel.createSession(name: sessionName, type: sessionType, password: sessionPassword) { success in
+                    homeViewModel.createSession(name: sessionName, type: sessionType, password: sessionPassword) { success in
                         if success {
                             createdSessionName = sessionName
                             isSessionCreated = true
@@ -70,13 +70,11 @@ struct CreationSessionScreen: View {
                         .cornerRadius(8)
                 }
                 .padding()
-                
-                // Navigation conditionnelle vers SessionScreen
-                NavigationLink(destination: SessionScreen(nameSession: createdSessionName, nameAdmin: createdAdminName), isActive: $isSessionCreated) {
-                    EmptyView()
-                }
             }
             .padding()
+            .navigationDestination(isPresented: $isSessionCreated) {
+                SessionScreen(nameSession: createdSessionName, nameAdmin: createdAdminName)
+            }
         }
     }
 }
