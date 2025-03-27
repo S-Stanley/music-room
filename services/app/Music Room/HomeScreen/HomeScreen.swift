@@ -52,6 +52,7 @@ struct HomeScreen: View {
                                         .foregroundColor(.blue)
                                         .padding(.horizontal)
                                 }
+
                             }
                         }
                         .padding()
@@ -64,6 +65,7 @@ struct HomeScreen: View {
 
                 Spacer()
 
+                // Bouton pour créer une nouvelle session
                 NavigationLink(destination: CreationSessionScreen()) {
                     Text("Create session")
                         .padding(.horizontal, 12)
@@ -83,6 +85,7 @@ struct HomeScreen: View {
                 }
             }
 
+            // Afficher le champ de mot de passe si nécessaire
             .sheet(isPresented: $showPasswordField) {
                 VStack {
                     SecureField("Enter password", text: $password)

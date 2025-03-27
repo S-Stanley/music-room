@@ -10,9 +10,13 @@ import SwiftUI
 struct SessionScreen: View {
     var nameSession: String
     var nameAdmin: String
-    
+//    var adminToken: String  // Ajout du token de l'admin à la session
+
     @State private var selectedScreen: String = "Playlist"
-    @Environment(\.presentationMode) var presentationMode  // Permet de revenir à l'écran précédent
+    @Environment(\.presentationMode) var presentationMode
+
+    // Récupérer le token de l'utilisateur connecté
+    let userToken: String = User.load()?.token ?? ""
 
     var body: some View {
         VStack {
@@ -27,20 +31,24 @@ struct SessionScreen: View {
                         .foregroundColor(.gray)
                 }
                 Spacer()
-                Image(systemName: "lock")
-                    .font(.system(size: 30))
-                    .foregroundColor(.black)
-                    .padding(10)
-                
-                Image(systemName: "person.fill.badge.plus")
-                    .font(.system(size: 30))
-                    .foregroundColor(.black)
-                    .padding(10)
-                
-                Image(systemName: "gearshape.fill")
-                    .font(.system(size: 30))
-                    .foregroundColor(.black)
-                    .padding(10)
+
+                // Vérification : Afficher les icônes SEULEMENT si l'utilisateur est l'admin
+//                if userToken == adminToken {
+                    Image(systemName: "lock")
+                        .font(.system(size: 30))
+                        .foregroundColor(.black)
+                        .padding(10)
+                    
+                    Image(systemName: "person.fill.badge.plus")
+                        .font(.system(size: 30))
+                        .foregroundColor(.black)
+                        .padding(10)
+                    
+                    Image(systemName: "gearshape.fill")
+                        .font(.system(size: 30))
+                        .foregroundColor(.black)
+                        .padding(10)
+//                }
             }
             .padding()
             .background(Color.white)
@@ -52,7 +60,6 @@ struct SessionScreen: View {
             NavigationBar(selectedOption: $selectedScreen, text: "Playlist", text2: "Add music")
                 .padding(.top)
 
-            // Contenu dynamique
             Spacer()
             
             switch selectedScreen {
@@ -68,7 +75,7 @@ struct SessionScreen: View {
 
             Spacer()
 
-            // Ajouter le bouton Quitter la session
+            // Bouton pour quitter la session
             Button(action: {
                 quitterLaSession()
             }) {
@@ -85,12 +92,7 @@ struct SessionScreen: View {
         .navigationBarBackButtonHidden(true)
     }
 
-    // Fonction pour quitter la session
     func quitterLaSession() {
-        // Ajouter ici la logique pour quitter la session.
-        // Par exemple, supprimer l'utilisateur de la session active, etc.
-
-        // Après cela, retour à l'écran précédent
         presentationMode.wrappedValue.dismiss()
     }
 }

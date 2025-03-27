@@ -10,7 +10,15 @@ import Foundation
 class HomeViewModel: ObservableObject {
     @Published var activeSessions: [Session] = []
 
-    func createSession(name: String, type: String, password: String?, completion: @escaping (Bool) -> Void) {
+    func takeToken() -> String {
+        guard let user = User.load() else {
+            return ("Error")
+        }
+        return (user.token)
+    }
+    
+    
+    func createSession(name: String, type: String, password: String?, adminToken: String, completion: @escaping (Bool) -> Void) {
         guard let user = User.load() else {
             completion(false)
             return
@@ -18,7 +26,7 @@ class HomeViewModel: ObservableObject {
         
         guard let url = URL(string: "http://localhost:5001/playlist/") else { return }
 
-        print("Nom de session: \(name), Type: \(type)")
+        print("Nom de session: \(name), Type: \(type), AdminToken: \(adminToken)")
         print("Requête envoyée à l'API")
 
         var request = URLRequest(url: url)
@@ -26,7 +34,9 @@ class HomeViewModel: ObservableObject {
         request.setValue(user.token, forHTTPHeaderField: "token")
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 
-        var body = "name=\(name)&type=\(type)"
+        // Ajout de l'adminToken dans les paramètres
+        var body = "name=\(name)&type=\(type)&adminToken=\(adminToken)"
+        
         if let password = password, type == "PRIVATE" {
             body += "&password=\(password)"
         }

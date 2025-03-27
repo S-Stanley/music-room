@@ -16,6 +16,10 @@ struct CreationSessionScreen: View {
     @State private var isSessionCreated = false
     @State private var createdSessionName: String = ""
     @State private var createdAdminName: String = "Admin"
+    @State private var createdAdminToken: String = "" // Ajout du token admin
+
+    // Récupération du token de l'utilisateur connecté
+    let userToken: String = User.load()?.token ?? ""
 
     var body: some View {
         NavigationStack {
@@ -53,9 +57,10 @@ struct CreationSessionScreen: View {
                 Button(action: {
                     let sessionPassword = sessionType == "PRIVATE" ? password : nil
                     
-                    homeViewModel.createSession(name: sessionName, type: sessionType, password: sessionPassword) { success in
+                    homeViewModel.createSession(name: sessionName, type: sessionType, password: sessionPassword, adminToken: userToken) { success in
                         if success {
                             createdSessionName = sessionName
+                            createdAdminToken = userToken // Stocke le token du créateur
                             isSessionCreated = true
                         } else {
                             errorMessage = "Failed to create session"
@@ -78,10 +83,6 @@ struct CreationSessionScreen: View {
         }
     }
 }
-
-
-
-
 
 #Preview {
     CreationSessionScreen()
