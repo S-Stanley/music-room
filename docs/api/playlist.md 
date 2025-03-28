@@ -15,7 +15,7 @@
 Example de requete:
 
 ```bash
-curl -X POST localhost:5001/playlist/ -H token:c055fb5c-7d35-42a8-b4e7-a20a706d999b -d name=playlist -d type=PUBLIC
+curl -X POST "localhost:5001/playlist/" -H token:c055fb5c-7d35-42a8-b4e7-a20a706d999b -d name=playlist -d type=PUBLIC
 ```
 
 #### List all playlists
@@ -32,5 +32,18 @@ curl -X POST localhost:5001/playlist/ -H token:c055fb5c-7d35-42a8-b4e7-a20a706d9
 Example de requete:
 
 ```bash
-curl localhost:5001/playlist/?take=10&skip=0 -H token:c055fb5c-7d35-42a8-b4e7-a20a706d999b
+curl "localhost:5001/playlist/?take=10&skip=0" -H token:c055fb5c-7d35-42a8-b4e7-a20a706d999b
 ```
+
+#### Add song to playlist
+
+* Endpoint: POST `/playlist/:playlist_id` [PROTECTED]
+* Body params
+  * trackId -> deezert trackId
+* reponse
+  * 201 -> Song is added to playlist
+  * 400 -> TrackId is not sent, playlist does not exist or trackId does not exist
+
+  ```bash
+curl "localhost:5001/playlist/e41fa7e7-05a7-4812-9a8b-446ecbc78b2e" -H token:c055fb5c-7d35-42a8-b4e7-a20a706d999b -d trackId=98087618
+  ```
