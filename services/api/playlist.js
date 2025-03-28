@@ -29,6 +29,12 @@ router.get("/", async (req, res) => {
         id: true,
         name: true,
         type: true,
+        user: {
+          select: {
+            id: true,
+            email: true,
+          },
+        },
       },
       skip: parseInt(skip ?? 0, 10),
       take: (!take || parseInt(take, 10) > _PAGINATION_MAX_TAKE)
@@ -74,6 +80,19 @@ router.post("/", async(req, res) => {
         user: {
           connect: {
             id: res.locals?.user?.id
+          }
+        }
+      },
+      select: {
+        id: true,
+        name: true,
+        createdAt: true,
+        updatedAt: true,
+        type: true,
+        user: {
+          select: {
+            id: true,
+            email: true,
           }
         }
       }
