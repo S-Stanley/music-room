@@ -19,7 +19,8 @@ model User {
   password      String
   token         String?     @db.Uuid @unique
   playlists     Playlist[]
-  cReatedAt     DateTime    @default(now()) @map("created_at")
+  trackPlaylist TrackPlaylist[]
+  createdAt     DateTime    @default(now()) @map("created_at")
   updatedAt     DateTime    @default(now()) @map("updated_at")
 }
 
@@ -35,6 +36,21 @@ model Playlist {
   password      String?
   user          User        @relation(fields: [userId], references: [id])
   userId        String      @map("user_id") @db.Uuid
+  tracks        TrackPlaylist[]
+  createdAt     DateTime    @default(now()) @map("created_at")
+  updatedAt     DateTime    @default(now()) @map("updated_at") 
+}
+
+model TrackPlaylist {
+  id            String      @id @default(uuid()) @db.Uuid
+  trackId       String      @map("tracK_id")
+  trackTitle    String      @map("track_title")
+  trackPreview  String      @map("track_preview")
+  albumCover    String      @map("album_cover")
+  user          User        @relation(fields: [userId], references: [id])
+  userId        String      @map("user_id") @db.Uuid
+  playlist      Playlist    @relation(fields: [playlistId], references: [id])
+  playlistId    String      @map("playlist_id") @db.Uuid
   createdAt     DateTime    @default(now()) @map("created_at")
   updatedAt     DateTime    @default(now()) @map("updated_at") 
 }

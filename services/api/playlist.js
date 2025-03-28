@@ -12,6 +12,70 @@ const PlaylistTypeEnum = {
 
 const _PAGINATION_MAX_TAKE = 50;
 
+router.post("/:playlist_id", async(req, res) => {
+  console.log("User", res.locals?.user?.id, "adding music to playlist");
+  try {
+    const { trackId } = req.body;
+    const { playlist_id } = req.params;
+    if (!trackId || !playlist_id){
+      return res.status(400).json({
+        error: "Missing argument trackId or playlist_id"
+      });
+    }
+    const playlist = await prisma.playlist.findUnique({ where: { id: playlist_id } });
+    if (!playlist){
+      return res.status(400).json({
+        error: "Playlist not found"
+      });
+    }
+    const deezerTrack = await fetch(`https://api.deezer.com/track/${trackId}`);
+    if (deezerTrack?.status !== 200){
+      console.error(await deezerTracl.json());
+      return res.status(400).json({
+        error: "TrackId not found"
+      });
+    }
+    const track = (await deezerTrack.json());
+    console.log(track);
+    const addedTrack = await prisma.trackPlaylist.create({
+      data: {
+        trackId: trackId,
+        trackTitle: track?.title, 
+        trackPreview: track?.preview, 
+        albumCover: track?.album?.cover,
+        user: {
+          connect: {
+            id: res.locals?.user?.id
+          }
+        },
+        playlist: {
+          connect: {
+            id: playlist_id,
+          }
+        },
+      },
+      select: {
+        id: true,
+        trackId: true,
+        trackPreview: true,
+        albumCover: true,
+        user: {
+          select: {
+            id: true,
+            email: true,
+          }
+        }
+      }
+    });
+    return res.status(201).json(addedTrack); 
+  } catch (e){
+    console.error(e);
+    return res.status(500).json({
+      error: "Server error"
+    }); 
+  }
+});
+
 router.get("/", async (req, res) => {
   console.info("User is reading all playlist");
   try {
