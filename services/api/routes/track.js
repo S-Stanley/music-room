@@ -4,24 +4,12 @@ import { PrismaClient } from '@prisma/client';
 const router = express.Router();
 const prisma = new PrismaClient();
 
-const getPlaylistById = async(playlist_id) => {
-  const playlist = await prisma.playlist.findUnique(
-    {
-      where: { 
-        id: playlist_id
-      }
-    }
-  );
-  return (playlist);
-}
-
-const getAllTrackOfPlaylist = async(playlist_id) => {
-  return await prisma.trackPlaylist.findMany({
-    where: {
-      playlistId: playlist_id,
-    }
-  });
-};
+import {
+  getPlaylistById,
+} from "../handlers/playlist.js";
+import {
+  getAllTrackOfPlaylist,
+} from "../handlers/track.js";
 
 router.get("/:playlist_id", async(req, res) => {
   console.log("User", res.locals?.user?.id, "getting all tracks of a playlist");

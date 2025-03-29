@@ -7,9 +7,9 @@ const app = express();
 const port = process.env.port || 5001;
 const prisma = new PrismaClient();
 
-import { usersRouter } from "./users.js";
-import { playlistRouter } from "./playlist.js";
-import { trackRouter } from "./track.js";
+import { usersRouter } from "./routes/users.js";
+import { playlistRouter } from "./routes/playlist.js";
+import { trackRouter } from "./routes/track.js";
 
 app.use(express.urlencoded({extended: false}));
 
