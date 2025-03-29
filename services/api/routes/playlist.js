@@ -2,6 +2,10 @@ import express from "express";
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
 
+import {
+  getPlaylistById,
+} from "../handlers/playlist.js";
+
 const router = express.Router();
 const prisma = new PrismaClient();
 
@@ -22,7 +26,7 @@ router.post("/:playlist_id", async(req, res) => {
         error: "Missing argument trackId or playlist_id"
       });
     }
-    const playlist = await prisma.playlist.findUnique({ where: { id: playlist_id } });
+    const playlist = await getPlaylistById(playlist_id);
     if (!playlist){
       return res.status(400).json({
         error: "Playlist not found"
@@ -36,7 +40,6 @@ router.post("/:playlist_id", async(req, res) => {
       });
     }
     const track = (await deezerTrack.json());
-    console.log(track);
     const addedTrack = await prisma.trackPlaylist.create({
       data: {
         trackId: trackId,
