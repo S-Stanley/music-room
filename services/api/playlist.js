@@ -36,7 +36,6 @@ router.post("/:playlist_id", async(req, res) => {
       });
     }
     const track = (await deezerTrack.json());
-    console.log(track);
     const addedTrack = await prisma.trackPlaylist.create({
       data: {
         trackId: trackId,
