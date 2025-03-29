@@ -5,6 +5,9 @@ import bcrypt from 'bcrypt';
 import {
   getPlaylistById,
 } from "../handlers/playlist.js";
+import {
+  getTrackDefaultPosition,
+} from "../handlers/track.js";
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -46,6 +49,7 @@ router.post("/:playlist_id", async(req, res) => {
         trackTitle: track?.title, 
         trackPreview: track?.preview, 
         albumCover: track?.album?.cover,
+        position: await getTrackDefaultPosition(playlist_id),
         user: {
           connect: {
             id: res.locals?.user?.id
@@ -62,6 +66,7 @@ router.post("/:playlist_id", async(req, res) => {
         trackId: true,
         trackPreview: true,
         albumCover: true,
+        position: true,
         user: {
           select: {
             id: true,
