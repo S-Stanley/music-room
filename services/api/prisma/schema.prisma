@@ -51,6 +51,7 @@ model TrackPlaylist {
   userId        String      @map("user_id") @db.Uuid
   playlist      Playlist    @relation(fields: [playlistId], references: [id])
   playlistId    String      @map("playlist_id") @db.Uuid
+  position      Int
   createdAt     DateTime    @default(now()) @map("created_at")
   updatedAt     DateTime    @default(now()) @map("updated_at") 
 }
