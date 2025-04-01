@@ -5,36 +5,13 @@ const router = express.Router();
 const prisma = new PrismaClient();
 
 import {
-  getPlaylistById,
-} from "../handlers/playlist.js";
-import {
   getAllTrackOfPlaylist,
 } from "../handlers/track.js";
-
-router.get("/:playlist_id", async(req, res) => {
-  console.log("User", res.locals?.user?.id, "getting all tracks of a playlist");
-  try {
-    const { playlist_id } = req.params;
-    const playlist = await getPlaylistById(playlist_id);
-    if (!playlist){
-      return res.status(400).json({
-        error: "Playlist not found"
-      }); 
-    }
-    return res.status(200).json(
-      await getAllTrackOfPlaylist(playlist_id)
-    ); 
-  } catch (e) {
-    console.error(e);
-    return res.status(500).json({
-      error: "Server error"
-    }); 
-  }
-});
 
 router.get("/search", async(req, res) => {
   try {
     const { q } = req.query;
+    console.log(req.query);
   console.info("User in searching a track with:", q);
     if (!q){
       return res.status(400).json({
