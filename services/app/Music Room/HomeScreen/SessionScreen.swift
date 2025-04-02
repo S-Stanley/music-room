@@ -9,7 +9,7 @@ import SwiftUI
 
 struct SessionScreen: View {
     @StateObject var homeViewModel = HomeViewModel()
-    var sessionId: String // ✅ Ajout de l'ID de session
+    var sessionId: String
     var nameSession: String
     var nameAdmin: String
 
@@ -40,12 +40,18 @@ struct SessionScreen: View {
                         .cornerRadius(8)
                 }
                 .padding()
+                
+                Image(systemName: "lock")
+                    .foregroundColor(.black)
+                    .font(.system(size: 30))
+                Image(systemName: "gearshape.fill")
+                    .foregroundColor(.black)
+                    .font(.system(size: 30))
             }
-            .padding()
             
             // Barre de navigation
             NavigationBar(selectedOption: $selectedScreen, text: "Playlist", text2: "Add music")
-                .padding(.top)
+
 
             Spacer()
 
@@ -53,7 +59,7 @@ struct SessionScreen: View {
             case "Playlist":
                 PlaylistScreen(playlistId: sessionId)
             case "Add music":
-                MusicScreen(playlistId: sessionId) // ✅ Utilisation de `sessionId`
+                MusicScreen(playlistId: sessionId)
             default:
                 Text("Unknown action")
                     .font(.title2)
@@ -76,24 +82,25 @@ struct PlaylistScreen: View {
 
     var body: some View {
         VStack {
-            Text("Playlist")
-                .font(.title)
-                .padding()
-
             if musicViewModel.tracks.isEmpty {
+               
                 Text("Aucune musique dans cette playlist.")
                     .foregroundColor(.gray)
+                    .padding()
+                    .frame(maxHeight: .infinity)
             } else {
                 ScrollView {
-                    LazyVStack {
+                    LazyVStack(spacing: 5) {
                         ForEach(musicViewModel.tracks, id: \.id) { track in
                             TrackRow(track: track, onAdd: {})
                         }
                     }
+                    .padding(.horizontal)
                 }
             }
         }
         .onAppear {
+            // Assure-toi que la playlist est bien récupérée
             musicViewModel.fetchTracksForPlaylist(playlistId: playlistId) { success, error in
                 if !success {
                     print("Erreur lors du chargement des musiques: \(error ?? "Inconnue")")
@@ -102,5 +109,7 @@ struct PlaylistScreen: View {
         }
     }
 }
+
+
 
 

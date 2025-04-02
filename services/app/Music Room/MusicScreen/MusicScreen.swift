@@ -14,10 +14,6 @@ struct MusicScreen: View {
 
     var body: some View {
         VStack {
-            Text("Session ID: \(playlistId ?? "Aucune session sélectionnée")")
-                           .foregroundColor(.red)
-                           .padding()
-            
             SearchBar(text: $searchQuery, onSearch: {
                 musicViewModel.searchMusic(query: searchQuery)
             })
@@ -26,16 +22,17 @@ struct MusicScreen: View {
             ScrollView {
                 LazyVStack(spacing: 12) {
                     ForEach(musicViewModel.tracks, id: \.id) { track in
-                        TrackRow(track: track) {
+                        TrackRow(track: track, onAdd: {
                             if let playlistId = playlistId {
                                 musicViewModel.addMusicToPlaylist(playlistId: playlistId, trackId: String(track.id))
                             } else {
                                 print("Erreur: Aucun ID de playlist disponible")
                             }
-                        }
+                        })
                     }
                 }
             }
+
 
             if let errorMessage = musicViewModel.errorMessage {
                 Text(errorMessage)
@@ -43,8 +40,6 @@ struct MusicScreen: View {
                     .padding()
             }
         }
-        .padding(.top)
-        .background(Color(.systemGroupedBackground))
         .edgesIgnoringSafeArea(.bottom)
     }
 }
@@ -78,7 +73,6 @@ struct SearchBar: View {
                     .shadow(radius: 4)
             }
             .padding(.horizontal)
-            .padding(.bottom, 10)
         }
     }
 }
@@ -86,9 +80,10 @@ struct SearchBar: View {
 struct TrackRow: View {
     let track: Track
     let onAdd: () -> Void
-    
+    @ObservedObject var audioPlayer = AudioPlayer.shared // Utilisation du singleton pour observer les changements
+
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: 8) {
             AsyncImage(url: URL(string: track.album.coverSmall)) { phase in
                 if let image = phase.image {
                     image.resizable()
@@ -96,7 +91,7 @@ struct TrackRow: View {
                         .frame(width: 60, height: 60)
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                 } else if phase.error != nil {
-                    Color.red.frame(width: 60, height: 60)
+                    Color.red.frame(width: 60, height: 60) // Placeholder en cas d'erreur
                 } else {
                     ProgressView()
                         .frame(width: 60, height: 60)
@@ -114,10 +109,26 @@ struct TrackRow: View {
 
             Spacer()
 
-            Button(action: onAdd) {
-                Image(systemName: "play.circle.fill")
-                    .foregroundColor(.blue)
-                    .font(.system(size: 30))
+            HStack {
+                // 🔥 Bouton pour jouer/pauser la musique
+                Button(action: {
+                    if audioPlayer.currentlyPlayingTrackId == track.id {
+                        audioPlayer.stop()
+                    } else {
+                        audioPlayer.play(urlString: track.preview, trackId: track.id)
+                    }
+                }) {
+                    Image(systemName: audioPlayer.currentlyPlayingTrackId == track.id ? "pause.circle.fill" : "play.circle.fill")
+                        .foregroundColor(.blue)
+                        .font(.system(size: 30))
+                }
+
+                // 🔥 Bouton pour ajouter à la playlist
+                Button(action: onAdd) {
+                    Image(systemName: "plus.circle.fill")
+                        .foregroundColor(.green)
+                        .font(.system(size: 30))
+                }
             }
         }
         .padding()
@@ -127,6 +138,39 @@ struct TrackRow: View {
         .padding(.horizontal)
     }
 }
+
+import AVFoundation
+import Combine
+
+class AudioPlayer: ObservableObject {
+    static let shared = AudioPlayer()
+
+    private var player: AVPlayer?
+    @Published var currentlyPlayingTrackId: Int? // Stocke l’ID du morceau en cours
+
+    func play(urlString: String, trackId: Int) {
+        stop() // Stopper la musique en cours
+
+        guard let url = URL(string: urlString) else {
+            print("❌ URL invalide")
+            return
+        }
+
+        player = AVPlayer(url: url)
+        player?.play()
+        currentlyPlayingTrackId = trackId // Mettre à jour l’ID du morceau en cours
+
+        print("▶️ Lecture en cours:", urlString)
+    }
+
+    func stop() {
+        player?.pause()
+        currentlyPlayingTrackId = nil
+        print("⏸ Musique arrêtée")
+    }
+}
+
+
 
 
 #Preview {
