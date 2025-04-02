@@ -14,11 +14,10 @@ struct CreationSessionScreen: View {
     @State private var password: String = ""
     @State private var errorMessage: String?
     @State private var isSessionCreated = false
+    @State private var createdSessionId: String = ""
     @State private var createdSessionName: String = ""
     @State private var createdAdminName: String = "Admin"
-    @State private var createdAdminToken: String = "" // Ajout du token admin
 
-    // Récupération du token de l'utilisateur connecté
     let userToken: String = User.load()?.token ?? ""
 
     var body: some View {
@@ -40,7 +39,6 @@ struct CreationSessionScreen: View {
                 .pickerStyle(SegmentedPickerStyle())
                 .padding()
 
-                // Affiche le champ mot de passe uniquement si la session est privée
                 if sessionType == "PRIVATE" {
                     SecureField("Enter password", text: $password)
                         .padding()
@@ -57,10 +55,10 @@ struct CreationSessionScreen: View {
                 Button(action: {
                     let sessionPassword = sessionType == "PRIVATE" ? password : nil
                     
-                    homeViewModel.createSession(name: sessionName, type: sessionType, password: sessionPassword, adminToken: userToken) { success in
-                        if success {
+                    homeViewModel.createSession(name: sessionName, type: sessionType, password: sessionPassword, adminToken: userToken) { success, sessionId in
+                        if success, let sessionId = sessionId {
+                            createdSessionId = sessionId // ✅ Stocke l'ID
                             createdSessionName = sessionName
-                            createdAdminToken = userToken // Stocke le token du créateur
                             isSessionCreated = true
                         } else {
                             errorMessage = "Failed to create session"
@@ -78,11 +76,12 @@ struct CreationSessionScreen: View {
             }
             .padding()
             .navigationDestination(isPresented: $isSessionCreated) {
-                SessionScreen(nameSession: createdSessionName, nameAdmin: createdAdminName)
+                SessionScreen(sessionId: createdSessionId, nameSession: createdSessionName, nameAdmin: createdAdminName) // ✅ On envoie bien l'ID ici
             }
         }
     }
 }
+
 
 #Preview {
     CreationSessionScreen()

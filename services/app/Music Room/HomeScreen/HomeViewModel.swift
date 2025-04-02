@@ -9,7 +9,8 @@ import Foundation
 
 class HomeViewModel: ObservableObject {
     @Published var activeSessions: [Session] = []
-
+    @Published var selectedPlaylistId: String?
+    
     func takeToken() -> String {
         guard let user = User.load() else {
             return ("Error")
@@ -18,25 +19,20 @@ class HomeViewModel: ObservableObject {
     }
     
     
-    func createSession(name: String, type: String, password: String?, adminToken: String, completion: @escaping (Bool) -> Void) {
+    func createSession(name: String, type: String, password: String?, adminToken: String, completion: @escaping (Bool, String?) -> Void) {
         guard let user = User.load() else {
-            completion(false)
+            completion(false, nil)
             return
         }
         
         guard let url = URL(string: "http://localhost:5001/playlist/") else { return }
-
-        print("Nom de session: \(name), Type: \(type), AdminToken: \(adminToken)")
-        print("Requête envoyée à l'API")
 
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue(user.token, forHTTPHeaderField: "token")
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 
-        // Ajout de l'adminToken dans les paramètres
         var body = "name=\(name)&type=\(type)&adminToken=\(adminToken)"
-        
         if let password = password, type == "PRIVATE" {
             body += "&password=\(password)"
         }
@@ -47,27 +43,31 @@ class HomeViewModel: ObservableObject {
             DispatchQueue.main.async {
                 if let error = error {
                     print("Erreur: \(error.localizedDescription)")
-                    completion(false)
+                    completion(false, nil)
                     return
                 }
-                
-                guard let httpResponse = response as? HTTPURLResponse else {
-                    completion(false)
+
+                guard let httpResponse = response as? HTTPURLResponse, let data = data else {
+                    completion(false, nil)
                     return
                 }
 
                 if httpResponse.statusCode == 201 {
-                    print("Session créée avec succès ✅")
-                    completion(true)
+                    do {
+                        let sessionResponse = try JSONDecoder().decode(Session.self, from: data)
+                        print("✅ Session créée avec succès, ID: \(sessionResponse.id)")
+                        completion(true, sessionResponse.id) // ✅ On retourne l'ID
+                    } catch {
+                        print("❌ Erreur de décodage JSON: \(error.localizedDescription)")
+                        completion(false, nil)
+                    }
                 } else {
-                    print("Erreur lors de la création: \(httpResponse.statusCode)")
-                    completion(false)
+                    print("❌ Erreur serveur: \(httpResponse.statusCode)")
+                    completion(false, nil)
                 }
             }
         }.resume()
     }
-
-
 
 
     func fetchActiveSessions(completion: @escaping (Bool, String?) -> Void) {
@@ -106,6 +106,13 @@ class HomeViewModel: ObservableObject {
                     do {
                         let sessions = try JSONDecoder().decode([Session].self, from: data)
                         self.activeSessions = sessions
+
+                        // ✅ Sélection automatique d'une session si `selectedPlaylistId` est nil
+                        if self.selectedPlaylistId == nil, let firstSession = sessions.first {
+                            self.selectedPlaylistId = firstSession.id
+                            print("✅ Session sélectionnée automatiquement: \(self.selectedPlaylistId!)")
+                        }
+
                         completion(true, nil)
                     } catch {
                         print("❌ Erreur de décodage JSON: \(error.localizedDescription)")

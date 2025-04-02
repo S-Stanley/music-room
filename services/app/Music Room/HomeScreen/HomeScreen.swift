@@ -47,7 +47,7 @@ struct HomeScreen: View {
                                         .padding(.horizontal)
                                 }
                             } else {
-                                NavigationLink(destination: SessionScreen(nameSession: session.name, nameAdmin: "Admin")) {
+                                NavigationLink(destination: SessionScreen(sessionId: session.id,nameSession: session.name, nameAdmin: "Admin")) {
                                     Text("Join")
                                         .foregroundColor(.blue)
                                         .padding(.horizontal)
