@@ -26,6 +26,8 @@
 		E456F5CC2D92041200E1640F /* MusicViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E456F5CB2D92041200E1640F /* MusicViewModel.swift */; };
 		E456F5CF2D93EDCE00E1640F /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E456F5CE2D93EDCE00E1640F /* ProfileViewModel.swift */; };
 		E456F5D32D955D3200E1640F /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E456F5D22D955D3200E1640F /* HomeViewModel.swift */; };
+		E456F5D82D9EB73F00E1640F /* PlaylistScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = E456F5D72D9EB73F00E1640F /* PlaylistScreen.swift */; };
+		E456F5DA2D9EB7A800E1640F /* AudioPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E456F5D92D9EB7A800E1640F /* AudioPlayer.swift */; };
 		E47AF0DD2D0B662200C3444F /* Music_RoomApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E47AF0DC2D0B662200C3444F /* Music_RoomApp.swift */; };
 		E47AF0DF2D0B662200C3444F /* AuthentificationScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = E47AF0DE2D0B662200C3444F /* AuthentificationScreen.swift */; };
 		E47AF0E12D0B662200C3444F /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = E47AF0E02D0B662200C3444F /* Item.swift */; };
@@ -54,6 +56,8 @@
 		E456F5CB2D92041200E1640F /* MusicViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicViewModel.swift; sourceTree = "<group>"; };
 		E456F5CE2D93EDCE00E1640F /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
 		E456F5D22D955D3200E1640F /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
+		E456F5D72D9EB73F00E1640F /* PlaylistScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistScreen.swift; sourceTree = "<group>"; };
+		E456F5D92D9EB7A800E1640F /* AudioPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayer.swift; sourceTree = "<group>"; };
 		E47AF0D92D0B662200C3444F /* Music Room.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Music Room.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E47AF0DC2D0B662200C3444F /* Music_RoomApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Music_RoomApp.swift; sourceTree = "<group>"; };
 		E47AF0DE2D0B662200C3444F /* AuthentificationScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthentificationScreen.swift; sourceTree = "<group>"; };
@@ -104,6 +108,7 @@
 				E43D22032D821182007BB44D /* BoxSession.swift */,
 				E43ABE0E2D83305A009624E9 /* PopUpChangeInfo.swift */,
 				E43D21FA2D81BF73007BB44D /* NavBar.swift */,
+				E456F5D92D9EB7A800E1640F /* AudioPlayer.swift */,
 			);
 			path = ui;
 			sourceTree = "<group>";
@@ -137,6 +142,14 @@
 			path = HomeScreen;
 			sourceTree = "<group>";
 		};
+		E456F5D52D9EB69A00E1640F /* PlaylistScreen */ = {
+			isa = PBXGroup;
+			children = (
+				E456F5D72D9EB73F00E1640F /* PlaylistScreen.swift */,
+			);
+			path = PlaylistScreen;
+			sourceTree = "<group>";
+		};
 		E47AF0D02D0B662200C3444F = {
 			isa = PBXGroup;
 			children = (
@@ -156,6 +169,7 @@
 		E47AF0DB2D0B662200C3444F /* Music Room */ = {
 			isa = PBXGroup;
 			children = (
+				E456F5D52D9EB69A00E1640F /* PlaylistScreen */,
 				E456F5D12D955D1200E1640F /* HomeScreen */,
 				E456F5D02D93EF5600E1640F /* ProfileScreen */,
 				E43018602D0F665500E239AD /* Authentification */,
@@ -249,6 +263,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E43D22042D821182007BB44D /* BoxSession.swift in Sources */,
+				E456F5D82D9EB73F00E1640F /* PlaylistScreen.swift in Sources */,
 				E43D22022D81C4DD007BB44D /* InformationUser.swift in Sources */,
 				E47B1D122D7B04A2000F2758 /* AuthViewModel.swift in Sources */,
 				E43D21FD2D81C355007BB44D /* ProfileScreen.swift in Sources */,
@@ -259,6 +274,7 @@
 				E43ABE0F2D83305A009624E9 /* PopUpChangeInfo.swift in Sources */,
 				E43ABE0D2D83127D009624E9 /* SessionScreen.swift in Sources */,
 				E456F5CC2D92041200E1640F /* MusicViewModel.swift in Sources */,
+				E456F5DA2D9EB7A800E1640F /* AudioPlayer.swift in Sources */,
 				E43ABE682D8AD2C4009624E9 /* UserDefaultHeader.swift in Sources */,
 				E47AF0E12D0B662200C3444F /* Item.swift in Sources */,
 				E430186D2D0F701000E239AD /* TextFieldItem.swift in Sources */,
