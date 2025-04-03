@@ -77,59 +77,51 @@ struct PlaylistTrack: Codable, Identifiable {
 class MusicViewModel: ObservableObject {
     @Published var tracks: [Track] = []
     @Published var errorMessage: String?
+    @Published var searchedTracks: [Track] = []
+    @Published var playlistTracks: Set<String> = []
 
     func searchMusic(query: String) {
-        guard let url = URL(string: "http://localhost:5001/track/search?q=\(query)") else {
-            self.errorMessage = "URL invalide"
-            return
-        }
-        print("🔎 Recherche envoyée avec query:", query)
+            guard let url = URL(string: "http://localhost:5001/track/search?q=\(query)") else {
+                self.errorMessage = "URL invalide"
+                return
+            }
+            print("🔎 Recherche envoyée avec query:", query)
 
-        var request = URLRequest(url: url)
-        request.httpMethod = "GET"
+            var request = URLRequest(url: url)
+            request.httpMethod = "GET"
 
-        if let user = User.load() {
-            request.setValue(user.token, forHTTPHeaderField: "token")
-        } else {
-            self.errorMessage = "Utilisateur non authentifié"
-            print("❌ Aucun utilisateur trouvé dans UserDefaults")
-            return
-        }
+            if let user = User.load() {
+                request.setValue(user.token, forHTTPHeaderField: "token")
+            } else {
+                self.errorMessage = "Utilisateur non authentifié"
+                return
+            }
 
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            DispatchQueue.main.async {
-                if let error = error {
-                    self.errorMessage = "Erreur: \(error.localizedDescription)"
-                    return
-                }
+            URLSession.shared.dataTask(with: request) { data, response, error in
+                DispatchQueue.main.async {
+                    if let error = error {
+                        self.errorMessage = "Erreur: \(error.localizedDescription)"
+                        return
+                    }
 
-                guard let httpResponse = response as? HTTPURLResponse else {
-                    self.errorMessage = "Réponse invalide du serveur"
-                    return
-                }
+                    guard let httpResponse = response as? HTTPURLResponse, let data = data else {
+                        self.errorMessage = "Réponse invalide du serveur"
+                        return
+                    }
 
-                if let data = data {
-
-                    switch httpResponse.statusCode {
-                        case 200:
-                            do {
-                                let decodedResponse = try JSONDecoder().decode([Track].self, from: data)
-                                self.tracks = decodedResponse
-                            } catch {
-                                self.errorMessage = "Erreur lors du décodage de la réponse"
-                                print("❌ Erreur JSON:", error.localizedDescription)
-                            }
-                        case 400:
-                            self.errorMessage = "Paramètre de recherche manquant"
-                        case 401:
-                            self.errorMessage = "Non autorisé, vérifiez votre token"
-                        default:
-                            self.errorMessage = "Erreur inconnue (\(httpResponse.statusCode))"
+                    if httpResponse.statusCode == 200 {
+                        do {
+                            let decodedResponse = try JSONDecoder().decode([Track].self, from: data)
+                            self.searchedTracks = decodedResponse // 🔥 Stocker les résultats ici !
+                        } catch {
+                            self.errorMessage = "Erreur lors du décodage de la réponse"
+                        }
+                    } else {
+                        self.errorMessage = "Erreur inconnue (\(httpResponse.statusCode))"
                     }
                 }
-            }
-        }.resume()
-    }
+            }.resume()
+        }
     
     func addMusicToPlaylist(playlistId: String, trackId: String) {
         guard let url = URL(string: "http://localhost:5001/playlist/\(playlistId)") else {
@@ -218,6 +210,10 @@ class MusicViewModel: ObservableObject {
                         self.tracks = playlistTracks.map {
                             Track(id: Int($0.trackId) ?? 0, title: $0.trackTitle, link: "", duration: 0, rank: 0, preview: $0.trackPreview, album: Album(id: 0, title: "", cover: $0.albumCover, coverSmall: $0.albumCover, coverMedium: $0.albumCover, coverBig: $0.albumCover, coverXL: $0.albumCover, tracklist: ""), artist: Artist(id: 0, name: "", link: "", picture: "", pictureSmall: "", pictureMedium: "", pictureBig: "", pictureXL: ""))
                         }
+                        
+                        // 🔥 Mettre à jour la liste des musiques déjà ajoutées à la playlist
+                        self.playlistTracks = Set(playlistTracks.map { $0.trackId })
+                        
                         completion(true, nil)
                     } catch {
                         print("❌ Erreur de décodage JSON: \(error.localizedDescription)")
@@ -230,5 +226,4 @@ class MusicViewModel: ObservableObject {
             }
         }.resume()
     }
-
 }

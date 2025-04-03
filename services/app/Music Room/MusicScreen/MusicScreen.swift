@@ -18,21 +18,27 @@ struct MusicScreen: View {
                 musicViewModel.searchMusic(query: searchQuery)
             })
 
-
             ScrollView {
                 LazyVStack(spacing: 12) {
-                    ForEach(musicViewModel.tracks, id: \.id) { track in
-                        TrackRow(track: track, onAdd: {
-                            if let playlistId = playlistId {
-                                musicViewModel.addMusicToPlaylist(playlistId: playlistId, trackId: String(track.id))
-                            } else {
-                                print("Erreur: Aucun ID de playlist disponible")
+                    ForEach(
+                        (searchQuery.isEmpty ? musicViewModel.tracks : musicViewModel.searchedTracks)
+                            .filter { track in
+                                searchQuery.isEmpty ? !musicViewModel.playlistTracks.contains(String(track.id)) : true
+                            },
+                        id: \.id
+                    ) { track in
+                        TrackRow(
+                            track: track,
+                            isAlreadyAdded: musicViewModel.playlistTracks.contains(String(track.id)),
+                            onAdd: {
+                                if let playlistId = playlistId {
+                                    musicViewModel.addMusicToPlaylist(playlistId: playlistId, trackId: String(track.id))
+                                }
                             }
-                        })
+                        )
                     }
                 }
             }
-
 
             if let errorMessage = musicViewModel.errorMessage {
                 Text(errorMessage)
@@ -40,9 +46,28 @@ struct MusicScreen: View {
                     .padding()
             }
         }
+        .onChange(of: searchQuery) { newQuery in
+            // Réinitialiser la recherche lorsque le texte de recherche change
+            if newQuery.isEmpty {
+                musicViewModel.searchedTracks = []  // Réinitialiser la recherche lorsqu'on efface le texte
+            } else {
+                musicViewModel.searchMusic(query: newQuery)
+            }
+        }
+        .onAppear {
+            if let playlistId = playlistId {
+                musicViewModel.fetchTracksForPlaylist(playlistId: playlistId) { success, error in
+                    if !success {
+                        print("Erreur lors du chargement des musiques de la playlist: \(error ?? "Inconnue")")
+                    }
+                }
+            }
+        }
         .edgesIgnoringSafeArea(.bottom)
     }
 }
+
+
 
 struct SearchBar: View {
     @Binding var text: String
@@ -79,8 +104,9 @@ struct SearchBar: View {
 
 struct TrackRow: View {
     let track: Track
+    let isAlreadyAdded: Bool // ✅ Indique si la musique est déjà ajoutée
     let onAdd: () -> Void
-    @ObservedObject var audioPlayer = AudioPlayer.shared // Utilisation du singleton pour observer les changements
+    @ObservedObject var audioPlayer = AudioPlayer.shared
 
     var body: some View {
         HStack(spacing: 8) {
@@ -91,7 +117,7 @@ struct TrackRow: View {
                         .frame(width: 60, height: 60)
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                 } else if phase.error != nil {
-                    Color.red.frame(width: 60, height: 60) // Placeholder en cas d'erreur
+                    Color.red.frame(width: 60, height: 60)
                 } else {
                     ProgressView()
                         .frame(width: 60, height: 60)
@@ -110,7 +136,6 @@ struct TrackRow: View {
             Spacer()
 
             HStack {
-                // 🔥 Bouton pour jouer/pauser la musique
                 Button(action: {
                     if audioPlayer.currentlyPlayingTrackId == track.id {
                         audioPlayer.stop()
@@ -123,11 +148,12 @@ struct TrackRow: View {
                         .font(.system(size: 30))
                 }
 
-                // 🔥 Bouton pour ajouter à la playlist
-                Button(action: onAdd) {
-                    Image(systemName: "plus.circle.fill")
-                        .foregroundColor(.green)
-                        .font(.system(size: 30))
+                if !isAlreadyAdded { // ✅ Cache le bouton si déjà ajouté
+                    Button(action: onAdd) {
+                        Image(systemName: "plus.circle.fill")
+                            .foregroundColor(.green)
+                            .font(.system(size: 30))
+                    }
                 }
             }
         }
@@ -137,6 +163,7 @@ struct TrackRow: View {
         .shadow(radius: 4)
     }
 }
+
 
 
 #Preview {
