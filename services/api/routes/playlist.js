@@ -200,4 +200,37 @@ router.post("/", async(req, res) => {
   }
 });
 
+router.post("/:playlist_id/join", async (req, res) => {
+  console.log("User is trying to join playlist");
+  try {
+    const { playlist_id } = req.params;
+    const { password } = req.body;
+    const playlist = await getPlaylistById(playlist_id);
+    if (!playlist){
+      return res.status(400).json({
+        error: "Playlist not found"
+      });
+    }
+    if (playlist.type === PlaylistTypeEnum.PRIVATE){
+      if (!password){
+        return res.status(400).json({
+          error: "Missing parameter password for private playlist"
+        });
+      }
+      if (!await bcrypt.compare(password, playlist.password)){
+        return res.status(400).json({
+          error: "Invalid password"
+        })
+      }
+    }
+    return res.status(200).json(playlist);
+
+  } catch (e){
+    console.error(e);
+    return res.status(500).json({
+      error: "Server error"
+    });
+  }
+});
+
 export const playlistRouter = router;;
