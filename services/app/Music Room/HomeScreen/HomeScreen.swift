@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+
 struct HomeScreen: View {
     @ObservedObject var homeViewModel = HomeViewModel()
     @State private var showPasswordField = false
@@ -14,6 +15,7 @@ struct HomeScreen: View {
     @State private var selectedSession: Session?
     @State private var passwordErrorMessage = ""
     @State private var isPasswordCorrect = false
+    @State private var navigateToSession = false  // Nouvelle variable d'état pour la navigation
 
     var body: some View {
         NavigationStack {
@@ -35,7 +37,6 @@ struct HomeScreen: View {
 
                             Spacer()
 
-                           
                             if session.type == "PRIVATE" {
                                 Image(systemName: "lock")
                                 Button(action: {
@@ -47,12 +48,11 @@ struct HomeScreen: View {
                                         .padding(.horizontal)
                                 }
                             } else {
-                                NavigationLink(destination: SessionScreen(sessionId: session.id,nameSession: session.name, nameAdmin: "Admin")) {
+                                NavigationLink(destination: SessionScreen(sessionId: session.id, nameSession: session.name, nameAdmin: "Admin")) {
                                     Text("Join")
                                         .foregroundColor(.blue)
                                         .padding(.horizontal)
                                 }
-
                             }
                         }
                         .padding()
@@ -77,7 +77,6 @@ struct HomeScreen: View {
                 .padding()
             }
             .onAppear {
-                // Récupérer les sessions actives depuis l'API
                 homeViewModel.fetchActiveSessions { success, error in
                     if !success {
                         print("Erreur: \(error ?? "Inconnue")")
@@ -94,14 +93,21 @@ struct HomeScreen: View {
                         .cornerRadius(8)
                         .padding()
 
-                    if !passwordErrorMessage.isEmpty {
-                        Text(passwordErrorMessage)
+                    if !homeViewModel.passwordErrorMessage.isEmpty {
+                        Text(homeViewModel.passwordErrorMessage)
                             .foregroundColor(.red)
-                            .padding()
                     }
 
                     Button("Join Session") {
-                        checkPassword()
+                        if let session = selectedSession {
+                            homeViewModel.joinPrivateSession(session: session, password: password) { success in
+                                if success {
+                                    self.showPasswordField = false
+                                    self.isPasswordCorrect = true
+                                    self.navigateToSession = true  // Active la navigation après un mot de passe correct
+                                }
+                            }
+                        }
                     }
                     .padding()
                     .background(Color.blue)
@@ -110,57 +116,20 @@ struct HomeScreen: View {
                     .padding()
                 }
                 .padding()
+                .onDisappear {
+                        // Réinitialisation ici
+                        homeViewModel.passwordErrorMessage = ""
+                        password = ""
+                }
+                .ignoresSafeArea(.keyboard)
             }
-        }
-    }
-
-    // Fonction pour vérifier le mot de passe
-    func checkPassword() {
-        guard let session = selectedSession else {
-            print("Session not found")
-            return
-        }
-
-        // Simuler l'appel API pour récupérer les détails de la session par ID
-        fetchSessionByID(sessionId: session.id) { sessionDetails in
-            guard let sessionDetails = sessionDetails else {
-                passwordErrorMessage = "Session not found"
-                print("Session not found")
-                return
-            }
-
-            // Comparaison des mots de passe après nettoyage (retirer les espaces et comparer en minuscule)
-            let normalizedPassword = password.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-            let normalizedSessionPassword = sessionDetails.password?.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-
-            print("Session password: \(sessionDetails.password ?? "nil")")
-            print("Entered password: \(password)")
-
-            // Vérifier si les mots de passe correspondent
-            if normalizedPassword == normalizedSessionPassword {
-                // Mot de passe correct
-                isPasswordCorrect = true
-                showPasswordField = false // Masquer le champ de mot de passe
-                print("Password is correct")
-                // Naviguer vers la session
-                // Vous pouvez naviguer ici vers la session réelle, par exemple avec une NavigationLink
-            } else {
-                passwordErrorMessage = "Incorrect password"
-                print("Password mismatch")
-            }
-        }
-    }
-
-    // Fonction pour récupérer la session par ID via API
-    func fetchSessionByID(sessionId: String, completion: @escaping (Session?) -> Void) {
-        // Simuler l'appel à l'API pour récupérer les détails de la session
-        // Dans un vrai cas, vous ferez une requête API pour obtenir les détails de la session par son ID.
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-            // Rechercher la session correspondant à l'ID dans la liste des sessions actives
-            if let session = homeViewModel.activeSessions.first(where: { $0.id == sessionId }) {
-                completion(session)
-            } else {
-                completion(nil)
+            
+            // Utilisation de navigationDestination
+            .navigationDestination(isPresented: $navigateToSession) {
+                // Lier la destination à la session sélectionnée
+                if let session = selectedSession {
+                    SessionScreen(sessionId: session.id, nameSession: session.name, nameAdmin: "Admin")
+                }
             }
         }
     }

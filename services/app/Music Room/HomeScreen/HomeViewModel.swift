@@ -10,6 +10,8 @@ import Foundation
 class HomeViewModel: ObservableObject {
     @Published var activeSessions: [Session] = []
     @Published var selectedPlaylistId: String?
+    @Published var passwordErrorMessage: String = ""
+    @Published var isPasswordCorrect: Bool = false
     
     func takeToken() -> String {
         guard let user = User.load() else {
@@ -121,6 +123,72 @@ class HomeViewModel: ObservableObject {
                 } else {
                     print("❌ Erreur serveur: \(httpResponse.statusCode)")
                     completion(false, "Erreur serveur (\(httpResponse.statusCode))")
+                }
+            }
+        }.resume()
+    }
+    
+    func joinPrivateSession(session: Session, password: String, completion: @escaping (Bool) -> Void) {
+        guard let url = URL(string: "http://localhost:5001/playlist/\(session.id)/join") else {
+            print("URL invalide")
+            self.passwordErrorMessage = "URL invalide"
+            completion(false)
+            return
+        }
+
+        guard let user = User.load() else {
+            self.passwordErrorMessage = "Utilisateur non authentifié"
+            completion(false)
+            return
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+        request.setValue(user.token, forHTTPHeaderField: "token")
+
+        
+        let encodedPassword = password.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+        let bodyString = "password=\(encodedPassword)"
+        request.httpBody = bodyString.data(using: .utf8)
+
+        print("🔐 Mot de passe envoyé: \(password)")
+        print("📤 Requête body: \(bodyString)")
+
+
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            DispatchQueue.main.async {
+                if let error = error {
+                    print("❌ Erreur réseau :", error.localizedDescription)
+                    self.passwordErrorMessage = "Erreur réseau"
+                    completion(false)
+                    return
+                }
+
+                guard let httpResponse = response as? HTTPURLResponse else {
+                    self.passwordErrorMessage = "Réponse invalide du serveur"
+                    completion(false)
+                    return
+                }
+
+                switch httpResponse.statusCode {
+                    case 200:
+                        print("✅ Mot de passe correct. Accès autorisé.")
+                        self.isPasswordCorrect = true
+                        self.passwordErrorMessage = ""
+                        completion(true)
+
+                    case 400:
+                        self.passwordErrorMessage = "Mot de passe incorrect ou playlist introuvable"
+                        completion(false)
+
+                    case 500:
+                        self.passwordErrorMessage = "Erreur serveur"
+                        completion(false)
+
+                    default:
+                        self.passwordErrorMessage = "Erreur inconnue (\(httpResponse.statusCode))"
+                        completion(false)
                 }
             }
         }.resume()

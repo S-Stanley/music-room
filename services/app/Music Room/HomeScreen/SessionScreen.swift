@@ -28,29 +28,31 @@ struct SessionScreen: View {
                         .font(.subheadline)
                         .foregroundColor(.gray)
                 }
+                
                 Spacer()
+                
+                Image(systemName: "lock.fill")
+                    .foregroundColor(.black)
+                    .font(.system(size: 30))
+                    .padding()
+                Image(systemName: "gearshape.fill")
+                    .foregroundColor(.black)
+                    .font(.system(size: 30))
+                    .padding()
                 
                 Button(action: {
                     quitterLaSession()
                 }) {
-                    Text("Quitter la session")
+                    Image(systemName: "arrow.forward.square.fill")
+                        .foregroundColor(.red)
+                        .font(.system(size: 30))
                         .padding()
-                        .background(Color.red)
-                        .foregroundColor(.white)
-                        .cornerRadius(8)
                 }
-                .padding()
-                
-                Image(systemName: "lock")
-                    .foregroundColor(.black)
-                    .font(.system(size: 30))
-                Image(systemName: "gearshape.fill")
-                    .foregroundColor(.black)
-                    .font(.system(size: 30))
             }
             
             // Barre de navigation
             NavigationBar(selectedOption: $selectedScreen, text: "Playlist", text2: "Add music")
+                .padding(.bottom, 5)
 
 
             Spacer()
