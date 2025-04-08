@@ -8,7 +8,9 @@
 import SwiftUI
 
 struct SessionScreen: View {
+    @StateObject var musicViewModel = MusicViewModel()
     @StateObject var homeViewModel = HomeViewModel()
+    @ObservedObject var audioPlayer = AudioPlayer.shared
     var sessionId: String
     var nameSession: String
     var nameAdmin: String
@@ -41,6 +43,7 @@ struct SessionScreen: View {
                     .padding()
                 
                 Button(action: {
+                    audioPlayer.stop()
                     quitterLaSession()
                 }) {
                     Image(systemName: "arrow.forward.square.fill")
@@ -59,9 +62,9 @@ struct SessionScreen: View {
 
             switch selectedScreen {
             case "Playlist":
-                PlaylistScreen(playlistId: sessionId)
+                PlaylistScreen(musicViewModel: musicViewModel, playlistId: sessionId)
             case "Add music":
-                MusicScreen(playlistId: sessionId)
+                MusicScreen(musicViewModel: musicViewModel, playlistId: sessionId)
             default:
                 Text("Unknown action")
                     .font(.title2)

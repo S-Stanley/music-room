@@ -11,28 +11,16 @@ import Combine
 
 class AudioPlayer: ObservableObject {
     static let shared = AudioPlayer()
-
     private var player: AVPlayer?
-    @Published var currentlyPlayingTrackId: Int? // Stocke l’ID du morceau en cours
 
-    func play(urlString: String, trackId: Int) {
-        stop() // Stopper la musique en cours
-
-        guard let url = URL(string: urlString) else {
-            print("❌ URL invalide")
-            return
-        }
-
+    func playPreview(from urlString: String) {
+        guard let url = URL(string: urlString) else { return }
         player = AVPlayer(url: url)
         player?.play()
-        currentlyPlayingTrackId = trackId // Mettre à jour l’ID du morceau en cours
-
-        print("▶️ Lecture en cours:", urlString)
     }
 
     func stop() {
         player?.pause()
-        currentlyPlayingTrackId = nil
-        print("⏸ Musique arrêtée")
+        player = nil
     }
 }

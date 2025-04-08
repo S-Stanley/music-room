@@ -79,6 +79,11 @@ class MusicViewModel: ObservableObject {
     @Published var errorMessage: String?
     @Published var searchedTracks: [Track] = []
     @Published var playlistTracks: Set<String> = []
+    
+    private var currentTrackIndex: Int = 0
+    private var audioPlayer = AudioPlayer.shared
+    private var isPlaying = false
+    private var hasStartedPlaying = false
 
     func searchMusic(query: String) {
             guard let url = URL(string: "http://localhost:5001/track/search?q=\(query)") else {
@@ -172,58 +177,113 @@ class MusicViewModel: ObservableObject {
     }
 
     func fetchTracksForPlaylist(playlistId: String, completion: @escaping (Bool, String?) -> Void) {
-        guard let user = User.load() else {
-            completion(false, "Utilisateur non authentifié")
-            return
-        }
-
-        guard let url = URL(string: "http://localhost:5001/playlist/\(playlistId)/track") else {
-            completion(false, "URL invalide")
-            return
-        }
-
-        var request = URLRequest(url: url)
-        request.httpMethod = "GET"
-        request.setValue(user.token, forHTTPHeaderField: "token")
-
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            DispatchQueue.main.async {
-                if let error = error {
-                    print("❌ Erreur de requête: \(error.localizedDescription)")
-                    completion(false, "Erreur: \(error.localizedDescription)")
-                    return
-                }
-
-                guard let httpResponse = response as? HTTPURLResponse, let data = data else {
-                    print("❌ Réponse invalide du serveur")
-                    completion(false, "Réponse invalide du serveur")
-                    return
-                }
-
-                print("✅ Statut HTTP: \(httpResponse.statusCode)")
-                print("📥 Réponse JSON brute: \(String(data: data, encoding: .utf8) ?? "Aucune donnée")")
-
-                if httpResponse.statusCode == 200 {
-                    do {
-                        let playlistTracks = try JSONDecoder().decode([PlaylistTrack].self, from: data)
-                        self.tracks = [] // Vide la liste actuelle
-                        self.tracks = playlistTracks.map {
-                            Track(id: Int($0.trackId) ?? 0, title: $0.trackTitle, link: "", duration: 0, rank: 0, preview: $0.trackPreview, album: Album(id: 0, title: "", cover: $0.albumCover, coverSmall: $0.albumCover, coverMedium: $0.albumCover, coverBig: $0.albumCover, coverXL: $0.albumCover, tracklist: ""), artist: Artist(id: 0, name: "", link: "", picture: "", pictureSmall: "", pictureMedium: "", pictureBig: "", pictureXL: ""))
-                        }
-                        
-                        // 🔥 Mettre à jour la liste des musiques déjà ajoutées à la playlist
-                        self.playlistTracks = Set(playlistTracks.map { $0.trackId })
-                        
-                        completion(true, nil)
-                    } catch {
-                        print("❌ Erreur de décodage JSON: \(error.localizedDescription)")
-                        completion(false, "Erreur de décodage JSON")
-                    }
-                } else {
-                    print("❌ Erreur serveur: \(httpResponse.statusCode)")
-                    completion(false, "Erreur serveur (\(httpResponse.statusCode))")
-                }
+            guard let user = User.load() else {
+                completion(false, "Utilisateur non authentifié")
+                return
             }
-        }.resume()
+
+            guard let url = URL(string: "http://localhost:5001/playlist/\(playlistId)/track") else {
+                completion(false, "URL invalide")
+                return
+            }
+
+            var request = URLRequest(url: url)
+            request.httpMethod = "GET"
+            request.setValue(user.token, forHTTPHeaderField: "token")
+
+            URLSession.shared.dataTask(with: request) { data, response, error in
+                DispatchQueue.main.async {
+                    if let error = error {
+                        print("❌ Erreur de requête: \(error.localizedDescription)")
+                        completion(false, "Erreur: \(error.localizedDescription)")
+                        return
+                    }
+
+                    guard let httpResponse = response as? HTTPURLResponse, let data = data else {
+                        print("❌ Réponse invalide du serveur")
+                        completion(false, "Réponse invalide du serveur")
+                        return
+                    }
+
+                    if httpResponse.statusCode == 200 {
+                        do {
+                            let playlistTracks = try JSONDecoder().decode([PlaylistTrack].self, from: data)
+                            self.tracks = playlistTracks.map {
+                                Track(
+                                    id: Int($0.trackId) ?? 0,
+                                    title: $0.trackTitle,
+                                    link: "",
+                                    duration: 0,
+                                    rank: 0,
+                                    preview: $0.trackPreview,
+                                    album: Album(id: 0, title: "", cover: $0.albumCover, coverSmall: $0.albumCover, coverMedium: $0.albumCover, coverBig: $0.albumCover, coverXL: $0.albumCover, tracklist: ""),
+                                    artist: Artist(id: 0, name: "", link: "", picture: "", pictureSmall: "", pictureMedium: "", pictureBig: "", pictureXL: "")
+                                )
+                            }
+
+                            self.playlistTracks = Set(playlistTracks.map { $0.trackId })
+                            self.currentTrackIndex = 0
+                            
+                            // ✅ On lance la lecture une seule fois
+                            if !self.tracks.isEmpty && !self.hasStartedPlaying {
+                                self.hasStartedPlaying = true
+                                self.playNextTrack()
+                            }
+
+                            completion(true, nil)
+                        } catch {
+                            print("❌ Erreur de décodage JSON: \(error.localizedDescription)")
+                            completion(false, "Erreur de décodage JSON")
+                        }
+                    } else {
+                        print("❌ Erreur serveur: \(httpResponse.statusCode)")
+                        completion(false, "Erreur serveur (\(httpResponse.statusCode))")
+                    }
+                }
+            }.resume()
+        }
+
+    private func playNextTrack() {
+        // Nettoyage observer pour éviter les doublons
+        NotificationCenter.default.removeObserver(self)
+
+        // Cas où la playlist est vide
+        guard !tracks.isEmpty else {
+            print("🎶 Playlist vide — arrêt")
+            isPlaying = false
+            return
+        }
+
+        // Sécurité au cas où l'index est out-of-bounds
+        if currentTrackIndex >= tracks.count {
+            currentTrackIndex = 0
+        }
+
+        let track = tracks[currentTrackIndex]
+        print("▶️ Lecture : \(track.title)")
+        audioPlayer.playPreview(from: track.preview)
+        isPlaying = true
+
+        NotificationCenter.default.addObserver(
+            forName: .AVPlayerItemDidPlayToEndTime,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            guard let self = self else { return }
+
+            print("✅ Fin de : \(track.title)")
+
+            // Supprimer le morceau actuel
+            self.tracks.remove(at: self.currentTrackIndex)
+
+            // Si encore des morceaux, on lit le suivant
+            if !self.tracks.isEmpty {
+                // Pas besoin d’incrémenter l’index car on a retiré l’élément actuel
+                self.playNextTrack()
+            } else {
+                print("🏁 Fin de la playlist")
+                self.isPlaying = false
+            }
+        }
     }
 }

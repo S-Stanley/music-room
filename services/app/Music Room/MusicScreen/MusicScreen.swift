@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct MusicScreen: View {
-    @StateObject var musicViewModel = MusicViewModel()
+    @ObservedObject var musicViewModel: MusicViewModel
     @State private var searchQuery: String = ""
     var playlistId: String?
 
@@ -136,17 +136,17 @@ struct TrackRow: View {
             Spacer()
 
             HStack {
-                Button(action: {
-                    if audioPlayer.currentlyPlayingTrackId == track.id {
-                        audioPlayer.stop()
-                    } else {
-                        audioPlayer.play(urlString: track.preview, trackId: track.id)
-                    }
-                }) {
-                    Image(systemName: audioPlayer.currentlyPlayingTrackId == track.id ? "pause.circle.fill" : "play.circle.fill")
-                        .foregroundColor(.blue)
-                        .font(.system(size: 30))
-                }
+//                Button(action: {
+//                    if audioPlayer.currentlyPlayingTrackId == track.id {
+//                        audioPlayer.stop()
+//                    } else {
+//                        audioPlayer.play(urlString: track.preview, trackId: track.id)
+//                    }
+//                }) {
+//                    Image(systemName: audioPlayer.currentlyPlayingTrackId == track.id ? "pause.circle.fill" : "play.circle.fill")
+//                        .foregroundColor(.blue)
+//                        .font(.system(size: 30))
+//                }
 
                 if !isAlreadyAdded { // ✅ Cache le bouton si déjà ajouté
                     Button(action: onAdd) {
@@ -162,10 +162,4 @@ struct TrackRow: View {
         .cornerRadius(12)
         .shadow(radius: 4)
     }
-}
-
-
-
-#Preview {
-    MusicScreen()
 }

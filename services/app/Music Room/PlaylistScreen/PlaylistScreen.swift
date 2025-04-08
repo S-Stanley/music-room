@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct PlaylistScreen: View {
-    @StateObject var musicViewModel = MusicViewModel()
+    @ObservedObject var musicViewModel: MusicViewModel
     var playlistId: String
 
     var body: some View {
@@ -46,7 +46,7 @@ struct PlaylistScreen: View {
 struct TrackRowPlaylist: View {
     let track: Track
     let onAdd: () -> Void
-    @ObservedObject var audioPlayer = AudioPlayer.shared // Utilisation du singleton pour observer les changements
+    
 
     var body: some View {
         HStack(spacing: 8) {
