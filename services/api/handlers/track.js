@@ -17,3 +17,16 @@ export const getTrackDefaultPosition = async (playlist_id) => {
     }
   });
 };
+
+export const getTrackById = async(track_id) => {
+  try {
+    return await prisma.trackPlaylist.findUnique({
+      where: {
+        id: track_id,
+      }
+    })
+  } catch (e) {
+    console.error(e);
+    return (null);
+  }
+};

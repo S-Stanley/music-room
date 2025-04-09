@@ -74,3 +74,17 @@ Example do not work on default data du to password encryption missing, you gave 
 ```bash
 curl "localhost:5001/playlist/2a8fd55d-b9f9-4ec9-9398-32a22d97e64c/join" -H token:c055fb5c-7d35-42a8-b4e7-a20a706d999b -d password=123
 ```
+
+#### Vote for next track [PROTECTED]
+
+* Endpint: POST `/playlist/:playlist_id/vote/:track_id
+* Response:
+    * 200 -> User voted for track
+    * 400:
+        * Playlist, user track not found
+        * User already vote for this track in the playlist
+    * 500 -> Server error
+
+```bash
+curl -X POST "localhost:5001/playlist/e41fa7e7-05a7-4812-9a8b-446ecbc78b2e/vote/98087618" -H token:c055fb5c-7d35-42a8-b4e7-a20a706d999b
+```

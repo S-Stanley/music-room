@@ -20,6 +20,7 @@ model User {
   token         String?     @db.Uuid @unique
   playlists     Playlist[]
   trackPlaylist TrackPlaylist[]
+  votes         TrackVote[]
   createdAt     DateTime    @default(now()) @map("created_at")
   updatedAt     DateTime    @default(now()) @map("updated_at")
 }
@@ -37,6 +38,7 @@ model Playlist {
   user          User        @relation(fields: [userId], references: [id])
   userId        String      @map("user_id") @db.Uuid
   tracks        TrackPlaylist[]
+  votes         TrackVote[]
   createdAt     DateTime    @default(now()) @map("created_at")
   updatedAt     DateTime    @default(now()) @map("updated_at") 
 }
@@ -51,7 +53,20 @@ model TrackPlaylist {
   userId        String      @map("user_id") @db.Uuid
   playlist      Playlist    @relation(fields: [playlistId], references: [id])
   playlistId    String      @map("playlist_id") @db.Uuid
+  votes         TrackVote[]
   position      Int
+  createdAt     DateTime    @default(now()) @map("created_at")
+  updatedAt     DateTime    @default(now()) @map("updated_at") 
+}
+
+model TrackVote {
+  id            String      @id @default(uuid()) @db.Uuid
+  playlist      Playlist    @relation(fields: [playlistId], references: [id])
+  playlistId    String      @map("playlist_id") @db.Uuid
+  user          User        @relation(fields: [userId], references: [id])
+  userId        String      @map("user_id") @db.Uuid
+  track         TrackPlaylist @relation(fields: [trackId], references: [id])
+  trackId       String      @map("track_id") @db.Uuid
   createdAt     DateTime    @default(now()) @map("created_at")
   updatedAt     DateTime    @default(now()) @map("updated_at") 
 }

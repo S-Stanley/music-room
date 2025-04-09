@@ -1,6 +1,7 @@
 import express from "express";
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
+import { v4 as uuidv4 } from 'uuid';
 
 import {
   getPlaylistById,
@@ -8,7 +9,15 @@ import {
 import {
   getTrackDefaultPosition,
   getAllTrackOfPlaylist,
+  getTrackById,
 } from "../handlers/track.js";
+import {
+  findUserById
+} from "../handlers/user.js"
+import {
+  findUserVoteByPlaylistId,
+  createUserVote,
+} from "../handlers/votes.js";
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -224,7 +233,6 @@ router.post("/:playlist_id/join", async (req, res) => {
       }
     }
     return res.status(200).json(playlist);
-
   } catch (e){
     console.error(e);
     return res.status(500).json({
@@ -233,4 +241,43 @@ router.post("/:playlist_id/join", async (req, res) => {
   }
 });
 
-export const playlistRouter = router;;
+router.post("/:playlist_id/vote/:track_id", async(req, res) => {
+  console.log("User is voting for next playlist");
+  try {
+    const { playlist_id, track_id } = req.params;
+    const user = await findUserById(res?.locals?.user?.id);
+    if (!user){
+      return res.status(400).json({
+        error: "User not found"
+      });
+    }
+    const playlist = await getPlaylistById(playlist_id);
+    if (!playlist){
+      return res.status(400).json({
+        error: "Playlist not found"
+      });
+    }
+    const track = await getTrackById(track_id);
+    if (!track){
+      return res.status(400).json({
+        error: "Track not found"
+      });
+    }
+    const checkIsUserAlreadyVoted = await findUserVoteByPlaylistId(playlist?.id, user?.id, track?.id);
+    console.log(checkIsUserAlreadyVoted)
+    if ((checkIsUserAlreadyVoted ?? []).length > 0){
+      return res.status(400).json({
+        error: "User already voted"
+      });
+    }
+    const newVote = await createUserVote(playlist?.id, user?.id, track?.id);
+    return res.status(201).json(newVote);
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({
+      error: "Server error"
+    });
+  }
+});
+
+export const playlistRouter = router;
