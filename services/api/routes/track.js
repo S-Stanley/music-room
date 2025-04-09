@@ -6,6 +6,8 @@ const prisma = new PrismaClient();
 
 import {
   getAllTrackOfPlaylist,
+  getTrackById,
+  setTrackAsPlayed,
 } from "../handlers/track.js";
 
 router.get("/search", async(req, res) => {
@@ -31,6 +33,29 @@ router.get("/search", async(req, res) => {
     return res.status(500).json({
       error: "Server error"
     }); 
+  }
+});
+
+router.patch("/:track_id/played", async(req, res) => {
+  try {
+    const { track_id } = req.params;
+    const track = await getTrackById(track_id);
+    if (!track){
+      return res.status(400).json({
+        error: "Track not found"
+      });
+    }
+    if (!track?.alreadyPlayed){
+      await setTrackAsPlayed(track?.id);
+    }
+    return res.status(200).json({
+      updated: true,
+    }); 
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({
+      error: "Server error"
+    });
   }
 });
 

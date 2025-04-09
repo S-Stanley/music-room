@@ -55,8 +55,9 @@ model TrackPlaylist {
   playlistId    String      @map("playlist_id") @db.Uuid
   votes         TrackVote[]
   position      Int
+  alreadyPlayed Boolean     @default(false) @map("already_played")
   createdAt     DateTime    @default(now()) @map("created_at")
-  updatedAt     DateTime    @default(now()) @map("updated_at") 
+  updatedAt     DateTime    @default(now()) @map("updated_at")
 }
 
 model TrackVote {
