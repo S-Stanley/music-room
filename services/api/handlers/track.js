@@ -6,6 +6,7 @@ export const getAllTrackOfPlaylist = async(playlist_id) => {
   return await prisma.trackPlaylist.findMany({
     where: {
       playlistId: playlist_id,
+      alreadyPlayed: false,
     }
   });
 };
@@ -29,4 +30,15 @@ export const getTrackById = async(track_id) => {
     console.error(e);
     return (null);
   }
+};
+
+export const setTrackAsPlayed = async(track_id) => {
+  return await prisma.trackPlaylist.update({
+    where: {
+      id: track_id,
+    },
+    data: {
+      alreadyPlayed: true,
+    }
+  });
 };
