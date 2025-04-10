@@ -28,6 +28,7 @@
 		E456F5D32D955D3200E1640F /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E456F5D22D955D3200E1640F /* HomeViewModel.swift */; };
 		E456F5D82D9EB73F00E1640F /* PlaylistScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = E456F5D72D9EB73F00E1640F /* PlaylistScreen.swift */; };
 		E456F5DA2D9EB7A800E1640F /* AudioPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E456F5D92D9EB7A800E1640F /* AudioPlayer.swift */; };
+		E456F5DC2DA693EA00E1640F /* SettingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = E456F5DB2DA693EA00E1640F /* SettingScreen.swift */; };
 		E47AF0DD2D0B662200C3444F /* Music_RoomApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E47AF0DC2D0B662200C3444F /* Music_RoomApp.swift */; };
 		E47AF0DF2D0B662200C3444F /* AuthentificationScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = E47AF0DE2D0B662200C3444F /* AuthentificationScreen.swift */; };
 		E47AF0E12D0B662200C3444F /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = E47AF0E02D0B662200C3444F /* Item.swift */; };
@@ -58,6 +59,7 @@
 		E456F5D22D955D3200E1640F /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		E456F5D72D9EB73F00E1640F /* PlaylistScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistScreen.swift; sourceTree = "<group>"; };
 		E456F5D92D9EB7A800E1640F /* AudioPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayer.swift; sourceTree = "<group>"; };
+		E456F5DB2DA693EA00E1640F /* SettingScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingScreen.swift; sourceTree = "<group>"; };
 		E47AF0D92D0B662200C3444F /* Music Room.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Music Room.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E47AF0DC2D0B662200C3444F /* Music_RoomApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Music_RoomApp.swift; sourceTree = "<group>"; };
 		E47AF0DE2D0B662200C3444F /* AuthentificationScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthentificationScreen.swift; sourceTree = "<group>"; };
@@ -180,6 +182,7 @@
 				E47AF0E02D0B662200C3444F /* Item.swift */,
 				E47AF0E22D0B662400C3444F /* Assets.xcassets */,
 				E47AF0E42D0B662400C3444F /* Preview Content */,
+				E456F5DB2DA693EA00E1640F /* SettingScreen.swift */,
 			);
 			path = "Music Room";
 			sourceTree = "<group>";
@@ -282,6 +285,7 @@
 				E454FF292D7AFC8C00FAD268 /* HomeScreen.swift in Sources */,
 				E47AF0DD2D0B662200C3444F /* Music_RoomApp.swift in Sources */,
 				E43D21FB2D81BF73007BB44D /* NavBar.swift in Sources */,
+				E456F5DC2DA693EA00E1640F /* SettingScreen.swift in Sources */,
 				E43ABE112D843D29009624E9 /* CreationSessionScreen.swift in Sources */,
 				E456F5CF2D93EDCE00E1640F /* ProfileViewModel.swift in Sources */,
 				E43018652D0F66A400E239AD /* NavigationBar.swift in Sources */,

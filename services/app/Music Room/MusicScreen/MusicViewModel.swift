@@ -84,6 +84,8 @@ class MusicViewModel: ObservableObject {
     private var audioPlayer = AudioPlayer.shared
     private var isPlaying = false
     private var hasStartedPlaying = false
+    
+    var associatedUUIDs: [String: String] = [:]
 
     func searchMusic(query: String) {
             guard let url = URL(string: "http://localhost:5001/track/search?q=\(query)") else {
@@ -128,6 +130,54 @@ class MusicViewModel: ObservableObject {
             }.resume()
         }
     
+    func markTrackAsPlayed(trackId: String) {
+        // Récupérer l'UUID associé à ce trackId
+        guard let trackUUID = associatedUUIDs[trackId] else {
+            print("❌ Aucun UUID trouvé pour ce trackId")
+            return
+        }
+
+        guard let url = URL(string: "http://localhost:5001/track/\(trackUUID)/played") else {
+            self.errorMessage = "URL invalide pour PATCH"
+            return
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "PATCH"
+
+        if let user = User.load() {
+            request.setValue(user.token, forHTTPHeaderField: "token")
+        } else {
+            self.errorMessage = "Utilisateur non authentifié"
+            return
+        }
+
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            DispatchQueue.main.async {
+                if let error = error {
+                    print("❌ Erreur PATCH: \(error.localizedDescription)")
+                    return
+                }
+
+                guard let httpResponse = response as? HTTPURLResponse else {
+                    print("❌ Réponse PATCH invalide")
+                    return
+                }
+
+                switch httpResponse.statusCode {
+                    case 200:
+                        print("✅ Track \(trackUUID) marqué comme joué")
+                    case 400:
+                        print("⚠️ Track non trouvé")
+                    case 500:
+                        print("🔥 Erreur serveur")
+                    default:
+                        print("❓ Code inconnu: \(httpResponse.statusCode)")
+                }
+            }
+        }.resume()
+    }
+
     func addMusicToPlaylist(playlistId: String, trackId: String) {
         guard let url = URL(string: "http://localhost:5001/playlist/\(playlistId)") else {
             self.errorMessage = "URL invalide"
@@ -162,9 +212,40 @@ class MusicViewModel: ObservableObject {
                     return
                 }
 
+                // Loguer la réponse brute pour mieux comprendre ce qui est retourné
+                if let data = data {
+                    if let responseString = String(data: data, encoding: .utf8) {
+                        print("📝 Réponse brute de l'API : \(responseString)")
+                    }
+                }
+
                 switch httpResponse.statusCode {
                     case 201:
                         print("✅ Chanson ajoutée avec succès à la playlist !")
+
+                        // Décoder la réponse et extraire l'UUID
+                        if let data = data {
+                            do {
+                                // Log pour inspecter le format des données
+                                print("📝 Tentative de décodage des données JSON")
+                                
+                                // Essayons de décoder avec un type plus générique pour comprendre le format
+                                let decodedResponse = try JSONSerialization.jsonObject(with: data, options: [])
+                                
+                                // Log pour voir la structure de la réponse
+                                print("📝 Réponse décodée : \(decodedResponse)")
+
+                                // Essayer de récupérer l'UUID à partir de la réponse
+                                if let responseDict = decodedResponse as? [String: Any], let trackUUID = responseDict["id"] as? String {
+                                    self.associatedUUIDs[trackId] = trackUUID
+                                    print("✅ UUID associé: \(trackUUID)")
+                                } else {
+                                    print("❌ UUID non trouvé dans la réponse")
+                                }
+                            } catch {
+                                print("❌ Erreur lors du décodage de la réponse: \(error.localizedDescription)")
+                            }
+                        }
                     case 400:
                         self.errorMessage = "Erreur: TrackId manquant ou playlist inexistante"
                     case 401:
@@ -175,6 +256,8 @@ class MusicViewModel: ObservableObject {
             }
         }.resume()
     }
+
+
 
     func fetchTracksForPlaylist(playlistId: String, completion: @escaping (Bool, String?) -> Void) {
             guard let user = User.load() else {
@@ -262,6 +345,9 @@ class MusicViewModel: ObservableObject {
         let track = tracks[currentTrackIndex]
         print("▶️ Lecture : \(track.title)")
         audioPlayer.playPreview(from: track.preview)
+
+        // Utilise track.id (qui est un UUID sous forme de String)
+        markTrackAsPlayed(trackId: String(track.id))  // track.id est maintenant un String UUID
         isPlaying = true
 
         NotificationCenter.default.addObserver(

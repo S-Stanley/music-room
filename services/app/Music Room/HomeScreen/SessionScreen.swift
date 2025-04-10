@@ -33,14 +33,22 @@ struct SessionScreen: View {
                 
                 Spacer()
                 
-                Image(systemName: "lock.fill")
-                    .foregroundColor(.black)
-                    .font(.system(size: 30))
-                    .padding()
-                Image(systemName: "gearshape.fill")
-                    .foregroundColor(.black)
-                    .font(.system(size: 30))
-                    .padding()
+                Button(action: {
+                    
+                }) {
+                    Image(systemName: "lock.fill")
+                        .foregroundColor(.black)
+                        .font(.system(size: 30))
+                        .padding()
+                }
+
+                
+                NavigationLink(destination: SettingScreen()) {
+                    Image(systemName: "gearshape.fill")
+                        .foregroundColor(.black)
+                        .font(.system(size: 30))
+                        .padding()
+                }
                 
                 Button(action: {
                     audioPlayer.stop()
