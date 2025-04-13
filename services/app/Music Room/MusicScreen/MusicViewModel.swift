@@ -51,12 +51,13 @@ struct Track: Codable {
     let link: String
     let duration: Int
     let rank: Int
-    let preview: String
+    let preview: String?
     let album: Album
     let artist: Artist
+    var uuid: String?
 
     enum CodingKeys: String, CodingKey {
-        case id, title, link, duration, rank, preview, album, artist
+        case id, title, link, duration, rank, preview, album, artist, uuid
     }
 }
 
@@ -179,68 +180,77 @@ class MusicViewModel: ObservableObject {
     }
 
     func addMusicToPlaylist(playlistId: String, trackId: String) {
-        guard let url = URL(string: "http://localhost:5001/playlist/\(playlistId)") else {
-            self.errorMessage = "URL invalide"
-            return
-        }
+            guard let url = URL(string: "http://localhost:5001/playlist/\(playlistId)") else {
+                self.errorMessage = "URL invalide"
+                return
+            }
 
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+            var request = URLRequest(url: url)
+            request.httpMethod = "POST"
+            request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 
-        if let user = User.load() {
-            request.setValue(user.token, forHTTPHeaderField: "token")
-        } else {
-            self.errorMessage = "Utilisateur non authentifié"
-            print("❌ Aucun utilisateur trouvé dans UserDefaults")
-            return
-        }
+            if let user = User.load() {
+                request.setValue(user.token, forHTTPHeaderField: "token")
+            } else {
+                self.errorMessage = "Utilisateur non authentifié"
+                print("❌ Aucun utilisateur trouvé dans UserDefaults")
+                return
+            }
 
-        // Ajouter le trackId au body
-        let bodyString = "trackId=\(trackId)"
-        request.httpBody = bodyString.data(using: .utf8)
+            let bodyString = "trackId=\(trackId)"
+            request.httpBody = bodyString.data(using: .utf8)
 
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            DispatchQueue.main.async {
-                if let error = error {
-                    self.errorMessage = "Erreur: \(error.localizedDescription)"
-                    return
-                }
-
-                guard let httpResponse = response as? HTTPURLResponse else {
-                    self.errorMessage = "Réponse invalide du serveur"
-                    return
-                }
-
-                // Loguer la réponse brute pour mieux comprendre ce qui est retourné
-                if let data = data {
-                    if let responseString = String(data: data, encoding: .utf8) {
-                        print("📝 Réponse brute de l'API : \(responseString)")
+            URLSession.shared.dataTask(with: request) { data, response, error in
+                DispatchQueue.main.async {
+                    if let error = error {
+                        self.errorMessage = "Erreur: \(error.localizedDescription)"
+                        return
                     }
-                }
 
-                switch httpResponse.statusCode {
+                    guard let httpResponse = response as? HTTPURLResponse else {
+                        self.errorMessage = "Réponse invalide du serveur"
+                        return
+                    }
+
+                    if let data = data {
+                        if let responseString = String(data: data, encoding: .utf8) {
+                            print(" Réponse brute de l'API : \(responseString)")
+                        }
+                    }
+
+                    switch httpResponse.statusCode {
                     case 201:
                         print("✅ Chanson ajoutée avec succès à la playlist !")
 
-                        // Décoder la réponse et extraire l'UUID
                         if let data = data {
                             do {
-                                // Log pour inspecter le format des données
-                                print("📝 Tentative de décodage des données JSON")
-                                
-                                // Essayons de décoder avec un type plus générique pour comprendre le format
+                                print(" Tentative de décodage des données JSON")
                                 let decodedResponse = try JSONSerialization.jsonObject(with: data, options: [])
-                                
-                                // Log pour voir la structure de la réponse
-                                print("📝 Réponse décodée : \(decodedResponse)")
+                                print(" Réponse décodée : \(decodedResponse)")
 
-                                // Essayer de récupérer l'UUID à partir de la réponse
-                                if let responseDict = decodedResponse as? [String: Any], let trackUUID = responseDict["id"] as? String {
-                                    self.associatedUUIDs[trackId] = trackUUID
-                                    print("✅ UUID associé: \(trackUUID)")
+                                if let responseDict = decodedResponse as? [String: Any],
+                                   let deezerIdAny = responseDict["trackId"],
+                                   let uuidAny = responseDict["id"] {
+
+                                    let deezerId = String(describing: deezerIdAny)
+                                    let uuid = String(describing: uuidAny)
+
+                                    // Crée directement un objet Track avec l'UUID
+                                    let newTrack = Track(
+                                        id: Int(deezerId) ?? 0,
+                                        title: "", // Remplir avec d'autres données selon besoin
+                                        link: "",
+                                        duration: 0,
+                                        rank: 0,
+                                        preview: "",
+                                        album: Album(id: 0, title: "", cover: "", coverSmall: "", coverMedium: "", coverBig: "", coverXL: "", tracklist: ""),
+                                        artist: Artist(id: 0, name: "", link: "", picture: "", pictureSmall: "", pictureMedium: "", pictureBig: "", pictureXL: ""),
+                                        uuid: uuid
+                                    )
+                                    self.tracks.append(newTrack)
+                                    print("✅ Nouveau morceau ajouté : \(newTrack.title) avec UUID : \(uuid)")
                                 } else {
-                                    print("❌ UUID non trouvé dans la réponse")
+                                    print("❌ UUID non trouvé dans la réponse (clé manquante ou cast échoué)")
                                 }
                             } catch {
                                 print("❌ Erreur lors du décodage de la réponse: \(error.localizedDescription)")
@@ -252,10 +262,10 @@ class MusicViewModel: ObservableObject {
                         self.errorMessage = "Non autorisé, vérifiez votre token"
                     default:
                         self.errorMessage = "Erreur inconnue (\(httpResponse.statusCode))"
+                    }
                 }
-            }
-        }.resume()
-    }
+            }.resume()
+        }
 
 
 
@@ -300,17 +310,16 @@ class MusicViewModel: ObservableObject {
                                     rank: 0,
                                     preview: $0.trackPreview,
                                     album: Album(id: 0, title: "", cover: $0.albumCover, coverSmall: $0.albumCover, coverMedium: $0.albumCover, coverBig: $0.albumCover, coverXL: $0.albumCover, tracklist: ""),
-                                    artist: Artist(id: 0, name: "", link: "", picture: "", pictureSmall: "", pictureMedium: "", pictureBig: "", pictureXL: "")
+                                    artist: Artist(id: 0, name: "", link: "", picture: "", pictureSmall: "", pictureMedium: "", pictureBig: "", pictureXL: ""),
+                                    uuid: $0.id
                                 )
                             }
 
                             self.playlistTracks = Set(playlistTracks.map { $0.trackId })
                             self.currentTrackIndex = 0
                             
-                            // ✅ On lance la lecture une seule fois
-                            if !self.tracks.isEmpty && !self.hasStartedPlaying {
-                                self.hasStartedPlaying = true
-                                self.playNextTrack()
+                            for track in playlistTracks {
+                                self.associatedUUIDs[track.trackId] = track.trackId
                             }
 
                             completion(true, nil)
@@ -325,51 +334,116 @@ class MusicViewModel: ObservableObject {
                 }
             }.resume()
         }
+    
+    func voteForTrack(track: Track, playlistId: String) {
+            guard let uuid = track.uuid else {
+                print("❌ Pas d’UUID pour ce morceau : \(track.title)")
+                return
+            }
+        
+            print("\(uuid)")
+            print("\(playlistId)")
 
-    private func playNextTrack() {
-        // Nettoyage observer pour éviter les doublons
-        NotificationCenter.default.removeObserver(self)
+            guard let url = URL(string: "http://localhost:5001/playlist/\(playlistId)/vote/\(uuid)") else {
+                print("❌ URL invalide")
+                return
+            }
 
-        // Cas où la playlist est vide
-        guard !tracks.isEmpty else {
-            print("🎶 Playlist vide — arrêt")
-            isPlaying = false
+            var request = URLRequest(url: url)
+            request.httpMethod = "POST"
+
+            if let user = User.load() {
+                request.setValue(user.token, forHTTPHeaderField: "token")
+            } else {
+                print("❌ Utilisateur non authentifié")
+                return
+            }
+
+            URLSession.shared.dataTask(with: request) { data, response, error in
+                DispatchQueue.main.async {
+                    if let error = error {
+                        print("❌ Erreur vote: \(error.localizedDescription)")
+                        return
+                    }
+
+                    if let httpResponse = response as? HTTPURLResponse {
+                        switch httpResponse.statusCode {
+                        case 201:
+                            self.fetchAndPlayMostVotedTrack(playlistId: playlistId)
+                            print("✅ Vote enregistré pour \(track.title)")
+                        case 400:
+                            print("❌ Mauvaise requête : déjà voté ou données invalides")
+                        case 401:
+                            print("❌ Non autorisé")
+                        default:
+                            print("❌ Erreur serveur: \(httpResponse.statusCode)")
+                        }
+                    }
+
+                    if let data = data,
+                       let responseString = String(data: data, encoding: .utf8) {
+                        print("Réponse : \(responseString)")
+                    }
+                }
+            }.resume()
+        }
+    
+    func fetchAndPlayMostVotedTrack(playlistId: String) {
+        guard let url = URL(string: "http://localhost:5001/playlist/\(playlistId)/votes") else {
+            print("❌ URL invalide pour récupérer les votes")
             return
         }
 
-        // Sécurité au cas où l'index est out-of-bounds
-        if currentTrackIndex >= tracks.count {
-            currentTrackIndex = 0
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+
+        if let user = User.load() {
+            request.setValue(user.token, forHTTPHeaderField: "token")
+        } else {
+            print("❌ Utilisateur non authentifié")
+            return
         }
 
-        let track = tracks[currentTrackIndex]
-        print("▶️ Lecture : \(track.title)")
-        audioPlayer.playPreview(from: track.preview)
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            DispatchQueue.main.async {
+                if let error = error {
+                    print("❌ Erreur lors de la récupération des votes: \(error.localizedDescription)")
+                    return
+                }
 
-        // Utilise track.id (qui est un UUID sous forme de String)
-        markTrackAsPlayed(trackId: String(track.id))  // track.id est maintenant un String UUID
-        isPlaying = true
+                guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200, let data = data else {
+                    print("❌ Réponse invalide lors de la récupération des votes")
+                    return
+                }
 
-        NotificationCenter.default.addObserver(
-            forName: .AVPlayerItemDidPlayToEndTime,
-            object: nil,
-            queue: .main
-        ) { [weak self] _ in
-            guard let self = self else { return }
-
-            print("✅ Fin de : \(track.title)")
-
-            // Supprimer le morceau actuel
-            self.tracks.remove(at: self.currentTrackIndex)
-
-            // Si encore des morceaux, on lit le suivant
-            if !self.tracks.isEmpty {
-                // Pas besoin d’incrémenter l’index car on a retiré l’élément actuel
-                self.playNextTrack()
-            } else {
-                print("🏁 Fin de la playlist")
-                self.isPlaying = false
+                do {
+                    if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Int] {
+                        self.playMostVotedTrack(votes: json)
+                    } else {
+                        print("❌ Données de vote invalides")
+                    }
+                } catch {
+                    print("❌ Erreur lors du décodage des données de vote: \(error.localizedDescription)")
+                }
             }
+        }.resume()
+    }
+
+    func playMostVotedTrack(votes: [String: Int]) {
+        guard let mostVotedTrackId = votes.max(by: { $0.value < $1.value })?.key else {
+            print("❌ Aucune piste avec des votes trouvée")
+            return
+        }
+
+        if let track = self.tracks.first(where: { $0.uuid == mostVotedTrackId }) {
+            if let previewURL = track.preview { // Vérifier si la preview est disponible
+                self.audioPlayer.playPreview(from: previewURL)
+                print("▶️ Lecture de la piste la plus votée : \(track.title)")
+            } else {
+                print("❌ Aucune URL de preview disponible pour la piste la plus votée")
+            }
+        } else {
+            print("❌ Piste la plus votée non trouvée dans la liste des pistes")
         }
     }
 }

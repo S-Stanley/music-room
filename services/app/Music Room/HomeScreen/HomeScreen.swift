@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-
 struct HomeScreen: View {
     @ObservedObject var homeViewModel = HomeViewModel()
     @State private var showPasswordField = false
@@ -15,7 +14,8 @@ struct HomeScreen: View {
     @State private var selectedSession: Session?
     @State private var passwordErrorMessage = ""
     @State private var isPasswordCorrect = false
-    @State private var navigateToSession = false  // Nouvelle variable d'état pour la navigation
+    @State private var navigateToSession = false
+    @State private var creatorUserId: String = ""
 
     var body: some View {
         NavigationStack {
@@ -24,7 +24,6 @@ struct HomeScreen: View {
                     .font(.title)
                     .padding()
 
-                // Vérification si des sessions actives existent
                 if homeViewModel.activeSessions.isEmpty {
                     Text("No active sessions")
                         .foregroundColor(.gray)
@@ -48,7 +47,18 @@ struct HomeScreen: View {
                                         .padding(.horizontal)
                                 }
                             } else {
-                                NavigationLink(destination: SessionScreen(sessionId: session.id, nameSession: session.name, nameAdmin: "Admin")) {
+                                Button(action: {
+                                    homeViewModel.joinSession(session: session, password: nil) { success, userId in
+                                        if success {
+                                            self.selectedSession = session
+                                            self.navigateToSession = true
+                                            if let userId = userId {
+                                                creatorUserId = userId
+                                            }
+                                        }
+                                        print("Public Session User ID: \(userId ?? "unknown")")
+                                    }
+                                }) {
                                     Text("Join")
                                         .foregroundColor(.blue)
                                         .padding(.horizontal)
@@ -65,7 +75,6 @@ struct HomeScreen: View {
 
                 Spacer()
 
-                // Bouton pour créer une nouvelle session
                 NavigationLink(destination: CreationSessionScreen()) {
                     Text("Create session")
                         .padding(.horizontal, 12)
@@ -84,7 +93,6 @@ struct HomeScreen: View {
                 }
             }
 
-            // Afficher le champ de mot de passe si nécessaire
             .sheet(isPresented: $showPasswordField) {
                 VStack {
                     SecureField("Enter password", text: $password)
@@ -100,12 +108,16 @@ struct HomeScreen: View {
 
                     Button("Join Session") {
                         if let session = selectedSession {
-                            homeViewModel.joinPrivateSession(session: session, password: password) { success in
+                            homeViewModel.joinSession(session: session, password: password) { success, userId in
                                 if success {
                                     self.showPasswordField = false
                                     self.isPasswordCorrect = true
-                                    self.navigateToSession = true  // Active la navigation après un mot de passe correct
+                                    self.navigateToSession = true
+                                    if let userId = userId {
+                                        creatorUserId = userId
+                                    }
                                 }
+                                print("Private Session User ID: \(userId ?? "unknown")")
                             }
                         }
                     }
@@ -117,23 +129,21 @@ struct HomeScreen: View {
                 }
                 .padding()
                 .onDisappear {
-                        // Réinitialisation ici
-                        homeViewModel.passwordErrorMessage = ""
-                        password = ""
+                    homeViewModel.passwordErrorMessage = ""
+                    password = ""
                 }
                 .ignoresSafeArea(.keyboard)
             }
-            
-            // Utilisation de navigationDestination
+
             .navigationDestination(isPresented: $navigateToSession) {
-                // Lier la destination à la session sélectionnée
                 if let session = selectedSession {
-                    SessionScreen(sessionId: session.id, nameSession: session.name, nameAdmin: "Admin")
+                    SessionScreen(sessionId: session.id, nameSession: session.name, creatorUserId: creatorUserId)
                 }
             }
         }
     }
 }
+
 
 
 

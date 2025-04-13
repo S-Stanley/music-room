@@ -13,7 +13,7 @@ struct SessionScreen: View {
     @ObservedObject var audioPlayer = AudioPlayer.shared
     var sessionId: String
     var nameSession: String
-    var nameAdmin: String
+    var creatorUserId: String
 
     @State private var selectedScreen: String = "Playlist"
     @Environment(\.presentationMode) var presentationMode
@@ -26,15 +26,15 @@ struct SessionScreen: View {
                         .font(.title)
                         .fontWeight(.bold)
                         .foregroundColor(.blue)
-                    Text("Admin: \(nameAdmin)")
+                    Text("Creator ID: \(creatorUserId)")
                         .font(.subheadline)
                         .foregroundColor(.gray)
                 }
-                
+
                 Spacer()
-                
+
                 Button(action: {
-                    
+                    // ...
                 }) {
                     Image(systemName: "lock.fill")
                         .foregroundColor(.black)
@@ -42,14 +42,13 @@ struct SessionScreen: View {
                         .padding()
                 }
 
-                
                 NavigationLink(destination: SettingScreen()) {
                     Image(systemName: "gearshape.fill")
                         .foregroundColor(.black)
                         .font(.system(size: 30))
                         .padding()
                 }
-                
+
                 Button(action: {
                     audioPlayer.stop()
                     quitterLaSession()
@@ -60,11 +59,9 @@ struct SessionScreen: View {
                         .padding()
                 }
             }
-            
-            // Barre de navigation
+
             NavigationBar(selectedOption: $selectedScreen, text: "Playlist", text2: "Add music")
                 .padding(.bottom, 5)
-
 
             Spacer()
 

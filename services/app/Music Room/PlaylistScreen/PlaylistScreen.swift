@@ -24,7 +24,12 @@ struct PlaylistScreen: View {
                     LazyVStack(spacing: 5) {
                         ForEach(musicViewModel.tracks.indices, id: \.self) { index in
                             let track = musicViewModel.tracks[index]
-                            TrackRowPlaylist(track: track, onAdd: {})
+                            TrackRowPlaylist(
+                                track: track,
+                                onVote: {
+                                    musicViewModel.voteForTrack(track: track, playlistId: playlistId)
+                                }
+                            )
                         }
 
                     }
@@ -45,8 +50,7 @@ struct PlaylistScreen: View {
 
 struct TrackRowPlaylist: View {
     let track: Track
-    let onAdd: () -> Void
-    
+    let onVote: () -> Void
 
     var body: some View {
         HStack(spacing: 8) {
@@ -73,6 +77,14 @@ struct TrackRowPlaylist: View {
                     .foregroundColor(.secondary)
             }
             Spacer()
+            
+            Button(action: {
+                onVote()
+           }) {
+               Image(systemName: "heart")
+                   .foregroundColor(.red)
+                   .padding(8)
+           }
         }
         .padding()
         .background(Color(.systemBackground))

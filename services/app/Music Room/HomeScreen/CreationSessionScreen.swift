@@ -16,9 +16,9 @@ struct CreationSessionScreen: View {
     @State private var isSessionCreated = false
     @State private var createdSessionId: String = ""
     @State private var createdSessionName: String = ""
-    @State private var createdAdminName: String = "Admin"
-
+    
     let userToken: String = User.load()?.token ?? ""
+    let userId: String = User.load()?.id ?? ""
 
     var body: some View {
         NavigationStack {
@@ -76,7 +76,7 @@ struct CreationSessionScreen: View {
             }
             .padding()
             .navigationDestination(isPresented: $isSessionCreated) {
-                SessionScreen(sessionId: createdSessionId, nameSession: createdSessionName, nameAdmin: createdAdminName) // ✅ On envoie bien l'ID ici
+                SessionScreen(sessionId: createdSessionId, nameSession: createdSessionName, creatorUserId: userId)
             }
         }
     }
