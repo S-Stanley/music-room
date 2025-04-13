@@ -136,6 +136,7 @@ router.get("/", async (req, res) => {
           select: {
             id: true,
             email: true,
+            name: true,
           },
         },
       },

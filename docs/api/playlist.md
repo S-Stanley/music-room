@@ -72,7 +72,7 @@ curl "localhost:5001/playlist/e41fa7e7-05a7-4812-9a8b-446ecbc78b2e/track" -H tok
 Example do not work on default data du to password encryption missing, you gave to create the playlist first with a password and replace playlist_id and password.
 
 ```bash
-curl "localhost:5001/playlist/2a8fd55d-b9f9-4ec9-9398-32a22d97e64c/join" -H token:c055fb5c-7d35-42a8-b4e7-a20a706d999b -d password=123
+curl -X POST "localhost:5001/playlist/2a8fd55d-b9f9-4ec9-9398-32a22d97e64c/join" -H token:c055fb5c-7d35-42a8-b4e7-a20a706d999b -d password=123
 ```
 
 #### Vote for next track [PROTECTED]

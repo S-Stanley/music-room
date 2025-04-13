@@ -7,8 +7,13 @@ export const getPlaylistById = async(playlist_id) => {
     {
       where: { 
         id: playlist_id
+      },
+      include: {
+        user: true,
       }
     }
   );
+  playlist.user.password = undefined;
+  playlist.user.token = undefined;
   return (playlist);
 }
