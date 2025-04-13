@@ -3,12 +3,27 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 export const getAllTrackOfPlaylist = async(playlist_id) => {
-  return await prisma.trackPlaylist.findMany({
+  const tracks = await prisma.trackPlaylist.findMany({
     where: {
       playlistId: playlist_id,
       alreadyPlayed: false,
+    },
+    include: {
+      user: true,
+      playlist: {
+        include: {
+          user: true,
+        },
+      }
     }
   });
+  (tracks ?? []).forEach((track) => {
+    track.user.password = undefined;
+    track.user.token = undefined;
+    track.playlist.user.password = undefined;
+    track.playlist.user.token = undefined;
+  });
+  return (tracks);
 };
 
 export const getTrackDefaultPosition = async (playlist_id) => {
