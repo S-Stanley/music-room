@@ -12,7 +12,15 @@ export const findUserVoteByPlaylistId = async(playlist_id, user_id, track_id) =>
   }) 
 };
 
-export const createUserVote = async(playlist_id, user_id, track_id) => {
+export const createUserVote = async(playlist_id, user_id, track_id, trackVoteCount) => {
+  await prisma.trackPlaylist.update({
+    where: {
+      id: track_id,
+    },
+    data: {
+      voteCount: trackVoteCount + 1,
+    }
+  });
   return await prisma.trackVote.create({
     data: {
       user: {

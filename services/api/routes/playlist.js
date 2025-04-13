@@ -265,13 +265,12 @@ router.post("/:playlist_id/vote/:track_id", async(req, res) => {
       });
     }
     const checkIsUserAlreadyVoted = await findUserVoteByPlaylistId(playlist?.id, user?.id, track?.id);
-    console.log(checkIsUserAlreadyVoted)
     if ((checkIsUserAlreadyVoted ?? []).length > 0){
       return res.status(400).json({
         error: "User already voted"
       });
     }
-    const newVote = await createUserVote(playlist?.id, user?.id, track?.id);
+    const newVote = await createUserVote(playlist?.id, user?.id, track?.id, track?.voteCount);
     return res.status(201).json(newVote);
   } catch (e) {
     console.error(e);

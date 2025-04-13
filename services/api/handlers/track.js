@@ -8,6 +8,9 @@ export const getAllTrackOfPlaylist = async(playlist_id) => {
       playlistId: playlist_id,
       alreadyPlayed: false,
     },
+    orderBy: {
+      voteCount: "asc",
+    },
     include: {
       user: true,
       playlist: {
