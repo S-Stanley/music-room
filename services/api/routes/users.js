@@ -104,6 +104,7 @@ router.post("/email/signin", async(req, res) => {
       id: user?.id,
       email: user?.email,
       token: token,
+      name: user?.name,
     });
   } catch (e) {
     console.error(e);
@@ -116,7 +117,6 @@ router.post("/email/signin", async(req, res) => {
 router.post("/email/signup", async(req, res) => {
   console.info("User trying to login with email");
   try {
-    console.log(req.body)
     if (!req.body?.email){
       return res.status(400).json({
         error: "Missing argument: email"
@@ -137,6 +137,11 @@ router.post("/email/signup", async(req, res) => {
         error: "User already exist"
       })
     }
+    if (!req.body.email.indexOf("@") < 0){
+      return res.status(400).json({
+        error: "Email is not in the right format"
+      });
+    }
     const token = uuidv4();
     const hashedPassword = await bcrypt.hash(req.body.password, 7);
     const userToCreate = await prisma.user.create({
@@ -144,12 +149,14 @@ router.post("/email/signup", async(req, res) => {
         email: req.body.email,
         password: hashedPassword,
         token: token,
+        name: req.body.email.split("@")[0]
       }
     });
     return res.status(201).json({
       id: userToCreate?.id,
       email: userToCreate?.email,
       token: userToCreate?.token,
+      name: userToCreate?.name,
     });
   } catch (e) {
     console.error(e);
