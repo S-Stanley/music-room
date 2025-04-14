@@ -55,10 +55,15 @@ struct Track: Codable {
     let album: Album
     let artist: Artist
     var uuid: String?
+    var voteCount: Int?
 
     enum CodingKeys: String, CodingKey {
-        case id, title, link, duration, rank, preview, album, artist, uuid
+        case id, title, link, duration, rank, preview, album, artist, uuid, voteCount
     }
+}
+
+struct PlaylistTracks: Codable {
+    var searchedTracks: [Track] = []
 }
 
 struct PlaylistTrack: Codable, Identifiable {
@@ -72,13 +77,28 @@ struct PlaylistTrack: Codable, Identifiable {
     let position: Int
     let createdAt: String
     let updatedAt: String
+    let votes: Int? // OK de garder optionnel
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case trackId
+        case trackTitle
+        case trackPreview
+        case albumCover
+        case userId
+        case playlistId
+        case position
+        case createdAt
+        case updatedAt
+        case votes = "voteCount" // ⬅️ ICI la correction magique
+    }
 }
+
 
 class MusicViewModel: ObservableObject {
     @Published var tracks: [Track] = []
     @Published var errorMessage: String?
     @Published var searchedTracks: [Track] = []
-    @Published var playlistTracks: Set<String> = []
     
     private var currentTrackIndex: Int = 0
     private var audioPlayer = AudioPlayer.shared
@@ -244,7 +264,8 @@ class MusicViewModel: ObservableObject {
                                         preview: "",
                                         album: Album(id: 0, title: "", cover: "", coverSmall: "", coverMedium: "", coverBig: "", coverXL: "", tracklist: ""),
                                         artist: Artist(id: 0, name: "", link: "", picture: "", pictureSmall: "", pictureMedium: "", pictureBig: "", pictureXL: ""),
-                                        uuid: uuid
+                                        uuid: uuid,
+                                        voteCount: 0
                                     )
                                     self.tracks.append(newTrack)
                                     print("✅ Nouveau morceau ajouté : \(newTrack.title) avec UUID : \(uuid)")
@@ -265,184 +286,4 @@ class MusicViewModel: ObservableObject {
                 }
             }.resume()
         }
-
-
-
-    func fetchTracksForPlaylist(playlistId: String, completion: @escaping (Bool, String?) -> Void) {
-            guard let user = User.load() else {
-                completion(false, "Utilisateur non authentifié")
-                return
-            }
-
-            guard let url = URL(string: "http://localhost:5001/playlist/\(playlistId)/track") else {
-                completion(false, "URL invalide")
-                return
-            }
-
-            var request = URLRequest(url: url)
-            request.httpMethod = "GET"
-            request.setValue(user.token, forHTTPHeaderField: "token")
-
-            URLSession.shared.dataTask(with: request) { data, response, error in
-                DispatchQueue.main.async {
-                    if let error = error {
-                        print("❌ Erreur de requête: \(error.localizedDescription)")
-                        completion(false, "Erreur: \(error.localizedDescription)")
-                        return
-                    }
-
-                    guard let httpResponse = response as? HTTPURLResponse, let data = data else {
-                        print("❌ Réponse invalide du serveur")
-                        completion(false, "Réponse invalide du serveur")
-                        return
-                    }
-
-                    if httpResponse.statusCode == 200 {
-                        do {
-                            let playlistTracks = try JSONDecoder().decode([PlaylistTrack].self, from: data)
-                            self.tracks = playlistTracks.map {
-                                Track(
-                                    id: Int($0.trackId) ?? 0,
-                                    title: $0.trackTitle,
-                                    link: "",
-                                    duration: 0,
-                                    rank: 0,
-                                    preview: $0.trackPreview,
-                                    album: Album(id: 0, title: "", cover: $0.albumCover, coverSmall: $0.albumCover, coverMedium: $0.albumCover, coverBig: $0.albumCover, coverXL: $0.albumCover, tracklist: ""),
-                                    artist: Artist(id: 0, name: "", link: "", picture: "", pictureSmall: "", pictureMedium: "", pictureBig: "", pictureXL: ""),
-                                    uuid: $0.id
-                                )
-                            }
-
-                            self.playlistTracks = Set(playlistTracks.map { $0.trackId })
-                            self.currentTrackIndex = 0
-                            
-                            for track in playlistTracks {
-                                self.associatedUUIDs[track.trackId] = track.trackId
-                            }
-
-                            completion(true, nil)
-                        } catch {
-                            print("❌ Erreur de décodage JSON: \(error.localizedDescription)")
-                            completion(false, "Erreur de décodage JSON")
-                        }
-                    } else {
-                        print("❌ Erreur serveur: \(httpResponse.statusCode)")
-                        completion(false, "Erreur serveur (\(httpResponse.statusCode))")
-                    }
-                }
-            }.resume()
-        }
-    
-    func voteForTrack(track: Track, playlistId: String) {
-            guard let uuid = track.uuid else {
-                print("❌ Pas d’UUID pour ce morceau : \(track.title)")
-                return
-            }
-        
-            print("\(uuid)")
-            print("\(playlistId)")
-
-            guard let url = URL(string: "http://localhost:5001/playlist/\(playlistId)/vote/\(uuid)") else {
-                print("❌ URL invalide")
-                return
-            }
-
-            var request = URLRequest(url: url)
-            request.httpMethod = "POST"
-
-            if let user = User.load() {
-                request.setValue(user.token, forHTTPHeaderField: "token")
-            } else {
-                print("❌ Utilisateur non authentifié")
-                return
-            }
-
-            URLSession.shared.dataTask(with: request) { data, response, error in
-                DispatchQueue.main.async {
-                    if let error = error {
-                        print("❌ Erreur vote: \(error.localizedDescription)")
-                        return
-                    }
-
-                    if let httpResponse = response as? HTTPURLResponse {
-                        switch httpResponse.statusCode {
-                        case 201:
-                            self.fetchAndPlayMostVotedTrack(playlistId: playlistId)
-                            print("✅ Vote enregistré pour \(track.title)")
-                        case 400:
-                            print("❌ Mauvaise requête : déjà voté ou données invalides")
-                        case 401:
-                            print("❌ Non autorisé")
-                        default:
-                            print("❌ Erreur serveur: \(httpResponse.statusCode)")
-                        }
-                    }
-
-                    if let data = data,
-                       let responseString = String(data: data, encoding: .utf8) {
-                        print("Réponse : \(responseString)")
-                    }
-                }
-            }.resume()
-        }
-    
-    func fetchAndPlayMostVotedTrack(playlistId: String) {
-        guard let url = URL(string: "http://localhost:5001/playlist/\(playlistId)/votes") else {
-            print("❌ URL invalide pour récupérer les votes")
-            return
-        }
-
-        var request = URLRequest(url: url)
-        request.httpMethod = "GET"
-
-        if let user = User.load() {
-            request.setValue(user.token, forHTTPHeaderField: "token")
-        } else {
-            print("❌ Utilisateur non authentifié")
-            return
-        }
-
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            DispatchQueue.main.async {
-                if let error = error {
-                    print("❌ Erreur lors de la récupération des votes: \(error.localizedDescription)")
-                    return
-                }
-
-                guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200, let data = data else {
-                    print("❌ Réponse invalide lors de la récupération des votes")
-                    return
-                }
-
-                do {
-                    if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Int] {
-                        self.playMostVotedTrack(votes: json)
-                    } else {
-                        print("❌ Données de vote invalides")
-                    }
-                } catch {
-                    print("❌ Erreur lors du décodage des données de vote: \(error.localizedDescription)")
-                }
-            }
-        }.resume()
-    }
-
-    func playMostVotedTrack(votes: [String: Int]) {
-        guard let mostVotedTrackId = votes.max(by: { $0.value < $1.value })?.key else {
-            print("❌ Aucune piste avec des votes trouvée")
-            return
-        }
-
-        if let track = self.tracks.first(where: { $0.uuid == mostVotedTrackId }) {
-            if let previewURL = track.preview { // Vérifier si la preview est disponible
-                self.audioPlayer.playPreview(from: previewURL)
-                print("▶️ Lecture de la piste la plus votée : \(track.title)")
-            } else {
-                print("❌ Aucune URL de preview disponible pour la piste la plus votée")
-            }
-        } else {
-            print("❌ Piste la plus votée non trouvée dans la liste des pistes")
-        }
-    }
 }

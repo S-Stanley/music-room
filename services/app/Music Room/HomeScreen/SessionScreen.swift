@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct SessionScreen: View {
+    @StateObject var playlistViewModel = PlaylistViewModel()
     @StateObject var musicViewModel = MusicViewModel()
     @StateObject var homeViewModel = HomeViewModel()
     @ObservedObject var audioPlayer = AudioPlayer.shared
@@ -67,9 +68,9 @@ struct SessionScreen: View {
 
             switch selectedScreen {
             case "Playlist":
-                PlaylistScreen(musicViewModel: musicViewModel, playlistId: sessionId)
+                PlaylistScreen(playlistViewModel: playlistViewModel, playlistId: sessionId)
             case "Add music":
-                MusicScreen(musicViewModel: musicViewModel, playlistId: sessionId)
+                MusicScreen(playlistViewModel: playlistViewModel, musicViewModel: musicViewModel, playlistId: sessionId)
             default:
                 Text("Unknown action")
                     .font(.title2)

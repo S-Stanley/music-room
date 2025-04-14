@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct MusicScreen: View {
+    @ObservedObject var playlistViewModel: PlaylistViewModel
     @ObservedObject var musicViewModel: MusicViewModel
     @State private var searchQuery: String = ""
     var playlistId: String?
@@ -23,13 +24,13 @@ struct MusicScreen: View {
                     ForEach(
                         (searchQuery.isEmpty ? musicViewModel.tracks : musicViewModel.searchedTracks)
                             .filter { track in
-                                searchQuery.isEmpty ? !musicViewModel.playlistTracks.contains(String(track.id)) : true
+                                searchQuery.isEmpty ? !playlistViewModel.playlistTracks.contains(String(track.id)) : true
                             },
                         id: \.id
                     ) { track in
                         TrackRow(
                             track: track,
-                            isAlreadyAdded: musicViewModel.playlistTracks.contains(String(track.id)),
+                            isAlreadyAdded: playlistViewModel.playlistTracks.contains(String(track.id)),
                             onAdd: {
                                 if let playlistId = playlistId {
                                     musicViewModel.addMusicToPlaylist(playlistId: playlistId, trackId: String(track.id))
@@ -54,20 +55,9 @@ struct MusicScreen: View {
                 musicViewModel.searchMusic(query: newQuery)
             }
         }
-        .onAppear {
-            if let playlistId = playlistId {
-                musicViewModel.fetchTracksForPlaylist(playlistId: playlistId) { success, error in
-                    if !success {
-                        print("Erreur lors du chargement des musiques de la playlist: \(error ?? "Inconnue")")
-                    }
-                }
-            }
-        }
         .edgesIgnoringSafeArea(.bottom)
     }
 }
-
-
 
 struct SearchBar: View {
     @Binding var text: String
@@ -85,18 +75,6 @@ struct SearchBar: View {
             .padding()
             .background(Color(.systemGray6))
             .cornerRadius(10)
-            .padding(.horizontal)
-
-            Button(action: onSearch) {
-                Text("Rechercher")
-                    .font(.headline)
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(10)
-                    .shadow(radius: 4)
-            }
             .padding(.horizontal)
         }
     }

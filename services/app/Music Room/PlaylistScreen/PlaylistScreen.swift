@@ -8,12 +8,12 @@
 import SwiftUI
 
 struct PlaylistScreen: View {
-    @ObservedObject var musicViewModel: MusicViewModel
+    @ObservedObject var playlistViewModel: PlaylistViewModel
     var playlistId: String
 
     var body: some View {
         VStack {
-            if musicViewModel.tracks.isEmpty {
+            if playlistViewModel.tracks.isEmpty {
                
                 Text("Aucune musique dans cette playlist.")
                     .foregroundColor(.gray)
@@ -22,12 +22,12 @@ struct PlaylistScreen: View {
             } else {
                 ScrollView {
                     LazyVStack(spacing: 5) {
-                        ForEach(musicViewModel.tracks.indices, id: \.self) { index in
-                            let track = musicViewModel.tracks[index]
+                        ForEach(playlistViewModel.tracks.indices, id: \.self) { index in
+                            let track = playlistViewModel.tracks[index]
                             TrackRowPlaylist(
                                 track: track,
                                 onVote: {
-                                    musicViewModel.voteForTrack(track: track, playlistId: playlistId)
+                                    playlistViewModel.voteForTrack(track: track, playlistId: playlistId)
                                 }
                             )
                         }
@@ -39,7 +39,7 @@ struct PlaylistScreen: View {
         }
         .onAppear {
             // Assure-toi que la playlist est bien récupérée
-            musicViewModel.fetchTracksForPlaylist(playlistId: playlistId) { success, error in
+            playlistViewModel.fetchTracksForPlaylist(playlistId: playlistId) { success, error in
                 if !success {
                     print("Erreur lors du chargement des musiques: \(error ?? "Inconnue")")
                 }
@@ -84,6 +84,9 @@ struct TrackRowPlaylist: View {
                Image(systemName: "heart")
                    .foregroundColor(.red)
                    .padding(8)
+               Text("\(track.voteCount ?? 0)") // Affichage du nombre de votes
+                   .font(.caption)
+                   .foregroundColor(.secondary)
            }
         }
         .padding()
