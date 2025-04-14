@@ -18,6 +18,9 @@ import {
   findUserVoteByPlaylistId,
   createUserVote,
 } from "../handlers/votes.js";
+import {
+  createInvitation,
+} from "../handlers/invitations.js";
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -272,6 +275,37 @@ router.post("/:playlist_id/vote/:track_id", async(req, res) => {
     }
     const newVote = await createUserVote(playlist?.id, user?.id, track?.id, track?.voteCount);
     return res.status(201).json(newVote);
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({
+      error: "Server error"
+    });
+  }
+});
+
+router.post("/:playlist_id/invitations", async(req, res) => {
+  try {
+    const { playlist_id } = req.params;
+    const { userId } = req.body;
+    if (!playlist_id || !userId){
+      return res.status(400).json({
+        error: "Missing argument playlist id or user id"
+      });
+    }
+    const playlist = await getPlaylistById(playlist_id);
+    if (!playlist){
+      return res.status(400).json({
+        error: "Unknow playlist"
+      });
+    }
+    const userToInvite = await findUserById(userId);
+    if (!userToInvite){
+      return res.status(400).json({
+        error: "Unknow user"
+      });
+    }
+    const invitation = await createInvitation(playlist_id, res?.locals?.user?.id, userId);
+    return res.status(201).json(invitation);
   } catch (e) {
     console.error(e);
     return res.status(500).json({
