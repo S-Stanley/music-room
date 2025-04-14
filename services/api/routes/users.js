@@ -3,6 +3,10 @@ import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import { validate as uuidValidate, v4 as uuidv4 } from 'uuid';
 
+import {
+  getAllInvitationsOfUser,
+} from "../handlers/invitations.js";
+
 const router = express.Router();
 const prisma = new PrismaClient();
 
@@ -31,6 +35,18 @@ router.post("/info", async(req, res) => {
       error: "Server error"
     });
 	}
+});
+
+router.get("/invitations", async(req, res) => {
+  try {
+    const allInvitations = await getAllInvitationsOfUser(res?.locals?.user?.id);
+    res.status(200).json(allInvitations);
+  } catch (e){
+    console.error(e);
+    return res.status(500).json({
+      error: "Server error"
+    });
+  }
 });
 
 router.get("/:user_id", async(req, res) => {
