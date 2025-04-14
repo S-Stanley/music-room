@@ -11,6 +11,7 @@ struct User: Codable {
     let id: String
     var email: String
     let token: String
+    let name: String
 
     func save() {
         if let encoded = try? JSONEncoder().encode(self) {
@@ -26,4 +27,3 @@ struct User: Codable {
         return nil
     }
 }
-

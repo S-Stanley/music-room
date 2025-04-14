@@ -48,26 +48,28 @@ class AuthViewModel: ObservableObject {
                 }
 
                 switch httpResponse.statusCode {
-                    case 200:
-                        if let data = data {
-                            do {
-                                let response = try JSONDecoder().decode(SignInResponse.self, from: data)
-                                if let id = response.id, let email = response.email, let token = response.token {
-                                    let user = User(id: id, email: email, token: token)
-                                    user.save()
-                                    
-                                    print("✅ Utilisateur enregistré :", email)
-                                    
-                                    DispatchQueue.main.async {
-                                        self.isAuthenticated = true
-                                        self.email = email
-                                    }
+                case 200:
+                    if let data = data {
+                        do {
+                            let response = try JSONDecoder().decode(SignInResponse.self, from: data)
+                            if let id = response.id, let email = response.email, let token = response.token, let name = response.name { // Récupérer le nom
+                                let user = User(id: id, email: email, token: token, name: name) // Inclure le nom
+                                user.save()
+
+                                print("✅ Utilisateur enregistré :", email)
+
+                                DispatchQueue.main.async {
+                                    self.isAuthenticated = true
+                                    self.email = email
                                 }
-                            } catch {
-                                self.errorMessage = "Erreur lors du décodage de la réponse"
-                                print("❌ Erreur de décodage: \(error.localizedDescription)")
+                            } else {
+                                self.errorMessage = "Réponse incomplète du serveur"
                             }
+                        } catch {
+                            self.errorMessage = "Erreur lors du décodage de la réponse"
+                            print("❌ Erreur de décodage: \(error.localizedDescription)")
                         }
+                    }
                 case 400:
                     self.errorMessage = "Email ou mot de passe invalide"
                 default:
@@ -105,35 +107,34 @@ class AuthViewModel: ObservableObject {
                 }
 
                 switch httpResponse.statusCode {
-                    case 201:
-                        print("Inscription réussie ✅")
-                        self.isAuthenticated = true
+                case 201:
+                    print("Inscription réussie ✅")
+                    self.isAuthenticated = true
 
-                        if let data = data {
-                            let decoder = JSONDecoder()
-                            do {
-                                let response = try decoder.decode(SignInResponse.self, from: data)
-                                // Vérifiez si le token est bien présent
-                                if let token = response.token {
-                                    UserDefaults.standard.set(response.email, forKey: "user_email")
-                                    UserDefaults.standard.set(token, forKey: "auth_token")
-                                    UserDefaults.standard.set(response.id, forKey: "user_id")
-                                    self.email = response.email ?? "Email non trouvé"
-                                    self.loadUserInfo()
-                                } else {
-                                    self.errorMessage = "Le token est manquant dans la réponse."
-                                }
-                            } catch {
-                                self.errorMessage = "Erreur lors du décodage de la réponse"
-                                print("Erreur de décodage: \(error.localizedDescription)")
+                    if let data = data {
+                        let decoder = JSONDecoder()
+                        do {
+                            let response = try decoder.decode(SignInResponse.self, from: data)
+                            if let token = response.token, let id = response.id, let email = response.email, let name = response.name { // Récupérer le nom
+                                let user = User(id: id, email: email, token: token, name: name) // Inclure le nom
+                                user.save()
+
+                                self.email = response.email ?? "Email non trouvé"
+                                self.loadUserInfo()
+                            } else {
+                                self.errorMessage = "Le token ou le nom est manquant dans la réponse."
                             }
+                        } catch {
+                            self.errorMessage = "Erreur lors du décodage de la réponse"
+                            print("Erreur de décodage: \(error.localizedDescription)")
                         }
-                    case 400:
-                        self.errorMessage = "Cet email est déjà utilisé ❌"
-                    case 500:
-                        self.errorMessage = "Erreur serveur. Veuillez réessayer plus tard."
-                    default:
-                        self.errorMessage = "Erreur inconnue (\(httpResponse.statusCode))"
+                    }
+                case 400:
+                    self.errorMessage = "Cet email est déjà utilisé ❌"
+                case 500:
+                    self.errorMessage = "Erreur serveur. Veuillez réessayer plus tard."
+                default:
+                    self.errorMessage = "Erreur inconnue (\(httpResponse.statusCode))"
                 }
             }
         }.resume()
@@ -144,5 +145,6 @@ struct SignInResponse: Codable {
     let id: String?
     let email: String?
     let token: String?
+    let name: String?
     let error: String?
 }

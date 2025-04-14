@@ -77,16 +77,16 @@ class HomeViewModel: ObservableObject {
             completion(false, "Utilisateur non authentifié")
             return
         }
-        
+
         guard let url = URL(string: "http://localhost:5001/playlist/?take=50&skip=0") else {
             completion(false, "URL invalide")
             return
         }
-        
+
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.setValue(user.token, forHTTPHeaderField: "token")
-        
+
         URLSession.shared.dataTask(with: request) { data, response, error in
             DispatchQueue.main.async {
                 if let error = error {
@@ -94,27 +94,26 @@ class HomeViewModel: ObservableObject {
                     completion(false, "Erreur: \(error.localizedDescription)")
                     return
                 }
-                
+
                 guard let httpResponse = response as? HTTPURLResponse, let data = data else {
                     print("❌ Réponse invalide du serveur")
                     completion(false, "Réponse invalide du serveur")
                     return
                 }
-                
+
                 print("✅ Statut HTTP: \(httpResponse.statusCode)")
                 print("📥 Réponse JSON brute: \(String(data: data, encoding: .utf8) ?? "Aucune donnée")")
-                
+
                 if httpResponse.statusCode == 200 {
                     do {
                         let sessions = try JSONDecoder().decode([Session].self, from: data)
                         self.activeSessions = sessions
-                        
-                        // ✅ Sélection automatique d'une session si `selectedPlaylistId` est nil
+
                         if self.selectedPlaylistId == nil, let firstSession = sessions.first {
                             self.selectedPlaylistId = firstSession.id
                             print("✅ Session sélectionnée automatiquement: \(self.selectedPlaylistId!)")
                         }
-                        
+
                         completion(true, nil)
                     } catch {
                         print("❌ Erreur de décodage JSON: \(error.localizedDescription)")
@@ -197,7 +196,7 @@ class HomeViewModel: ObservableObject {
                     if let data = data {
                         do {
                             let response = try JSONDecoder().decode(JoinSessionResponse.self, from: data)
-                            completion(true, response.userId) // Renvoyer userId
+                            completion(true, response.user.name)
                         } catch {
                             print("❌ Erreur de décodage JSON :", error)
                             completion(true, nil) // Renvoyer nil pour userId en cas d'erreur de décodage
@@ -231,6 +230,15 @@ struct JoinSessionResponse: Codable {
     let userId: String
     let createdAt: String
     let updatedAt: String
+    let user: UserInfo // 👈 Ajoute ça
+
+        struct UserInfo: Codable {
+            let id: String
+            let email: String
+            let name: String
+            let createdAt: String
+            let updatedAt: String
+        }
 }
 
 struct Session: Identifiable, Decodable {
@@ -238,4 +246,5 @@ struct Session: Identifiable, Decodable {
     let name: String
     let type: String
     let password: String?
+    let creatorUserName: String?
 }

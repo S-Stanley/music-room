@@ -74,7 +74,6 @@ struct PlaylistTrack: Codable, Identifiable {
     let updatedAt: String
 }
 
-
 class MusicViewModel: ObservableObject {
     @Published var tracks: [Track] = []
     @Published var errorMessage: String?

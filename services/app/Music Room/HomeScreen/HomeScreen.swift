@@ -15,7 +15,7 @@ struct HomeScreen: View {
     @State private var passwordErrorMessage = ""
     @State private var isPasswordCorrect = false
     @State private var navigateToSession = false
-    @State private var creatorUserId: String = ""
+    @State private var sessionCreatorName: String = "unknown"
 
     var body: some View {
         NavigationStack {
@@ -48,15 +48,12 @@ struct HomeScreen: View {
                                 }
                             } else {
                                 Button(action: {
-                                    homeViewModel.joinSession(session: session, password: nil) { success, userId in
+                                    homeViewModel.joinSession(session: session, password: nil) { success, userName in
                                         if success {
                                             self.selectedSession = session
+                                            self.sessionCreatorName = userName ?? "unknown"
                                             self.navigateToSession = true
-                                            if let userId = userId {
-                                                creatorUserId = userId
-                                            }
                                         }
-                                        print("Public Session User ID: \(userId ?? "unknown")")
                                     }
                                 }) {
                                     Text("Join")
@@ -113,9 +110,6 @@ struct HomeScreen: View {
                                     self.showPasswordField = false
                                     self.isPasswordCorrect = true
                                     self.navigateToSession = true
-                                    if let userId = userId {
-                                        creatorUserId = userId
-                                    }
                                 }
                                 print("Private Session User ID: \(userId ?? "unknown")")
                             }
@@ -137,15 +131,12 @@ struct HomeScreen: View {
 
             .navigationDestination(isPresented: $navigateToSession) {
                 if let session = selectedSession {
-                    SessionScreen(sessionId: session.id, nameSession: session.name, creatorUserId: creatorUserId)
+                    SessionScreen(sessionId: session.id, nameSession: session.name, creatorUserName: sessionCreatorName)
                 }
             }
         }
     }
 }
-
-
-
 
 #Preview {
     HomeScreen()

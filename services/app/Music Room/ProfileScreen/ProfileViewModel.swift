@@ -63,7 +63,7 @@ class ProfileViewModel: ObservableObject {
                         self.email = newEmail // Mettre à jour l'interface utilisateur
                         
                         // Sauvegarde les nouvelles infos de l'utilisateur
-                        let updatedUser = User(id: user.id, email: newEmail, token: user.token)
+                    let updatedUser = User(id: user.id, email: newEmail, token: user.token, name: user.name)
                         updatedUser.save()
                     
                     case 400:
@@ -116,7 +116,7 @@ class ProfileViewModel: ObservableObject {
                         self.password = newPassword
                         
                         // Sauvegarde les nouvelles infos de l'utilisateur (même si ici c'est juste le mot de passe)
-                        let updatedUser = User(id: user.id, email: user.email, token: user.token)
+                    let updatedUser = User(id: user.id, email: user.email, token: user.token, name: user.name)
                         updatedUser.save()
                     
                     case 400:

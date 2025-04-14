@@ -13,7 +13,7 @@ struct SessionScreen: View {
     @ObservedObject var audioPlayer = AudioPlayer.shared
     var sessionId: String
     var nameSession: String
-    var creatorUserId: String
+    var creatorUserName: String
 
     @State private var selectedScreen: String = "Playlist"
     @Environment(\.presentationMode) var presentationMode
@@ -26,7 +26,7 @@ struct SessionScreen: View {
                         .font(.title)
                         .fontWeight(.bold)
                         .foregroundColor(.blue)
-                    Text("Creator ID: \(creatorUserId)")
+                    Text("Creator ID: \(creatorUserName)")
                         .font(.subheadline)
                         .foregroundColor(.gray)
                 }
