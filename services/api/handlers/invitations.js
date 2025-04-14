@@ -23,3 +23,23 @@ export const createInvitation = async(playlist_id, invitedByUserId, invitedUserI
     }
   });
 };
+
+export const getAllInvitationsOfUser = async(user_id) => {
+  const allInvitation = await prisma.invitation.findMany({
+    where: {
+      invitedUserId: user_id,
+    },
+    include: {
+      invitedUser: true,
+      invitedBy: true,
+      playlist: true,
+    },
+  });
+  allInvitation.forEach((invitation) => {
+    invitation.invitedBy.password = undefined;
+    invitation.invitedBy.token = undefined;
+    invitation.invitedUser.password = undefined;
+    invitation.invitedUser.token = undefined;
+  });
+  return (allInvitation);
+};
