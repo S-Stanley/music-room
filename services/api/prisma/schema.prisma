@@ -22,6 +22,8 @@ model User {
   playlists     Playlist[]
   trackPlaylist TrackPlaylist[]
   votes         TrackVote[]
+  invitSent     Invitation[] @relation("InvitSent")
+  invitReceived Invitation[] @relation("InviteReceived")
   createdAt     DateTime    @default(now()) @map("created_at")
   updatedAt     DateTime    @default(now()) @map("updated_at")
 }
@@ -40,6 +42,7 @@ model Playlist {
   userId        String      @map("user_id") @db.Uuid
   tracks        TrackPlaylist[]
   votes         TrackVote[]
+  invitations   Invitation[]
   createdAt     DateTime    @default(now()) @map("created_at")
   updatedAt     DateTime    @default(now()) @map("updated_at") 
 }
@@ -72,4 +75,16 @@ model TrackVote {
   trackId       String      @map("track_id") @db.Uuid
   createdAt     DateTime    @default(now()) @map("created_at")
   updatedAt     DateTime    @default(now()) @map("updated_at") 
+}
+
+model Invitation { 
+  id            String      @id @default(uuid()) @db.Uuid
+  playlist      Playlist    @relation(fields: [playlistId], references: [id])
+  playlistId    String      @map("playlist_id") @db.Uuid
+  invitedBy     User        @relation("InvitSent", fields: [invitedById], references: [id])
+  invitedById   String      @map("invited_by_id") @db.Uuid
+  invitedUser   User        @relation("InviteReceived", fields: [invitedUserId], references: [id])
+  invitedUserId String      @map("invited_USER_ID") @db.Uuid
+  createdAt     DateTime    @default(now()) @map("created_at")
+  updatedAt     DateTime    @default(now()) @map("updated_at")
 }
