@@ -11,10 +11,11 @@ struct PlaylistScreen: View {
     @ObservedObject var playlistViewModel: PlaylistViewModel
     var playlistId: String
 
+    @State private var timer: Timer? = nil
+
     var body: some View {
         VStack {
             if playlistViewModel.tracks.isEmpty {
-               
                 Text("Aucune musique dans cette playlist.")
                     .foregroundColor(.gray)
                     .padding()
@@ -31,22 +32,38 @@ struct PlaylistScreen: View {
                                 }
                             )
                         }
-
                     }
                     .padding(.horizontal)
                 }
             }
         }
         .onAppear {
-            // Assure-toi que la playlist est bien récupérée
+            // Appel initial
             playlistViewModel.fetchTracksForPlaylist(playlistId: playlistId) { success, error in
                 if !success {
                     print("Erreur lors du chargement des musiques: \(error ?? "Inconnue")")
                 }
             }
+
+            // Déclenche un timer toutes les 5 secondes
+            timer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { _ in
+                playlistViewModel.fetchTracksForPlaylist(playlistId: playlistId) { success, error in
+                    if !success {
+                        print("🔁 Erreur lors du refresh: \(error ?? "Inconnue")")
+                    } else {
+                        print("🔁 Playlist mise à jour automatiquement")
+                    }
+                }
+            }
+        }
+        .onDisappear {
+            // Nettoyage du timer quand la vue disparaît
+            timer?.invalidate()
+            timer = nil
         }
     }
 }
+
 
 struct TrackRowPlaylist: View {
     let track: Track

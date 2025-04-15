@@ -8,17 +8,25 @@
 import SwiftUI
 
 struct SessionScreen: View {
-    @StateObject var playlistViewModel = PlaylistViewModel()
     @StateObject var musicViewModel = MusicViewModel()
     @StateObject var homeViewModel = HomeViewModel()
     @ObservedObject var audioPlayer = AudioPlayer.shared
+    @StateObject var playlistViewModel: PlaylistViewModel
     var sessionId: String
     var nameSession: String
     var creatorUserName: String
 
+    @State private var hasStartedPlayback = false
     @State private var selectedScreen: String = "Playlist"
     @Environment(\.presentationMode) var presentationMode
 
+    init(sessionId: String, nameSession: String, creatorUserName: String) {
+            self.sessionId = sessionId
+            self.nameSession = nameSession
+            self.creatorUserName = creatorUserName
+            _playlistViewModel = StateObject(wrappedValue: PlaylistViewModel(playlistId: sessionId))
+    }
+    
     var body: some View {
         VStack {
             HStack {
@@ -34,9 +42,7 @@ struct SessionScreen: View {
 
                 Spacer()
 
-                Button(action: {
-                    // ...
-                }) {
+                Button(action: {}) {
                     Image(systemName: "lock.fill")
                         .foregroundColor(.black)
                         .font(.system(size: 30))
@@ -61,20 +67,22 @@ struct SessionScreen: View {
                 }
             }
 
+            // 🧭 Navigation
             NavigationBar(selectedOption: $selectedScreen, text: "Playlist", text2: "Add music")
                 .padding(.bottom, 5)
 
             Spacer()
 
+            // 🎵 Affichage de l'écran
             switch selectedScreen {
-            case "Playlist":
-                PlaylistScreen(playlistViewModel: playlistViewModel, playlistId: sessionId)
-            case "Add music":
-                MusicScreen(playlistViewModel: playlistViewModel, musicViewModel: musicViewModel, playlistId: sessionId)
-            default:
-                Text("Unknown action")
-                    .font(.title2)
-                    .foregroundColor(.red)
+                case "Playlist":
+                    PlaylistScreen(playlistViewModel: playlistViewModel, playlistId: sessionId) // Passez l'instance existante
+                case "Add music":
+                    MusicScreen(playlistViewModel: playlistViewModel, musicViewModel: musicViewModel, playlistId: sessionId) // Passez l'instance existante
+                default:
+                    Text("Unknown action")
+                        .font(.title2)
+                        .foregroundColor(.red)
             }
         }
         .padding()

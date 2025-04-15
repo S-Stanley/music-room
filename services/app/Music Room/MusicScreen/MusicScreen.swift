@@ -59,6 +59,7 @@ struct MusicScreen: View {
     }
 }
 
+
 struct SearchBar: View {
     @Binding var text: String
     var onSearch: () -> Void

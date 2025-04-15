@@ -12,6 +12,15 @@ class PlaylistViewModel: ObservableObject {
     @Published var playlistTracks: Set<String> = []
     private var currentTrackIndex: Int = 0
     var associatedUUIDs: [String: String] = [:]
+    @Published var errorMessage: String?
+    private var isPlaying = false
+    private var audioPlayer = AudioPlayer.shared
+    private var hasStartedPlaying = false
+    var playlistId: String
+    
+    init(playlistId: String) {
+            self.playlistId = playlistId
+        }
     
     func fetchTracksForPlaylist(playlistId: String, completion: @escaping (Bool, String?) -> Void) {
         guard let user = User.load() else {
@@ -70,13 +79,15 @@ class PlaylistViewModel: ObservableObject {
                         }
 
                         self.playlistTracks = Set(playlistTracks.map { $0.trackId })
-                        self.currentTrackIndex = 0
 
                         for track in playlistTracks {
-                            self.associatedUUIDs[track.trackId] = track.trackId
+                            self.associatedUUIDs[track.trackId] = track.id
                         }
-
+                        
+                        print("Contenu de associatedUUIDs après fetchTracksForPlaylist : \(self.associatedUUIDs)")
+                    
                         completion(true, nil)
+                        self.startAutomaticPlaybackIfNeeded()
                     } catch {
                         print("❌ Erreur de décodage JSON: \(error.localizedDescription)")
                         completion(false, "Erreur de décodage JSON")
@@ -121,15 +132,7 @@ class PlaylistViewModel: ObservableObject {
                     switch httpResponse.statusCode {
                     case 201:
                         print("✅ Vote enregistré pour \(track.title)")
-                        // Mettre à jour localement le nombre de votes
-                        if let index = self.tracks.firstIndex(where: { $0.uuid == track.uuid }) {
-                            if self.tracks[index].voteCount == nil {
-                                self.tracks[index].voteCount = 1
-                            } else {
-                                self.tracks[index].voteCount! += 1
-                            }
-                        }
-                        // Mettre à jour les pistes de la playlist
+                        self.hasStartedPlaying = true
                         self.fetchTracksForPlaylist(playlistId: playlistId) { success, error in
                             if success {
                                 print("✅ Pistes de la playlist mises à jour après le vote")
@@ -152,4 +155,97 @@ class PlaylistViewModel: ObservableObject {
             }
         }.resume()
     }
+    
+    func markTrackAsPlayed(trackId: String) {
+             // Récupérer l'UUID associé à ce trackId
+             guard let trackUUID = associatedUUIDs[trackId] else {
+                 print("❌ Aucun UUID trouvé pour ce trackId")
+                 return
+             }
+            associatedUUIDs[trackId] = nil
+             guard let url = URL(string: "http://localhost:5001/track/\(trackUUID)/played") else {
+                 self.errorMessage = "URL invalide pour PATCH"
+                 return
+             }
+     
+             var request = URLRequest(url: url)
+             request.httpMethod = "PATCH"
+     
+             if let user = User.load() {
+                 request.setValue(user.token, forHTTPHeaderField: "token")
+             } else {
+                 self.errorMessage = "Utilisateur non authentifié"
+                 return
+             }
+     
+             URLSession.shared.dataTask(with: request) { data, response, error in
+                 DispatchQueue.main.async {
+                     if let error = error {
+                         print("❌ Erreur PATCH: \(error.localizedDescription)")
+                         return
+                     }
+     
+                     guard let httpResponse = response as? HTTPURLResponse else {
+                         print("❌ Réponse PATCH invalide")
+                         return
+                     }
+     
+                     switch httpResponse.statusCode {
+                         case 200:
+                             print("✅ Track \(trackUUID) marqué comme joué")
+                         case 400:
+                             print("⚠️ Track non trouvé")
+                         case 500:
+                             print("🔥 Erreur serveur")
+                         default:
+                             print("❓ Code inconnu: \(httpResponse.statusCode)")
+                     }
+                 }
+             }.resume()
+         }
+    
+    private func playFirstTrack() {
+        // Cas où la playlist est vide
+        guard !tracks.isEmpty else {
+            print("🎶 Playlist vide — arrêt")
+            isPlaying = false
+            return
+        }
+
+        let track = tracks[0]
+        isPlaying = true
+        
+        // Appel pour jouer le premier morceau et appeler fetchTracksForPlaylist après
+        audioPlayer.playPreview(from: track.preview) { [weak self] in
+            guard let self = self else { return }
+
+            print("✅ Fin de : \(track.title)")
+
+            // Marquer le morceau comme joué
+            self.markTrackAsPlayed(trackId: String(track.id))
+
+            // Rafraîchir la playlist avant de jouer le prochain morceau
+            self.fetchTracksForPlaylist(playlistId: self.playlistId) { success, error in
+                if success {
+                    // Playlist mise à jour, passer au morceau suivant
+                    if !self.tracks.isEmpty {
+                        self.playFirstTrack()
+                    } else {
+                        print("🏁 Fin de la playlist")
+                        self.isPlaying = false
+                    }
+                } else {
+                    print("❌ Erreur lors de la mise à jour de la playlist : \(error ?? "Inconnue")")
+                    self.isPlaying = false
+                }
+            }
+        }
+    }
+    
+    private func startAutomaticPlaybackIfNeeded() {
+            if !isPlaying && !hasStartedPlaying && !tracks.isEmpty {
+                hasStartedPlaying = true
+                playFirstTrack()
+            }
+        }
 }
