@@ -6,9 +6,14 @@ import { validate as uuidValidate, v4 as uuidv4 } from 'uuid';
 import {
   getAllInvitationsOfUser,
 } from "../handlers/invitations.js";
+import {
+  getAllUsers,
+} from "../handlers/user.js";
 
 const router = express.Router();
 const prisma = new PrismaClient();
+
+const _MAX_TAKE_ = 50;
 
 router.post("/info", async(req, res) => {
 	try {
@@ -174,6 +179,28 @@ router.post("/email/signup", async(req, res) => {
       token: userToCreate?.token,
       name: userToCreate?.name,
     });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({
+      error: "Server error"
+    });
+  }
+});
+
+router.get("/", async(req, res) => {
+  console.info("Getting all users");
+  try {
+    const { take, skip } = req.query;
+    if (parseInt(take, 10) > _MAX_TAKE_){
+      return res.status(500).json({
+        error: `Could not take more than ${_MAX_TAKE_}`
+      });
+    }
+    const allUsers = await getAllUsers(
+      parseInt(take, 10) || _MAX_TAKE_,
+      parseInt(skip, 10) || 0,
+    );
+    return res.status(200).json(allUsers);
   } catch (e) {
     console.error(e);
     return res.status(500).json({
