@@ -60,3 +60,19 @@ curl localhost:5001/users/f6cb6e9e-7e19-485c-a4b2-fc10128e4b71 -H token:c055fb5c
 ```bash
 curl -X POST localhost:5001/users/info -H token:c055fb5c-7d35-42a8-b4e7-a20a706d999b -d email=test@email.com 
 ```
+
+
+#### Get all users [PROTECTED]
+
+* Endpoint: `/users/`
+* Header: token
+* Query params
+    * take: combien d'utilisateurs a retourner
+    * skip: combien d'utilisateur a skipper
+* Reponse:
+    * 200 -> Retourne tous les utilisateurs
+    * 400 -> Take is greater than maximum (50)
+
+```bash
+curl "localhost:5001/users/?take=20&skip=0" -H token:c055fb5c-7d35-42a8-b4e7-a20a706d999b
+```

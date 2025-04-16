@@ -9,3 +9,13 @@ export const findUserById = async(user_id) => {
     }
   })
 };
+
+export const getAllUsers = async(take, skip) => {
+  return await prisma.user.findMany({
+    skip: skip,
+    take: take,
+    orderBy: {
+      createdAt: "asc"
+    }
+  });
+};
