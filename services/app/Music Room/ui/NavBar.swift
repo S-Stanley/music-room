@@ -10,6 +10,7 @@ import SwiftUI
 struct NavigationScreen: View {
     @StateObject var authViewModel = AuthViewModel()
     @StateObject var profileViewModel = ProfileViewModel()
+    @StateObject var homeViewModel = HomeViewModel()
 
     var body: some View {
         TabView {
@@ -19,7 +20,7 @@ struct NavigationScreen: View {
                     Text("Accueil")
                 }
 
-            ProfileScreen(profileViewModel: profileViewModel)
+            ProfileScreen(profileViewModel: profileViewModel, homeViewModel: homeViewModel)
                 .tabItem {
                     Image(systemName: "person.fill")
                     Text("Profil")

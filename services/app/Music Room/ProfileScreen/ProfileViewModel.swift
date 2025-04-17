@@ -12,6 +12,7 @@ class ProfileViewModel: ObservableObject {
     @Published var password: String = ""
     @Published var errorMessage: String?
     @Published var isAuthenticated: Bool = false
+    @Published var invitations: [Invitation] = []
 
     func loadUserInfo() {
         if let savedUser = User.load() {
@@ -131,5 +132,57 @@ class ProfileViewModel: ObservableObject {
             }
         }.resume()
     }
+    
+    func fetchInvitations() {
+        guard let user = User.load() else { return }
 
+        guard let url = URL(string: "http://localhost:5001/users/invitations") else { return }
+
+        var request = URLRequest(url: url)
+        request.setValue(user.token, forHTTPHeaderField: "token")
+
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            DispatchQueue.main.async {
+                if let data = data {
+                    let jsonString = String(data: data, encoding: .utf8)
+                    print("📦 JSON reçu : \(jsonString ?? "nil")")
+                    
+                    do {
+                        self.invitations = try JSONDecoder().decode([Invitation].self, from: data)
+                    } catch {
+                        print("Erreur de décodage: \(error)")
+                    }
+                } else if let error = error {
+                    print("Erreur réseau: \(error)")
+                }
+            }
+        }.resume()
+    }
 }
+
+struct Invitation: Codable, Identifiable {
+    let id: String
+    let playlist: Playlist
+    let invitedBy: UserSummary
+
+    var playlistName: String {
+        playlist.name
+    }
+
+    var inviterUsername: String {
+        invitedBy.name
+    }
+}
+
+struct Playlist: Codable {
+    let id: String
+    let name: String
+    let type: String
+    let password: String?
+}
+
+struct UserSummary: Codable {
+    let id: String
+    let name: String
+}
+

@@ -49,7 +49,7 @@ struct SessionScreen: View {
                         .padding()
                 }
 
-                NavigationLink(destination: SettingScreen()) {
+                NavigationLink(destination: SettingScreen(playlistId: sessionId)) {
                     Image(systemName: "gearshape.fill")
                         .foregroundColor(.black)
                         .font(.system(size: 30))
