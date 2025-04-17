@@ -43,3 +43,17 @@ export const getAllInvitationsOfUser = async(user_id) => {
   });
   return (allInvitation);
 };
+
+export const deleteInvitation = async(invitedUserId, playlistId) => {
+  try {
+    return await prisma.invitation.deleteMany({
+      where: {
+        playlistId: playlistId,
+        invitedUserId: invitedUserId,
+      }
+    });
+  } catch (e) {
+    console.error(e);
+    return (null);
+  }
+};

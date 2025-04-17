@@ -20,6 +20,7 @@ import {
 } from "../handlers/votes.js";
 import {
   createInvitation,
+  deleteInvitation,
 } from "../handlers/invitations.js";
 
 const router = express.Router();
@@ -236,6 +237,7 @@ router.post("/:playlist_id/join", async (req, res) => {
         })
       }
     }
+    await deleteInvitation(res?.locals?.user?.id, playlist_id);
     return res.status(200).json(playlist);
   } catch (e){
     console.error(e);
