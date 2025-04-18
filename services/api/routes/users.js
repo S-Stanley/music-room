@@ -199,6 +199,7 @@ router.get("/", async(req, res) => {
     const allUsers = await getAllUsers(
       parseInt(take, 10) || _MAX_TAKE_,
       parseInt(skip, 10) || 0,
+      res.locals.user.id,
     );
     return res.status(200).json(allUsers);
   } catch (e) {
