@@ -8,5 +8,6 @@ npm run migrate:dev --workspace=@music-room/api
 
 psql -d $DATABASE_URL -f ./fixtures/users.sql
 psql -d $DATABASE_URL -f ./fixtures/playlists.sql
+psql -d $DATABASE_URL -f ./fixtures/members.sql
 
 echo -e "\nLocal db on $DATABASE_URL is now clean and instancied with fixtures";
