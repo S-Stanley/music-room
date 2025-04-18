@@ -42,7 +42,11 @@ curl "localhost:5001/playlist/?take=10&skip=0" -H token:c055fb5c-7d35-42a8-b4e7-
   * trackId -> deezert trackId
 * reponse
   * 201 -> Song is added to playlist
-  * 400 -> TrackId is not sent, playlist does not exist or trackId does not exist
+  * 400 ->
+    * TrackId is not sent
+    * Playlist does not exist
+    * TrackId does not exist
+    * Maximum number of unplayed track reached (50)
 
   ```bash
 curl "localhost:5001/playlist/e41fa7e7-05a7-4812-9a8b-446ecbc78b2e" -H token:c055fb5c-7d35-42a8-b4e7-a20a706d999b -d trackId=98087618

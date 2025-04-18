@@ -29,6 +29,15 @@ export const getAllTrackOfPlaylist = async(playlist_id) => {
   return (tracks);
 };
 
+export const getNumberOfTracksInPlaylist = async(playlist_id) => {
+  return await prisma.trackPlaylist.count({
+    where: {
+      playlistId: playlist_id,
+      alreadyPlayed: false,
+    }
+  })
+};
+
 export const getTrackDefaultPosition = async (playlist_id) => {
   return await prisma.trackPlaylist.count({
     where: {

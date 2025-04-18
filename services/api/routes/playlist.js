@@ -10,6 +10,7 @@ import {
   getTrackDefaultPosition,
   getAllTrackOfPlaylist,
   getTrackById,
+  getNumberOfTracksInPlaylist,
 } from "../handlers/track.js";
 import {
   findUserById
@@ -68,6 +69,12 @@ router.post("/:playlist_id", async(req, res) => {
     if (!playlist){
       return res.status(400).json({
         error: "Playlist not found"
+      });
+    }
+    const numberOfTracks = await getNumberOfTracksInPlaylist(playlist_id);
+    if (numberOfTracks >= 50){
+      return res.status(400).json({
+        error: "There is already 50 unplayed track in this playlist"
       });
     }
     const deezerTrack = await fetch(`https://api.deezer.com/track/${trackId}`);
