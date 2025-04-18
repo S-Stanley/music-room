@@ -23,6 +23,11 @@ import {
   createInvitation,
   deleteInvitation,
 } from "../handlers/invitations.js";
+import {
+  createMember,
+  getAllPlaylistMembers,
+  isUserAlreadyJoinedPlaylist,
+} from "../handlers/members.js";
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -212,6 +217,7 @@ router.post("/", async(req, res) => {
         }
       }
     });
+    await createMember(res?.locals?.user?.id, newPlaylist?.id);
     return res.status(201).json(newPlaylist);
   } catch (e) {
     console.error(e);
@@ -232,6 +238,11 @@ router.post("/:playlist_id/join", async (req, res) => {
         error: "Playlist not found"
       });
     }
+    if (await isUserAlreadyJoinedPlaylist(playlist_id, res?.locals?.user?.id)){
+      return res.status(400).json({
+          error: "User already member of playlist"
+      })
+    }
     if (playlist.type === PlaylistTypeEnum.PRIVATE){
       if (!password){
         return res.status(400).json({
@@ -245,6 +256,7 @@ router.post("/:playlist_id/join", async (req, res) => {
       }
     }
     await deleteInvitation(res?.locals?.user?.id, playlist_id);
+    await createMember(res?.locals?.user?.id, playlist_id);
     return res.status(200).json(playlist);
   } catch (e){
     console.error(e);
@@ -315,6 +327,26 @@ router.post("/:playlist_id/invitations", async(req, res) => {
     }
     const invitation = await createInvitation(playlist_id, res?.locals?.user?.id, userId);
     return res.status(201).json(invitation);
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({
+      error: "Server error"
+    });
+  }
+});
+
+router.get("/:playlist_id/members", async(req, res) => {
+  try {
+    const { playlist_id } = req.params;
+    const playlist = await getPlaylistById(playlist_id);
+    if (!playlist){
+      return res.status(400).json({
+        error: "Unknow playlist"
+      });
+    }
+    return res.status(200).json(
+      await getAllPlaylistMembers(playlist_id)
+    );
   } catch (e) {
     console.error(e);
     return res.status(500).json({
