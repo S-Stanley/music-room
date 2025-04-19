@@ -8,7 +8,14 @@ import {
 } from "../handlers/invitations.js";
 import {
   getAllUsers,
+  createNewConfirmationCode,
+  isUserEmailValidated,
+  checkConfirmationCode,
+  findUserByEmail,
 } from "../handlers/user.js";
+import {
+  sendEmail,
+} from "../utils/email.js";
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -112,6 +119,11 @@ router.post("/email/signin", async(req, res) => {
         error: "Invalid identifiant"
       })
     }
+    if (!(await isUserEmailValidated(user?.id))){
+      return res.status(400).json({
+        error: "User email is not validated yet"
+      })
+    };
     const token = uuidv4();
     await prisma.user.update({
       where: {
@@ -173,12 +185,44 @@ router.post("/email/signup", async(req, res) => {
         name: req.body.email.split("@")[0]
       }
     });
+    const confirmationCode = await createNewConfirmationCode(userToCreate?.id);
+    await sendEmail(
+      req.body.email,
+      "Your music-room confirmation code",
+      `<p>Your confirmation code is: ${confirmationCode?.code}</p>`
+    );
     return res.status(201).json({
       id: userToCreate?.id,
-      email: userToCreate?.email,
-      token: userToCreate?.token,
-      name: userToCreate?.name,
     });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({
+      error: "Server error"
+    });
+  }
+});
+
+router.post("/email/validate", async(req, res) => {
+  console.log("Trying to validate email of user");
+  try {
+    const { email, confirmationCode } = req.body;
+    if (!email || !confirmationCode){
+      return res.status(400).json({
+        error: "Missing parameter email or confirmationCode"
+      });
+    }
+    const user = await findUserByEmail(email);
+    if (!user?.id){
+      return res.status(400).json({
+        error: "User does not exist",
+      });
+    }
+    if (!await checkConfirmationCode(user?.id, confirmationCode)){
+      return res.status(400).json({
+        error: "Wrong confirmation code",
+      });
+    }
+    return res.status(200).json(user);
   } catch (e) {
     console.error(e);
     return res.status(500).json({

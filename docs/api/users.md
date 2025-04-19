@@ -17,12 +17,12 @@ Should be call with `token` of user in headers
 Example de requete:
 
 ```bash
-curl localhost:5001/users/email/signin/ -X POST  -d email=user@music.room
+curl localhost:5001/users/email/signin/ -X POST  -d email=user@music.room -d password=123
 ```
 
 #### S'inscrire avec un email
 
-* Endpoint: POST `/users/email/signiup`
+* Endpoint: POST `/users/email/signup`
 * Data a envoyer:
     * email
     * password
@@ -34,6 +34,23 @@ Example de requete:
 
 ```bash
 curl localhost:5001/users/email/signup/ -X POST  -d email=user_to_create@music.room -d password=123
+```
+
+#### Valider l'email d'un utilisateur
+
+* Endpoint `POST /users/email/validate`
+* Data a envoyer:
+    * email
+    * confirmationCode
+* Reponse:
+    * 200 -> Email valide
+    * 400 ->
+        * Email ou confirmation code non envoye
+        * Code incorrect
+        * Utilisateur innexistant
+
+```bash
+curl -X POST "localhost:5001/users/email/validate/"  -d email=user_to_create@music.room -d confirmationCode=4242
 ```
 
 #### Avoir les infos d'un utilisateur [PROTECTED]
