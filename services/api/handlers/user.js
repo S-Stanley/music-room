@@ -1,4 +1,7 @@
 import { PrismaClient } from '@prisma/client';
+import {
+  generateConfirmationCode
+} from "../utils/user.js";
 
 const prisma = new PrismaClient();
 
@@ -21,6 +24,19 @@ export const getAllUsers = async(take, skip, userId) => {
       id: {
         not: userId
       }
+    }
+  });
+};
+
+export const createNewConfirmationCode = async(user_id) => {
+  return await prisma.confirmationCode.create({
+    data: {
+      user: {
+        connect: {
+          id: user_id,
+        }
+      },
+      code: generateConfirmationCode(),
     }
   });
 };

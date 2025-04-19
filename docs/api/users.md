@@ -22,7 +22,7 @@ curl localhost:5001/users/email/signin/ -X POST  -d email=user@music.room
 
 #### S'inscrire avec un email
 
-* Endpoint: POST `/users/email/signiup`
+* Endpoint: POST `/users/email/signup`
 * Data a envoyer:
     * email
     * password

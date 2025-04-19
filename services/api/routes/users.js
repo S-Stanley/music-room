@@ -8,6 +8,7 @@ import {
 } from "../handlers/invitations.js";
 import {
   getAllUsers,
+  createNewConfirmationCode,
 } from "../handlers/user.js";
 
 const router = express.Router();
@@ -173,11 +174,9 @@ router.post("/email/signup", async(req, res) => {
         name: req.body.email.split("@")[0]
       }
     });
+    await createNewConfirmationCode(userToCreate?.id);
     return res.status(201).json({
       id: userToCreate?.id,
-      email: userToCreate?.email,
-      token: userToCreate?.token,
-      name: userToCreate?.name,
     });
   } catch (e) {
     console.error(e);
