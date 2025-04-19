@@ -36,6 +36,23 @@ Example de requete:
 curl localhost:5001/users/email/signup/ -X POST  -d email=user_to_create@music.room -d password=123
 ```
 
+#### Valider l'email d'un utilisateur
+
+* Endpoint `POST /users/email/validate`
+* Data a envoyer:
+    * email
+    * confirmationCode
+* Reponse:
+    * 200 -> Email valide
+    * 400 ->
+        * Email ou confirmation code non envoye
+        * Code incorrect
+        * Utilisateur innexistant
+
+```bash
+curl -X POST "localhost:5001/users/email/validate/"  -d email=user_to_create@music.room -d confirmationCode=4242
+```
+
 #### Avoir les infos d'un utilisateur [PROTECTED]
 
 * Endpoint: `/users/:user_id`

@@ -18,6 +18,8 @@ const _UNPROTECTED_ENDPOINT_ = [
   "/users/email/signin",
   "/users/email/signup/",
   "/users/email/signin/",
+  "/users/email/validate",
+  "/users/email/validate/",
 ]
 
 app.use("/", async(req, res, next) => {

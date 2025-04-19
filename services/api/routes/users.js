@@ -10,6 +10,8 @@ import {
   getAllUsers,
   createNewConfirmationCode,
   isUserEmailValidated,
+  checkConfirmationCode,
+  findUserByEmail,
 } from "../handlers/user.js";
 import {
   sendEmail,
@@ -192,6 +194,35 @@ router.post("/email/signup", async(req, res) => {
     return res.status(201).json({
       id: userToCreate?.id,
     });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({
+      error: "Server error"
+    });
+  }
+});
+
+router.post("/email/validate", async(req, res) => {
+  console.log("Trying to validate email of user");
+  try {
+    const { email, confirmationCode } = req.body;
+    if (!email || !confirmationCode){
+      return res.status(400).json({
+        error: "Missing parameter email or confirmationCode"
+      });
+    }
+    const user = await findUserByEmail(email);
+    if (!user?.id){
+      return res.status(400).json({
+        error: "User does not exist",
+      });
+    }
+    if (!await checkConfirmationCode(user?.id, confirmationCode)){
+      return res.status(400).json({
+        error: "Wrong confirmation code",
+      });
+    }
+    return res.status(200).json(user);
   } catch (e) {
     console.error(e);
     return res.status(500).json({
