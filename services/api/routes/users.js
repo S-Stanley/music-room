@@ -11,6 +11,9 @@ import {
   createNewConfirmationCode,
   isUserEmailValidated,
 } from "../handlers/user.js";
+import {
+  sendEmail,
+} from "../utils/email.js";
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -180,7 +183,12 @@ router.post("/email/signup", async(req, res) => {
         name: req.body.email.split("@")[0]
       }
     });
-    await createNewConfirmationCode(userToCreate?.id);
+    const confirmationCode = await createNewConfirmationCode(userToCreate?.id);
+    await sendEmail(
+      req.body.email,
+      "Your music-room confirmation code",
+      `<p>Your confirmation code is: ${confirmationCode?.code}</p>`
+    );
     return res.status(201).json({
       id: userToCreate?.id,
     });
