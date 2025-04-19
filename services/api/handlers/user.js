@@ -40,3 +40,15 @@ export const createNewConfirmationCode = async(user_id) => {
     }
   });
 };
+
+export const isUserEmailValidated = async(user_id) => {
+  const code = await prisma.confirmationCode.findUnique({
+    where: {
+      userId: user_id,
+    }
+  });
+  if (code?.id){
+    return (false);
+  }
+  return (true);
+};

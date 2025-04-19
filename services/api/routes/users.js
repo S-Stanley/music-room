@@ -9,6 +9,7 @@ import {
 import {
   getAllUsers,
   createNewConfirmationCode,
+  isUserEmailValidated,
 } from "../handlers/user.js";
 
 const router = express.Router();
@@ -113,6 +114,11 @@ router.post("/email/signin", async(req, res) => {
         error: "Invalid identifiant"
       })
     }
+    if (!(await isUserEmailValidated(user?.id))){
+      return res.status(400).json({
+        error: "User email is not validated yet"
+      })
+    };
     const token = uuidv4();
     await prisma.user.update({
       where: {

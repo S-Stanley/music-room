@@ -17,7 +17,7 @@ Should be call with `token` of user in headers
 Example de requete:
 
 ```bash
-curl localhost:5001/users/email/signin/ -X POST  -d email=user@music.room
+curl localhost:5001/users/email/signin/ -X POST  -d email=user@music.room -d password=123
 ```
 
 #### S'inscrire avec un email
