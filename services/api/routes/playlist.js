@@ -11,6 +11,9 @@ import {
   getAllTrackOfPlaylist,
   getTrackById,
   getNumberOfTracksInPlaylist,
+  getAllTrackToUpdatePosition,
+  updateTrackPosition,
+  getAllTrackOfPlaylistOrderByPosition,
 } from "../handlers/track.js";
 import {
   findUserById
@@ -28,6 +31,9 @@ import {
   getAllPlaylistMembers,
   isUserAlreadyJoinedPlaylist,
 } from "../handlers/members.js";
+import {
+  reorderTracks,
+} from "../utils/track.js"
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -38,6 +44,50 @@ const PlaylistTypeEnum = {
 };
 
 const _PAGINATION_MAX_TAKE = 50;
+
+router.post("/:playlist_id/edit", async(req, res) => {
+  console.info("User is trying to edit playlist order")
+  try {
+    const { playlist_id } = req.params;
+    const { trackId, trackIdAfter } = req.body;
+    const playlist = await getPlaylistById(playlist_id);
+    if (!playlist){
+      return res.status(400).json({
+        error: "Playlist not found"
+      }); 
+    }
+    if (playlist.type === PlaylistTypeEnum.PRIVATE){
+      const isUserMemberOfPlaylist = await isUserAlreadyJoinedPlaylist(playlist_id, res?.locals?.user?.id);
+      if (!isUserMemberOfPlaylist){
+        return res.status(400).json({
+          error: "Playlist is private and user is not member"
+        });
+      }
+    }
+    const track = await getTrackById(trackId);
+    if (!track){
+      return res.status(400).json({
+        error: "Track not found"
+      });
+    }
+    const newTrackList = reorderTracks(
+      await getAllTrackToUpdatePosition(playlist_id, trackId),
+      trackIdAfter,
+      track,
+    );
+    let position = 1;
+    for (const i in newTrackList){
+      await updateTrackPosition(newTrackList[i]?.id, position);
+      position++;
+    }
+    return res.status(200).json(await getAllTrackOfPlaylistOrderByPosition(playlist_id))
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({
+      error: "Server error"
+    });
+  }
+});
 
 router.get("/:playlist_id/track", async(req, res) => {
   console.log("User", res.locals?.user?.id, "getting all tracks of a playlist");
