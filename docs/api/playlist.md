@@ -107,3 +107,21 @@ curl -X POST "localhost:5001/playlist/e41fa7e7-05a7-4812-9a8b-446ecbc78b2e/vote/
 ```bash
 curl -X GET "localhost:5001/playlist/e41fa7e7-05a7-4812-9a8b-446ecbc78b2e/members" -H token:c055fb5c-7d35-42a8-b4e7-a20a706d999b
 ```
+
+#### Edit track position [PROTECTED]
+
+* Endpoint: `POST /playlist/:playlist_id/edit`
+* Data a envoyer:
+    * track_id
+    * trackIdAfter
+* Reponse:
+    * 200 -> OK, updated
+    * 400 ->
+        * Playlist not found
+        * Track or trackAfter not found
+        * User is not member of private playlist
+    * 500 -> Erreur serveur
+
+```bash
+curl -X POST "localhost:5001/playlist/e41fa7e7-05a7-4812-9a8b-446ecbc78b2e/edit" -H token:c055fb5c-7d35-42a8-b4e7-a20a706d999b -d trackIdAfter=f77b7dce-74ed-4312-944f-340eb1d3f602 -d trackId=afd1b795-2ad2-44af-b9a6-c3910f3fe6ec
+```
