@@ -186,6 +186,7 @@ router.post("/email/signup", async(req, res) => {
       }
     });
     const confirmationCode = await createNewConfirmationCode(userToCreate?.id);
+    console.info("CONFIRMATION CODE:", confirmationCode);
     await sendEmail(
       req.body.email,
       "Your music-room confirmation code",
