@@ -70,11 +70,10 @@ curl "localhost:5001/playlist/e41fa7e7-05a7-4812-9a8b-446ecbc78b2e/track" -H tok
 
 * Endpoint: POST `/playlist/:playlist_id/join`
 * Response
-    * 200 -> User joigned playlist
+    * 200 -> User joined playlist or already joined
     * 400 ->
         * Playlist does not exist
         * Passwod is wrong for private playlist
-        * User already joined playlist
     * 500 -> Server error
 * Exemple:
 

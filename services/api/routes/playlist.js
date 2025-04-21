@@ -298,9 +298,7 @@ router.post("/:playlist_id/join", async (req, res) => {
       });
     }
     if (await isUserAlreadyJoinedPlaylist(playlist_id, res?.locals?.user?.id)){
-      return res.status(400).json({
-          error: "User already member of playlist"
-      })
+      return res.status(200).json(playlist);
     }
     if (playlist.type === PlaylistTypeEnum.PRIVATE){
       const invitation = await checkIfUserIsInvitedToPlaylist(res?.locals?.user?.id);
