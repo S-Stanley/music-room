@@ -89,10 +89,16 @@ router.post("/:playlist_id/edit", async(req, res) => {
   }
 });
 
+const ORDER_TRACKS_PLAYLIST_ENUM = {
+  VOTE: "VOTE",
+  POSITION: "POSITION",
+};
+
 router.get("/:playlist_id/track", async(req, res) => {
   console.log("User", res.locals?.user?.id, "getting all tracks of a playlist");
   try {
     const { playlist_id } = req.params;
+    const { orderBy } = req.query;
     const playlist = await getPlaylistById(playlist_id);
     if (!playlist){
       return res.status(400).json({
@@ -100,7 +106,9 @@ router.get("/:playlist_id/track", async(req, res) => {
       }); 
     }
     return res.status(200).json(
-      await getAllTrackOfPlaylist(playlist_id)
+      orderBy === ORDER_TRACKS_PLAYLIST_ENUM.POSITION
+      ? await getAllTrackOfPlaylistOrderByPosition(playlist_id)
+      : await getAllTrackOfPlaylist(playlist_id)
     ); 
   } catch (e) {
     console.error(e);
