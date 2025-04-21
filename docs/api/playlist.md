@@ -55,6 +55,8 @@ curl "localhost:5001/playlist/e41fa7e7-05a7-4812-9a8b-446ecbc78b2e" -H token:c05
 #### Get all tracks of playlist
 
 * Endpoint: GET `/playlist/:playlist_id/track` [PROTECTED]
+* Query params
+    * OrderBy: POSITION, VOTE or empty
 * Response
   * 200 -> Return all tracks of playlist
   * 400 -> Playlist do not exist
