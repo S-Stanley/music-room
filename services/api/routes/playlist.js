@@ -25,6 +25,7 @@ import {
 import {
   createInvitation,
   deleteInvitation,
+  checkIfUserIsInvitedToPlaylist,
 } from "../handlers/invitations.js";
 import {
   createMember,
@@ -302,15 +303,18 @@ router.post("/:playlist_id/join", async (req, res) => {
       })
     }
     if (playlist.type === PlaylistTypeEnum.PRIVATE){
-      if (!password){
+      const invitation = await checkIfUserIsInvitedToPlaylist(res?.locals?.user?.id);
+      if (!password && !invitation){
         return res.status(400).json({
-          error: "Missing parameter password for private playlist"
+          error: "Missing parameter password for private playlist or invitation not found"
         });
       }
-      if (!await bcrypt.compare(password, playlist.password)){
-        return res.status(400).json({
-          error: "Invalid password"
-        })
+      if (password){
+        if (!await bcrypt.compare(password, playlist.password)){
+          return res.status(400).json({
+            error: "Invalid password"
+          })
+        }
       }
     }
     await deleteInvitation(res?.locals?.user?.id, playlist_id);
