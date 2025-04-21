@@ -57,3 +57,21 @@ export const deleteInvitation = async(invitedUserId, playlistId) => {
     return (null);
   }
 };
+
+export const checkIfUserIsInvitedToPlaylist = async(user_id, playlist_id) => {
+  try {
+    const invitation = await prisma.invitation.findMany({
+      where: {
+        invitedUserId: user_id,
+        playlistId: playlist_id,
+      }
+    });
+    if (invitation.length === 0){
+      return (false);
+    }
+    return (true);
+  } catch (e) {
+    console.error(e);
+    return (false);
+  }
+};
