@@ -15,6 +15,8 @@ import {
 } from "../handlers/user.js";
 import {
   createPasswordChangeRequest,
+  checkUserConfirmationCodeForPasswordChange,
+  updateUserPassword,
 } from "../handlers/password.js";
 import {
   sendEmail,
@@ -48,6 +50,32 @@ router.post("/password/reset", async(req, res) => {
       user_id: res?.locals?.user?.id,
     });
   } catch (e) {
+		console.error(e);
+    return res.status(500).json({
+      error: "Server error"
+    });
+  }
+});
+
+router.post("/password/confirm", async(req, res) => {
+  try {
+    const { code } = req.body;
+    if (!code || isNaN(parseInt(code, 10))) {
+      return res.status(400).json({
+        error: "Confirmation code cannot be empty or wrong format"
+      });
+    }
+    const checkConfirmationCode = await checkUserConfirmationCodeForPasswordChange(res?.locals?.user?.id, parseInt(code, 10));
+    if (!checkConfirmationCode) {
+      return res.status(400).json({
+        error: "Wrong confirmation code"
+      });
+    }
+    await updateUserPassword(res?.locals?.user?.id);
+    return res.status(200).json({
+      user_id: res?.locals?.user?.id,
+    });
+  } catch (e){
 		console.error(e);
     return res.status(500).json({
       error: "Server error"

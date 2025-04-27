@@ -32,3 +32,44 @@ export const createPasswordChangeRequest = async(user_id, confirmationCode, newP
     return (null);
   }
 };
+
+export const findPasswordChangeRequest = async(user_id) => {
+  try {
+    return await prisma.passwordChange.findUnique({
+      where: {
+        userId: user_id,
+      },
+    });
+  } catch (e) {
+    console.error(e);
+    return (null);
+  }
+};
+
+export const checkUserConfirmationCodeForPasswordChange = async(user_id, confirmationCode) => {
+  try {
+    const passwordChangeRequest = await findPasswordChangeRequest(user_id);
+    return (passwordChangeRequest?.code === confirmationCode)
+  } catch (e) {
+    console.error(e);
+    return (false);
+  }
+};
+
+export const updateUserPassword = async(user_id) => {
+  try {
+    const passwordChangeRequest = await findPasswordChangeRequest(user_id)
+    await prisma.user.update({
+      where: {
+        id: user_id,
+      },
+      data: {
+        password: passwordChangeRequest?.password,
+      },
+    });
+    await deletePasswordChangeRequest(user_id);
+  } catch (e) {
+    console.error(e);
+    return (null);
+  }
+};
