@@ -93,3 +93,18 @@ curl -X POST localhost:5001/users/info -H token:c055fb5c-7d35-42a8-b4e7-a20a706d
 ```bash
 curl "localhost:5001/users/?take=20&skip=0" -H token:c055fb5c-7d35-42a8-b4e7-a20a706d999b
 ```
+
+#### Ask for password change [PROTECTED]
+
+* Endpoint: POST `/users/password/reset`
+* Header: token
+* Body params:
+    * password
+* Reponse
+    * 201: Demande prise en compte et email avec code de confirmation envoye
+    * 400: Password non existant
+    * 500: Erreur serveur
+
+```bash
+curl -X POST "localhost:5001/users/password/reset" -d password=456 -H token:c055fb5c-7d35-42a8-b4e7-a20a706d999b
+```

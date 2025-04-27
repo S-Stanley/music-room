@@ -14,13 +14,46 @@ import {
   findUserByEmail,
 } from "../handlers/user.js";
 import {
+  createPasswordChangeRequest,
+} from "../handlers/password.js";
+import {
   sendEmail,
 } from "../utils/email.js";
+import {
+  generateConfirmationCode,
+} from "../utils/user.js";
 
 const router = express.Router();
 const prisma = new PrismaClient();
 
 const _MAX_TAKE_ = 50;
+
+router.post("/password/reset", async(req, res) => {
+  console.info("User asking for password reset");
+  try {
+    const { password } = req.body;
+    if (!password){
+      return res.status(400).json({
+        error: "Password cannot be empty"
+      });
+    }
+    const confirmationCode = generateConfirmationCode();
+    await createPasswordChangeRequest(res?.locals?.user?.id, confirmationCode, password);
+    await sendEmail(
+      res?.locals?.user?.email,
+      "Your confirmation code for password change",
+      `<p>Your confirmation code for password request change is: ${confirmationCode}</p>`
+    );
+    return res.status(201).json({
+      user_id: res?.locals?.user?.id,
+    });
+  } catch (e) {
+		console.error(e);
+    return res.status(500).json({
+      error: "Server error"
+    });
+  }
+});
 
 router.post("/info", async(req, res) => {
 	try {
