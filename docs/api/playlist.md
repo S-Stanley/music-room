@@ -7,9 +7,13 @@
     * name
     * type: "PUBLIC" ou "PRIVATE"
     * password: only for private playlist
+    * orderType: "VOTE" ou "POSITION"
 * Reponse
     * 201 -> Playlist cree
-    * 400 -> Name ou type n'as pas ete envoye, type n'as pas le bon format
+    * 400 -> 
+        * Name ou type n'as pas ete envoye
+        * Type n'as pas le bon format
+        * OrderType est vide ou avec la mauvaise valeur
     * 500 -> Erreur serveur
 
 Example de requete:
@@ -55,8 +59,6 @@ curl "localhost:5001/playlist/e41fa7e7-05a7-4812-9a8b-446ecbc78b2e" -H token:c05
 #### Get all tracks of playlist
 
 * Endpoint: GET `/playlist/:playlist_id/track` [PROTECTED]
-* Query params
-    * OrderBy: POSITION, VOTE or empty
 * Response
   * 200 -> Return all tracks of playlist
   * 400 -> Playlist do not exist
