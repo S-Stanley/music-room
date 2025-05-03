@@ -45,6 +45,11 @@ enum PlaylistType {
   PUBLIC
 }
 
+enum PlaylistOrderType {
+  VOTE
+  POSITION
+}
+
 model Playlist {
   id            String      @id @default(uuid()) @db.Uuid
   type          PlaylistType
@@ -52,6 +57,7 @@ model Playlist {
   password      String?
   user          User        @relation(fields: [userId], references: [id])
   userId        String      @map("user_id") @db.Uuid
+  orderType     PlaylistOrderType @map("order_type") @default(VOTE)
   tracks        TrackPlaylist[]
   votes         TrackVote[]
   invitations   Invitation[]

@@ -99,7 +99,6 @@ router.get("/:playlist_id/track", async(req, res) => {
   console.log("User", res.locals?.user?.id, "getting all tracks of a playlist");
   try {
     const { playlist_id } = req.params;
-    const { orderBy } = req.query;
     const playlist = await getPlaylistById(playlist_id);
     if (!playlist){
       return res.status(400).json({
@@ -107,7 +106,7 @@ router.get("/:playlist_id/track", async(req, res) => {
       }); 
     }
     return res.status(200).json(
-      orderBy === ORDER_TRACKS_PLAYLIST_ENUM.POSITION
+      playlist?.orderType === ORDER_TRACKS_PLAYLIST_ENUM.POSITION
       ? await getAllTrackOfPlaylistOrderByPosition(playlist_id)
       : await getAllTrackOfPlaylist(playlist_id)
     ); 
@@ -232,10 +231,15 @@ router.get("/", async (req, res) => {
 router.post("/", async(req, res) => {
   console.info("User is creating playlist");
   try {
-    const { name, type, password } = req.body;
+    const { name, type, password, orderType } = req.body;
     if (!name || !type){
       return res.status(400).json({
         error: "Missing argument"
+      });
+    }
+    if (!orderType || !Object.keys(ORDER_TRACKS_PLAYLIST_ENUM).includes(orderType)){
+      return res.status(400).json({
+        error: "Missing or unknow order type"
       });
     }
     if (type === PlaylistTypeEnum.PRIVATE && !password){
@@ -256,6 +260,7 @@ router.post("/", async(req, res) => {
         name: name,
         type: type,
         password: hashedPassowrd,
+        orderType: orderType,
         user: {
           connect: {
             id: res.locals?.user?.id
