@@ -43,3 +43,11 @@ export const isUserAlreadyJoinedPlaylist = async(playlist_id, user_id) => {
   }
   return (true);
 };
+
+export const getAllPlaylistWhereUserIsMember = async(user_id) => {
+  return await prisma.members.findMany({
+    where: {
+      userId: user_id,
+    }
+  });
+};

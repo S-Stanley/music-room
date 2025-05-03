@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import {
   getPlaylistById,
+  getAllPlaylistByUserId,
 } from "../handlers/playlist.js";
 import {
   getTrackDefaultPosition,
@@ -201,24 +202,7 @@ router.get("/", async (req, res) => {
         error: "skip and take query params should be parseable to Int"
       });
     }
-    const allPlaylists = await prisma.playlist.findMany({
-      select: {
-        id: true,
-        name: true,
-        type: true,
-        user: {
-          select: {
-            id: true,
-            email: true,
-            name: true,
-          },
-        },
-      },
-      skip: parseInt(skip ?? 0, 10),
-      take: (!take || parseInt(take, 10) > _PAGINATION_MAX_TAKE)
-        ? _PAGINATION_MAX_TAKE
-        : parseInt(take),
-    });
+    const allPlaylists = await getAllPlaylistByUserId(skip, take, res?.locals?.user?.id);
     return res.status(200).json(allPlaylists); 
   } catch (e) {
     console.error(e);
