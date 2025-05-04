@@ -16,7 +16,7 @@ const PlaylistType = {
   PUBLIC: "PUBLIC",
 }
 
-export const getManyPlaylistByIds = async(skip, take, playlistIds) => {
+export const getManyPrivatePlaylistByIds = async(skip, take, playlistIds) => {
     return await prisma.playlist.findMany({
       where: {
         id: {
@@ -28,6 +28,7 @@ export const getManyPlaylistByIds = async(skip, take, playlistIds) => {
         id: true,
         name: true,
         type: true,
+        orderType: true,
         user: {
           select: {
             id: true,
@@ -52,6 +53,7 @@ export const getAllPublicPlaylists = async(skip, take) => {
         id: true,
         name: true,
         type: true,
+        orderType: true,
         user: {
           select: {
             id: true,
@@ -72,7 +74,7 @@ export const getAllPrivatePlaylistWhereUserIsInvited = async(skip, take, userId)
   if (invitations.length === 0){
     return ([]);
   }
-  return await getManyPlaylistByIds(
+  return await getManyPrivatePlaylistByIds(
     skip,
     take,
     invitations.map((invit) => invit?.playlistId)
@@ -81,7 +83,7 @@ export const getAllPrivatePlaylistWhereUserIsInvited = async(skip, take, userId)
 
 export const getAllPrivatePlaylistWhereUserIsMember = async(skip, take, user_id) => {
   const members = await getAllPlaylistWhereUserIsMember(user_id);
-  return await getManyPlaylistByIds(
+  return await getManyPrivatePlaylistByIds(
     skip,
     take,
     members.map((member) => member?.playlistId)
