@@ -257,6 +257,7 @@ router.post("/", async(req, res) => {
         createdAt: true,
         updatedAt: true,
         type: true,
+        orderType: true,
         user: {
           select: {
             id: true,
