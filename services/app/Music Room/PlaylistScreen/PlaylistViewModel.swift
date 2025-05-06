@@ -51,12 +51,14 @@ class PlaylistViewModel: ObservableObject {
                     return
                 }
 
+                print("✅ Statut HTTP: \(httpResponse.statusCode)")
+                            if let jsonString = String(data: data, encoding: .utf8) {
+                                print("📥 Réponse JSON brute: \(jsonString)")
+                            } else {
+                                print("❌ Impossible de convertir les données en chaîne de caractères")
+                            }
+                
                 if httpResponse.statusCode == 200 {
-                    // Ajout de l'affichage de la réponse brute
-                    if let dataString = String(data: data, encoding: .utf8) {
-                        print("Réponse brute de l'API : \(dataString)")
-                    }
-
                     do {
                         let playlistTracks = try JSONDecoder().decode([PlaylistTrack].self, from: data)
                         self.tracks = playlistTracks.map {
@@ -69,23 +71,23 @@ class PlaylistViewModel: ObservableObject {
                                 preview: $0.trackPreview,
                                 album: Album(id: 0, title: "", cover: $0.albumCover, coverSmall: $0.albumCover, coverMedium: $0.albumCover, coverBig: $0.albumCover, coverXL: $0.albumCover, tracklist: ""),
                                 artist: Artist(id: 0, name: "", link: "", picture: "", pictureSmall: "", pictureMedium: "", pictureBig: "", pictureXL: ""),
-                                uuid: $0.id,
-                                voteCount: $0.votes
+                                uuid: $0.id, // L'UUID semble être dans le champ 'id' de PlaylistTrack
+                                voteCount: $0.votes,
+                                addedBy: $0.user?.name
                             )
                         }
-                        
+
+                        // Reconstruire associatedUUIDs en maintenant l'ordre de 'tracks'
+                        self.associatedUUIDs = [:]
                         for track in self.tracks {
-                            print("Track \(track.id) voteCount: \(track.voteCount ?? 0)")
+                            self.associatedUUIDs[String(track.id)] = track.uuid // Utilise track.id (Int converti en String) comme clé et track.uuid comme valeur
+                            print("Track \(track.id) voteCount: \(track.voteCount ?? 0), UUID: \(track.uuid ?? "nil")")
                         }
 
                         self.playlistTracks = Set(playlistTracks.map { $0.trackId })
 
-                        for track in playlistTracks {
-                            self.associatedUUIDs[track.trackId] = track.id
-                        }
-                        
                         print("Contenu de associatedUUIDs après fetchTracksForPlaylist : \(self.associatedUUIDs)")
-                    
+
                         completion(true, nil)
                         self.startAutomaticPlaybackIfNeeded()
                     } catch {
@@ -156,6 +158,107 @@ class PlaylistViewModel: ObservableObject {
         }.resume()
     }
     
+    func moveTrackInPlaylist(from source: IndexSet, to destination: Int, playlistId: String) {
+        print("🔴 Début de moveTrackInPlaylist. Source: \(source), Destination: \(destination)")
+        guard let fromIndex = source.first else {
+            print("🔴 Erreur: Index source invalide.")
+            return
+        }
+        print("🔴 fromIndex: \(fromIndex)")
+        print("🔴 tracks avant déplacement local: \(tracks.map { $0.id })")
+
+        let movedTrack = tracks[fromIndex]
+        print("🔴 Morceau déplacé (avant déplacement local): \(movedTrack.id)")
+
+        // Créer une copie temporaire de l'array tracks
+        var tempTracks = tracks
+        print("🔴 tempTracks initial: \(tempTracks.map { $0.id })")
+
+        // Supprimer l'élément à l'index source
+        tempTracks.remove(at: fromIndex)
+        print("🔴 tempTracks après suppression: \(tempTracks.map { $0.id })")
+
+        // Insérer l'élément à la nouvelle destination
+        let adjustedDestination = destination > fromIndex ? destination - 1 : destination
+        if adjustedDestination <= tempTracks.count {
+            tempTracks.insert(movedTrack, at: adjustedDestination)
+        } else {
+            tempTracks.append(movedTrack) // Gérer le cas où la destination est à la fin
+        }
+        print("🔴 tempTracks après insertion à la destination \(destination) (ajustée: \(adjustedDestination)): \(tempTracks.map { $0.id })")
+
+        // Trouver le UUID du morceau déplacé
+        guard let trackUUID = associatedUUIDs[String(movedTrack.id)] else {
+            print("🔴 Erreur: UUID introuvable pour le track_id \(movedTrack.id) dans associatedUUIDs: \(associatedUUIDs)")
+            return
+        }
+        print("🔴 UUID du morceau déplacé: \(trackUUID)")
+
+        // Trouver le track après la future position DANS LA COPIE TEMPORAIRE
+        let trackIdAfterUUID: String? = {
+            let insertIndexForAfter = adjustedDestination + 1
+            guard insertIndexForAfter < tempTracks.count else {
+                print("🔴 insertIndexForAfter (\(insertIndexForAfter)) hors des limites de tempTracks (\(tempTracks.count)). Pas de track après.")
+                return nil
+            }
+            let afterTrack = tempTracks[insertIndexForAfter]
+            let uuidAfter = associatedUUIDs[String(afterTrack.id)]
+            print("🔴 Morceau après (dans tempTracks) à l'index \(insertIndexForAfter): \(afterTrack.id), UUID: \(uuidAfter ?? "nil")")
+            return uuidAfter
+        }()
+        print("🔴 trackIdAfterUUID déterminé: \(trackIdAfterUUID ?? "nil")")
+
+        print("ℹ️ trackIdAfterUUID au moment du déplacement : \(trackIdAfterUUID ?? "nil")")
+
+        // Construire l'URL de la requête
+        guard let url = URL(string: "http://localhost:5001/playlist/\(playlistId)/edit") else {
+            print("🔴 Erreur: URL invalide.")
+            return
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+
+        guard let user = User.load() else {
+            print("🔴 Erreur: Aucun utilisateur connecté.")
+            return
+        }
+        request.setValue(user.token, forHTTPHeaderField: "token")
+
+        var body = "trackId=\(trackUUID)" // CHANGEMENT ICI: track_id devient trackId
+        if let afterUUID = trackIdAfterUUID, !afterUUID.isEmpty {
+            body += "&trackIdAfter=\(afterUUID)"
+        }
+        print("🔴 Corps de la requête envoyé: \(body)")
+
+        request.httpBody = body.data(using: .utf8)
+
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            DispatchQueue.main.async {
+                if let error = error {
+                    print("🔴 Erreur réseau : \(error.localizedDescription)")
+                    return
+                }
+                guard let httpResponse = response as? HTTPURLResponse else {
+                    print("🔴 Erreur : Réponse invalide du serveur.")
+                    return
+                }
+                if httpResponse.statusCode == 200 {
+                    print("✅ Ordre mis à jour côté serveur")
+                    // ⚠️ IMPORTANT : Tu devras probablement mettre à jour ton array 'tracks' ici
+                    // pour refléter le nouvel ordre après un succès du serveur.
+                } else {
+                    print("🔴 Erreur serveur (\(httpResponse.statusCode))")
+                    if let data = data, let responseString = String(data: data, encoding: .utf8) {
+                        print("🔴 Réponse serveur : \(responseString)")
+                    }
+                }
+            }
+        }.resume()
+    }
+
+
     func markTrackAsPlayed(trackId: String) {
              // Récupérer l'UUID associé à ce trackId
              guard let trackUUID = associatedUUIDs[trackId] else {
@@ -248,4 +351,5 @@ class PlaylistViewModel: ObservableObject {
                 playFirstTrack()
             }
         }
+    
 }

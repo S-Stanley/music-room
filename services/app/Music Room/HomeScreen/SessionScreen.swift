@@ -15,15 +15,17 @@ struct SessionScreen: View {
     var sessionId: String
     var nameSession: String
     var creatorUserName: String
+    var orderType: String
 
     @State private var hasStartedPlayback = false
     @State private var selectedScreen: String = "Playlist"
     @Environment(\.presentationMode) var presentationMode
 
-    init(sessionId: String, nameSession: String, creatorUserName: String) {
+    init(sessionId: String, nameSession: String, creatorUserName: String, orderType: String) {
             self.sessionId = sessionId
             self.nameSession = nameSession
             self.creatorUserName = creatorUserName
+            self.orderType = orderType
             _playlistViewModel = StateObject(wrappedValue: PlaylistViewModel(playlistId: sessionId))
     }
     
@@ -55,7 +57,7 @@ struct SessionScreen: View {
                         .font(.system(size: 30))
                         .padding()
                 }
-
+	
                 Button(action: {
                     audioPlayer.stop()
                     quitterLaSession()
@@ -76,7 +78,7 @@ struct SessionScreen: View {
             // 🎵 Affichage de l'écran
             switch selectedScreen {
                 case "Playlist":
-                    PlaylistScreen(playlistViewModel: playlistViewModel, playlistId: sessionId) // Passez l'instance existante
+                    PlaylistScreen(orderType: orderType,playlistViewModel: playlistViewModel, playlistId: sessionId) // Passez l'instance existante
                 case "Add music":
                     MusicScreen(playlistViewModel: playlistViewModel, musicViewModel: musicViewModel, playlistId: sessionId) // Passez l'instance existante
                 default:

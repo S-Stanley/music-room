@@ -8,44 +8,61 @@
 import SwiftUI
 
 struct PlaylistScreen: View {
+    var orderType: String
     @ObservedObject var playlistViewModel: PlaylistViewModel
     var playlistId: String
 
     @State private var timer: Timer? = nil
+    @State private var isEditing = false
 
     var body: some View {
         VStack {
+            HStack {
+                Text("Playlist")
+                    .font(.title)
+                    .fontWeight(.bold)
+                Spacer()
+                if orderType == "POSITION" {
+                    EditButton()
+                        .padding(.trailing)
+                        .onTapGesture {
+                            isEditing.toggle()
+                        }
+                }
+            }
+            .padding()
+
             if playlistViewModel.tracks.isEmpty {
                 Text("Aucune musique dans cette playlist.")
                     .foregroundColor(.gray)
                     .padding()
                     .frame(maxHeight: .infinity)
             } else {
-                ScrollView {
-                    LazyVStack(spacing: 5) {
-                        ForEach(playlistViewModel.tracks.indices, id: \.self) { index in
-                            let track = playlistViewModel.tracks[index]
-                            TrackRowPlaylist(
-                                track: track,
-                                onVote: {
+                List {
+                    ForEach(playlistViewModel.tracks.indices, id: \.self) { index in
+                        let track = playlistViewModel.tracks[index]
+                        TrackRowPlaylist(
+                            track: track,
+                            onVote: {
+                                if orderType == "VOTE" {
                                     playlistViewModel.voteForTrack(track: track, playlistId: playlistId)
                                 }
-                            )
-                        }
+                            },
+                            showVoteButton: orderType == "VOTE" ? true : false
+                        )
                     }
-                    .padding(.horizontal)
+                    .onMove(perform: orderType == "POSITION" ? moveTrack : nil)
                 }
+                .listStyle(PlainListStyle())
             }
         }
         .onAppear {
-            // Appel initial
             playlistViewModel.fetchTracksForPlaylist(playlistId: playlistId) { success, error in
                 if !success {
                     print("Erreur lors du chargement des musiques: \(error ?? "Inconnue")")
                 }
             }
 
-            // Déclenche un timer toutes les 5 secondes
             timer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { _ in
                 playlistViewModel.fetchTracksForPlaylist(playlistId: playlistId) { success, error in
                     if !success {
@@ -57,18 +74,24 @@ struct PlaylistScreen: View {
             }
         }
         .onDisappear {
-            // Nettoyage du timer quand la vue disparaît
             timer?.invalidate()
             timer = nil
         }
     }
+
+    // 🎯 Logique pour déplacer les morceaux
+    func moveTrack(from source: IndexSet, to destination: Int) {
+        playlistViewModel.moveTrackInPlaylist(from: source, to: destination, playlistId: playlistId)
+    }
 }
+
 
 
 struct TrackRowPlaylist: View {
     let track: Track
     let onVote: () -> Void
-
+    let showVoteButton: Bool
+    
     var body: some View {
         HStack(spacing: 8) {
             AsyncImage(url: URL(string: track.album.coverSmall)) { phase in
@@ -92,19 +115,26 @@ struct TrackRowPlaylist: View {
                 Text(track.artist.name)
                     .font(.subheadline)
                     .foregroundColor(.secondary)
+                if let addedBy = track.addedBy {
+                        Text("Ajouté par \(addedBy)")
+                            .font(.caption2)
+                            .foregroundColor(.gray)
+                    }
             }
             Spacer()
             
-            Button(action: {
-                onVote()
-           }) {
-               Image(systemName: "heart")
-                   .foregroundColor(.red)
-                   .padding(8)
-               Text("\(track.voteCount ?? 0)") // Affichage du nombre de votes
-                   .font(.caption)
-                   .foregroundColor(.secondary)
-           }
+            if track.voteCount != nil && showVoteButton {
+                Button(action: {
+                    onVote()
+                }) {
+                    Image(systemName: "heart")
+                        .foregroundColor(.red)
+                        .padding(8)
+                    Text("\(track.voteCount ?? 0)")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+            }
         }
         .padding()
         .background(Color(.systemBackground))

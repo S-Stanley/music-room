@@ -9,6 +9,8 @@ import SwiftUI
 
 struct SignUpScreen: View {
     @ObservedObject var authViewModel: AuthViewModel
+    @State private var showConfirmationPopup = false
+    @State private var confirmationCode: String = ""
 
     var body: some View {
         VStack {
@@ -26,7 +28,12 @@ struct SignUpScreen: View {
                     .font(.caption)
             }
 
-            Button(action: authViewModel.signUp) {
+            Button(action: {
+                authViewModel.signUp {
+                    // 🔐 Appel réussi → on affiche la pop-up de confirmation
+                    showConfirmationPopup = true
+                }
+            }) {
                 Text("Sign Up")
                     .frame(maxWidth: .infinity)
                     .padding()
@@ -36,5 +43,35 @@ struct SignUpScreen: View {
             }
         }
         .padding()
+        .sheet(isPresented: $showConfirmationPopup) {
+            VStack(spacing: 20) {
+                Text("Code de confirmation")
+                    .font(.headline)
+
+                TextField("Entrez le code reçu par email", text: $confirmationCode)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .keyboardType(.numberPad)
+
+                Button("Valider") {
+                    authViewModel.validateEmail(code: confirmationCode) { success in
+                        if success {
+                            showConfirmationPopup = false
+                        }
+                    }
+                }
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(Color.green)
+                .foregroundColor(.white)
+                .cornerRadius(10)
+
+                Button("Annuler") {
+                    showConfirmationPopup = false
+                }
+                .foregroundColor(.red)
+            }
+            .padding()
+        }
     }
 }
+

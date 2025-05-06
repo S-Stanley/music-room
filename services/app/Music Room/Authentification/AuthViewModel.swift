@@ -12,7 +12,8 @@ class AuthViewModel: ObservableObject {
     @Published var password: String = ""
     @Published var errorMessage: String?
     @Published var isAuthenticated: Bool = false
-
+    @Published var shouldNavigateToForgotPassword = false
+    
     func loadUserInfo() {
         if let savedUser = User.load() {
             self.isAuthenticated = true
@@ -79,7 +80,7 @@ class AuthViewModel: ObservableObject {
         }.resume()
     }
 
-    func signUp() {
+    func signUp(completion: @escaping () -> Void) {
         guard !email.isEmpty, !password.isEmpty else {
             self.errorMessage = "Veuillez remplir tous les champs."
             return
@@ -105,40 +106,53 @@ class AuthViewModel: ObservableObject {
                     self.errorMessage = "Réponse invalide du serveur"
                     return
                 }
-
                 switch httpResponse.statusCode {
                 case 201:
-                    print("Inscription réussie ✅")
-                    self.isAuthenticated = true
-
-                    if let data = data {
-                        let decoder = JSONDecoder()
-                        do {
-                            let response = try decoder.decode(SignInResponse.self, from: data)
-                            if let token = response.token, let id = response.id, let email = response.email, let name = response.name { // Récupérer le nom
-                                let user = User(id: id, email: email, token: token, name: name) // Inclure le nom
-                                user.save()
-
-                                self.email = response.email ?? "Email non trouvé"
-                                self.loadUserInfo()
-                            } else {
-                                self.errorMessage = "Le token ou le nom est manquant dans la réponse."
-                            }
-                        } catch {
-                            self.errorMessage = "Erreur lors du décodage de la réponse"
-                            print("Erreur de décodage: \(error.localizedDescription)")
-                        }
-                    }
+                    print("✅ Utilisateur inscrit")
+                    completion() // 🔥 On déclenche l'affichage de la pop-up
                 case 400:
                     self.errorMessage = "Cet email est déjà utilisé ❌"
-                case 500:
-                    self.errorMessage = "Erreur serveur. Veuillez réessayer plus tard."
                 default:
                     self.errorMessage = "Erreur inconnue (\(httpResponse.statusCode))"
                 }
             }
         }.resume()
     }
+
+    func validateEmail(code: String, completion: @escaping (Bool) -> Void) {
+        guard let url = URL(string: "http://localhost:5001/users/email/validate") else { return }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+
+        let body = "email=\(email)&confirmationCode=\(code)"
+        request.httpBody = body.data(using: .utf8)
+
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            DispatchQueue.main.async {
+                if let error = error {
+                    self.errorMessage = "Erreur: \(error.localizedDescription)"
+                    completion(false)
+                    return
+                }
+
+                guard let httpResponse = response as? HTTPURLResponse else {
+                    self.errorMessage = "Réponse invalide"
+                    completion(false)
+                    return
+                }
+
+                if httpResponse.statusCode == 200 {
+                    print("✅ Email confirmé")
+                    self.signIn()
+                } else {
+                    self.errorMessage = "Code invalide ou expiré"
+                }
+            }
+        }.resume()
+    }
+
 }
 
 struct SignInResponse: Codable {

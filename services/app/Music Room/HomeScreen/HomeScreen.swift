@@ -49,6 +49,7 @@ struct HomeScreen: View {
                             } else {
                                 Button(action: {
                                     homeViewModel.joinSession(session: session, password: nil) { success, userName in
+                                        print("Résultat de joinSession (publique) : success = \(success), userName = \(userName ?? "nil")")
                                         if success {
                                             self.selectedSession = session
                                             self.sessionCreatorName = userName ?? "unknown"
@@ -56,9 +57,7 @@ struct HomeScreen: View {
                                         }
                                     }
                                 }) {
-                                    Text("Join")
-                                        .foregroundColor(.blue)
-                                        .padding(.horizontal)
+                                    Text("Join").foregroundColor(.blue).padding(.horizontal)
                                 }
                             }
                         }
@@ -131,7 +130,7 @@ struct HomeScreen: View {
 
             .navigationDestination(isPresented: $navigateToSession) {
                 if let session = selectedSession {
-                    SessionScreen(sessionId: session.id, nameSession: session.name, creatorUserName: sessionCreatorName)
+                    SessionScreen(sessionId: session.id, nameSession: session.name, creatorUserName: sessionCreatorName, orderType: session.orderType)
                 }
             }
         }

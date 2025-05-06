@@ -36,6 +36,7 @@
 		E47AF0E32D0B662400C3444F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E47AF0E22D0B662400C3444F /* Assets.xcassets */; };
 		E47AF0E62D0B662400C3444F /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E47AF0E52D0B662400C3444F /* Preview Assets.xcassets */; };
 		E47B1D122D7B04A2000F2758 /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E47B1D112D7B04A2000F2758 /* AuthViewModel.swift */; };
+		E4B84EE62DCA318A00D2DC6B /* ForgotPassword.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4B84EE52DCA318A00D2DC6B /* ForgotPassword.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -69,6 +70,7 @@
 		E47AF0E22D0B662400C3444F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E47AF0E52D0B662400C3444F /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		E47B1D112D7B04A2000F2758 /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
+		E4B84EE52DCA318A00D2DC6B /* ForgotPassword.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPassword.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -186,6 +188,7 @@
 				E47AF0E22D0B662400C3444F /* Assets.xcassets */,
 				E47AF0E42D0B662400C3444F /* Preview Content */,
 				E456F5DB2DA693EA00E1640F /* SettingScreen.swift */,
+				E4B84EE52DCA318A00D2DC6B /* ForgotPassword.swift */,
 			);
 			path = "Music Room";
 			sourceTree = "<group>";
@@ -279,6 +282,7 @@
 				E43018692D0F6C2700E239AD /* ButtonItem.swift in Sources */,
 				E456F5DE2DAD30C700E1640F /* PlaylistViewModel.swift in Sources */,
 				E43ABE0F2D83305A009624E9 /* PopUpChangeInfo.swift in Sources */,
+				E4B84EE62DCA318A00D2DC6B /* ForgotPassword.swift in Sources */,
 				E43ABE0D2D83127D009624E9 /* SessionScreen.swift in Sources */,
 				E456F5CC2D92041200E1640F /* MusicViewModel.swift in Sources */,
 				E456F5DA2D9EB7A800E1640F /* AudioPlayer.swift in Sources */,

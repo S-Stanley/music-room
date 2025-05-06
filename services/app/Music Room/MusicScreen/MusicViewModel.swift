@@ -56,6 +56,7 @@ struct Track: Codable {
     let artist: Artist
     var uuid: String?
     var voteCount: Int?
+    var addedBy: String?
 
     enum CodingKeys: String, CodingKey {
         case id, title, link, duration, rank, preview, album, artist, uuid, voteCount
@@ -77,7 +78,12 @@ struct PlaylistTrack: Codable, Identifiable {
     let position: Int
     let createdAt: String
     let updatedAt: String
-    let votes: Int? // OK de garder optionnel
+    let votes: Int?
+    let user: UserInfo? // 👈 ici on rajoute l’objet utilisateur
+
+    struct UserInfo: Codable {
+        let name: String
+    }
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -91,6 +97,7 @@ struct PlaylistTrack: Codable, Identifiable {
         case createdAt
         case updatedAt
         case votes = "voteCount" // ⬅️ ICI la correction magique
+        case user
     }
 }
 

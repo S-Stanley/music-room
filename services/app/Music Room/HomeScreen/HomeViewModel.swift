@@ -20,8 +20,8 @@ class HomeViewModel: ObservableObject {
         return (user.token)
     }
     
-    
-    func createSession(name: String, type: String, password: String?, adminToken: String, completion: @escaping (Bool, String?) -> Void) {
+    func createSession(name: String, type: String, orderType: String,password: String?, adminToken: String, completion: @escaping (Bool, String?) -> Void) {
+        
         guard let user = User.load() else {
             completion(false, nil)
             return
@@ -34,11 +34,12 @@ class HomeViewModel: ObservableObject {
         request.setValue(user.token, forHTTPHeaderField: "token")
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
         
-        var body = "name=\(name)&type=\(type)&adminToken=\(adminToken)"
+        var body = "name=\(name)&type=\(type)&adminToken=\(adminToken)&orderType=\(orderType)"
         if let password = password, type == "PRIVATE" {
             body += "&password=\(password)"
         }
         
+        print("📤 Données envoyées : \(body)")
         request.httpBody = body.data(using: .utf8)
         
         URLSession.shared.dataTask(with: request) { data, response, error in
@@ -55,18 +56,18 @@ class HomeViewModel: ObservableObject {
                 }
                 
                 if httpResponse.statusCode == 201 {
+                    print("✅ Statut HTTP 201 reçu")
+                    print("📥 Réponse brute : \(String(data: data, encoding: .utf8) ?? "n/a")")
                     do {
                         let sessionResponse = try JSONDecoder().decode(Session.self, from: data)
                         print("✅ Session créée avec succès, ID: \(sessionResponse.id)")
-                        completion(true, sessionResponse.id) // ✅ On retourne l'ID
+                        completion(true, sessionResponse.id)
                     } catch {
                         print("❌ Erreur de décodage JSON: \(error.localizedDescription)")
                         completion(false, nil)
                     }
-                } else {
-                    print("❌ Erreur serveur: \(httpResponse.statusCode)")
-                    completion(false, nil)
                 }
+
             }
         }.resume()
     }
@@ -101,8 +102,8 @@ class HomeViewModel: ObservableObject {
                     return
                 }
 
-                print("✅ Statut HTTP: \(httpResponse.statusCode)")
-                print("📥 Réponse JSON brute: \(String(data: data, encoding: .utf8) ?? "Aucune donnée")")
+//                print("✅ Statut HTTP: \(httpResponse.statusCode)")
+//                print("📥 Réponse JSON brute: \(String(data: data, encoding: .utf8) ?? "Aucune donnée")")
 
                 if httpResponse.statusCode == 200 {
                     do {
@@ -247,4 +248,5 @@ struct Session: Identifiable, Decodable {
     let type: String
     let password: String?
     let creatorUserName: String?
+    let orderType: String
 }

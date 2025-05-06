@@ -126,7 +126,7 @@ struct ProfileScreen: View {
             }
             .navigationDestination(isPresented: $navigateToSession) {
                 if let session = selectedSession {
-                    SessionScreen(sessionId: session.id, nameSession: session.name, creatorUserName: sessionCreatorName)
+                    SessionScreen(sessionId: session.id, nameSession: session.name, creatorUserName: sessionCreatorName, orderType: session.orderType)
                 }
             }
 
@@ -152,7 +152,8 @@ struct InvitationCard: View {
                     name: invite.playlist.name,
                     type: invite.playlist.type,
                     password: invite.playlist.password,
-                    creatorUserName: invite.invitedBy.name
+                    creatorUserName: invite.invitedBy.name,
+                    orderType: invite.playlist.orderType
                 )
                 onJoin(session)
             }) {

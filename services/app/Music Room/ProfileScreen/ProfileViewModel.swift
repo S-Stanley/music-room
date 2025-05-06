@@ -179,6 +179,7 @@ struct Playlist: Codable {
     let name: String
     let type: String
     let password: String?
+    let orderType: String
 }
 
 struct UserSummary: Codable {
