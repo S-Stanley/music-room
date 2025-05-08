@@ -128,3 +128,25 @@ curl -X GET "localhost:5001/playlist/e41fa7e7-05a7-4812-9a8b-446ecbc78b2e/member
 ```bash
 curl -X POST "localhost:5001/playlist/e41fa7e7-05a7-4812-9a8b-446ecbc78b2e/edit" -H token:c055fb5c-7d35-42a8-b4e7-a20a706d999b -d trackIdAfter=f77b7dce-74ed-4312-944f-340eb1d3f602 -d trackId=afd1b795-2ad2-44af-b9a6-c3910f3fe6ec
 ```
+
+#### Edit session playlist [PROTECTED]
+* Endpoint: `POST /playlist/:playlist_id/edit/session`
+* Data a envoyer:
+    * start: Datetime member of playlist can vote
+    * end: Datetime member of playlist can vote
+    * addr: Address near people can vote
+* Reponse:
+    * 200: OK
+    * 400:
+        * Playlist not found
+        * Format of datetime is wrong
+        * Address localisation cannot be found
+    * 500: Erreur serveur
+
+```bash
+curl -X POST "localhost:5001/playlist/e41fa7e7-05a7-4812-9a8b-446ecbc78b2e/edit/session" \
+-H token:c055fb5c-7d35-42a8-b4e7-a20a706d999b \
+-d start=2025 \
+-d end=2025 \
+-d addr="Paris"
+```

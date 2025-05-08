@@ -2,10 +2,12 @@ import express from "express";
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
+import NodeGeocoder from 'node-geocoder';
 
 import {
   getPlaylistById,
   getAllPlaylistByUserId,
+  updatePlaylistSession,
 } from "../handlers/playlist.js";
 import {
   getTrackDefaultPosition,
@@ -39,6 +41,9 @@ import {
 
 const router = express.Router();
 const prisma = new PrismaClient();
+const geocoder = NodeGeocoder({
+  provider: 'openstreetmap'
+});
 
 const PlaylistTypeEnum = {
   PUBLIC: "PUBLIC",
@@ -46,6 +51,64 @@ const PlaylistTypeEnum = {
 };
 
 const _PAGINATION_MAX_TAKE = 50;
+
+const getLocalisationOfAddress = async(address) => {
+  const res = await geocoder.geocode(address);
+  if (res.length > 0){
+    const { latitude, longitude } = res[0];
+    return {
+      latitude: latitude ?? null,
+      longitude: longitude ?? null,
+    }
+  };
+  return {
+    latitude: null,
+    longitude: null,
+  };
+};
+
+router.post("/:playlist_id/edit/session", async(req, res) => {
+  console.info("User is trying to ad lon, lat, session start and session end to playlist");
+  try {
+    const { playlist_id } = req.params;
+    const playlist = await getPlaylistById(playlist_id);
+    if (!playlist){
+      return res.status(400).json({
+        error: "Playlist not found"
+      });
+    }
+
+    const { addr, start, end } = req.body;
+    if (!addr || !start || !end){  
+      return res.status(400).json({
+        error: "Missing parameters in body"
+      });
+    }
+
+    const startSession = new Date(start);
+    const endSession = new Date(end);
+    if (isNaN(startSession) || isNaN(endSession)){
+      return res.status(400).json({
+        error: "Invalide start or end session"
+      });
+    }
+
+    const { latitude, longitude } = await getLocalisationOfAddress(addr);
+    if (!latitude || !longitude){
+      return res.status(400).json({
+        error: "Address not found"
+      });
+    }
+
+    await updatePlaylistSession(playlist_id, latitude.toString(), longitude.toString(), startSession, endSession);
+    return res.status(200).json(playlist);
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({
+      error: "Server error"
+    });
+  }
+});
 
 router.post("/:playlist_id/edit", async(req, res) => {
   console.info("User is trying to edit playlist order")
