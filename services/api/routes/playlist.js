@@ -8,6 +8,7 @@ import {
   getPlaylistById,
   getAllPlaylistByUserId,
   updatePlaylistSession,
+  updatePlaylistLocation,
 } from "../handlers/playlist.js";
 import {
   getTrackDefaultPosition,
@@ -79,28 +80,33 @@ router.post("/:playlist_id/edit/session", async(req, res) => {
     }
 
     const { addr, start, end } = req.body;
-    if (!addr || !start || !end){  
-      return res.status(400).json({
-        error: "Missing parameters in body"
-      });
+
+    if (start && end) {
+      const startSession = new Date(start);
+      const endSession = new Date(end);
+      if (isNaN(startSession) || isNaN(endSession)){
+        return res.status(400).json({
+          error: "Invalide start or end session"
+        });
+      }
+      await updatePlaylistSession(playlist_id, startSession, endSession);
+    }
+    if (!start && !end){
+      await updatePlaylistSession(playlist_id, null, null);
     }
 
-    const startSession = new Date(start);
-    const endSession = new Date(end);
-    if (isNaN(startSession) || isNaN(endSession)){
-      return res.status(400).json({
-        error: "Invalide start or end session"
-      });
+    if (addr) {
+      const { latitude, longitude } = await getLocalisationOfAddress(addr);
+      if (!latitude || !longitude){
+        return res.status(400).json({
+          error: "Address not found"
+        });
+      }
+      await updatePlaylistLocation(playlist_id, latitude.toString(), longitude.toString());
+    } else {
+      await updatePlaylistLocation(playlist_id, null, null);
     }
 
-    const { latitude, longitude } = await getLocalisationOfAddress(addr);
-    if (!latitude || !longitude){
-      return res.status(400).json({
-        error: "Address not found"
-      });
-    }
-
-    await updatePlaylistSession(playlist_id, latitude.toString(), longitude.toString(), startSession, endSession);
     return res.status(200).json(playlist);
   } catch (e) {
     console.error(e);
