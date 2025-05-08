@@ -94,7 +94,7 @@ curl -X POST localhost:5001/users/info -H token:c055fb5c-7d35-42a8-b4e7-a20a706d
 curl "localhost:5001/users/?take=20&skip=0" -H token:c055fb5c-7d35-42a8-b4e7-a20a706d999b
 ```
 
-#### Ask for password change [PROTECTED]
+#### Ask for password change
 
 * Endpoint: POST `/users/password/reset`
 * Header: token
@@ -102,26 +102,28 @@ curl "localhost:5001/users/?take=20&skip=0" -H token:c055fb5c-7d35-42a8-b4e7-a20
     * password
 * Reponse
     * 201: Demande prise en compte et email avec code de confirmation envoye
-    * 400: Password non existant
+    * 400: Password or email non existant, user not found
     * 500: Serveur error
 
 ```bash
-curl -X POST "localhost:5001/users/password/reset" -d password=456 -H token:c055fb5c-7d35-42a8-b4e7-a20a706d999b
+curl -X POST "localhost:5001/users/password/reset" -d password=456 -d email=user@music.room
 ```
 
-#### Confirm password change [PROTECTED]
+#### Confirm password change
 
 * Endpoint: POST `/users/password/confirm`
 * Header: token
 * Body params:
     * code
+    * email
 * Reponse
     * 200: Password updated
     * 400:
         * Confirmation code is not sent, empty or wrong format
         * Wrong confirmation code
+        * User does not exist
     * 500: Serveur error
 
 ```bash
-curl -X POST "localhost:5001/users/password/confirm" -d code=123 -H token:c055fb5c-7d35-42a8-b4e7-a20a706d999b
+curl -X POST "localhost:5001/users/password/confirm" -d code=123 -d email=user@music.room
 ```

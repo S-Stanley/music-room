@@ -33,21 +33,28 @@ const _MAX_TAKE_ = 50;
 router.post("/password/reset", async(req, res) => {
   console.info("User asking for password reset");
   try {
-    const { password } = req.body;
-    if (!password){
+    const { email, password } = req.body;
+    if (!password || !email){
       return res.status(400).json({
-        error: "Password cannot be empty"
+        error: "Password or email cannot be empty"
+      });
+    }
+    const user = await findUserByEmail(email);
+    if (!user){
+      return res.status(400).json({
+        error: "User does not exist"
       });
     }
     const confirmationCode = generateConfirmationCode();
-    await createPasswordChangeRequest(res?.locals?.user?.id, confirmationCode, password);
+    await createPasswordChangeRequest(user.id, confirmationCode, password);
+    console.info("Confirmation code:", confirmationCode);
     await sendEmail(
-      res?.locals?.user?.email,
+      user.email,
       "Your confirmation code for password change",
       `<p>Your confirmation code for password request change is: ${confirmationCode}</p>`
     );
     return res.status(201).json({
-      user_id: res?.locals?.user?.id,
+      user_id: user.id,
     });
   } catch (e) {
 		console.error(e);
@@ -59,21 +66,27 @@ router.post("/password/reset", async(req, res) => {
 
 router.post("/password/confirm", async(req, res) => {
   try {
-    const { code } = req.body;
+    const { code, email } = req.body;
     if (!code || isNaN(parseInt(code, 10))) {
       return res.status(400).json({
         error: "Confirmation code cannot be empty or wrong format"
       });
     }
-    const checkConfirmationCode = await checkUserConfirmationCodeForPasswordChange(res?.locals?.user?.id, parseInt(code, 10));
+    const user = await findUserByEmail(email);
+    if (!user){
+      return res.status(400).json({
+        error: "User does not exist"
+      });
+    }
+    const checkConfirmationCode = await checkUserConfirmationCodeForPasswordChange(user.id, parseInt(code, 10));
     if (!checkConfirmationCode) {
       return res.status(400).json({
         error: "Wrong confirmation code"
       });
     }
-    await updateUserPassword(res?.locals?.user?.id);
+    await updateUserPassword(user.id);
     return res.status(200).json({
-      user_id: res?.locals?.user?.id,
+      user_id: user?.id,
     });
   } catch (e){
 		console.error(e);
