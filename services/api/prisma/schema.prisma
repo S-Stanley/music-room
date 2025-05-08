@@ -58,6 +58,10 @@ model Playlist {
   user          User        @relation(fields: [userId], references: [id])
   userId        String      @map("user_id") @db.Uuid
   orderType     PlaylistOrderType @map("order_type") @default(VOTE)
+  lat           String?
+  lon           String?
+  startSession  DateTime?
+  endSession    DateTime?
   tracks        TrackPlaylist[]
   votes         TrackVote[]
   invitations   Invitation[]
