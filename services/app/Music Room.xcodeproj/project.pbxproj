@@ -37,6 +37,9 @@
 		E47AF0E62D0B662400C3444F /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E47AF0E52D0B662400C3444F /* Preview Assets.xcassets */; };
 		E47B1D122D7B04A2000F2758 /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E47B1D112D7B04A2000F2758 /* AuthViewModel.swift */; };
 		E4B84EE62DCA318A00D2DC6B /* ForgotPassword.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4B84EE52DCA318A00D2DC6B /* ForgotPassword.swift */; };
+		E4B84EED2DCCE1F900D2DC6B /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = E4B84EEC2DCCE1F900D2DC6B /* GoogleSignIn */; };
+		E4B84EEF2DCCE1F900D2DC6B /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = E4B84EEE2DCCE1F900D2DC6B /* GoogleSignInSwift */; };
+		E4B84EF32DCCE80600D2DC6B /* GoogleAuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4B84EF22DCCE80600D2DC6B /* GoogleAuthViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -71,6 +74,8 @@
 		E47AF0E52D0B662400C3444F /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		E47B1D112D7B04A2000F2758 /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
 		E4B84EE52DCA318A00D2DC6B /* ForgotPassword.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPassword.swift; sourceTree = "<group>"; };
+		E4B84EF22DCCE80600D2DC6B /* GoogleAuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleAuthViewModel.swift; sourceTree = "<group>"; };
+		E4D904372DCCFBCB00BC190E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -78,6 +83,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E4B84EED2DCCE1F900D2DC6B /* GoogleSignIn in Frameworks */,
+				E4B84EEF2DCCE1F900D2DC6B /* GoogleSignInSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -89,6 +96,7 @@
 			children = (
 				E43018612D0F667100E239AD /* ui */,
 				E47AF0DE2D0B662200C3444F /* AuthentificationScreen.swift */,
+				E4B84EE52DCA318A00D2DC6B /* ForgotPassword.swift */,
 				E43018702D0F73AC00E239AD /* SignInScreen.swift */,
 				E430186A2D0F6F7700E239AD /* SignUpScreen.swift */,
 				E47B1D112D7B04A2000F2758 /* AuthViewModel.swift */,
@@ -188,7 +196,8 @@
 				E47AF0E22D0B662400C3444F /* Assets.xcassets */,
 				E47AF0E42D0B662400C3444F /* Preview Content */,
 				E456F5DB2DA693EA00E1640F /* SettingScreen.swift */,
-				E4B84EE52DCA318A00D2DC6B /* ForgotPassword.swift */,
+				E4B84EF22DCCE80600D2DC6B /* GoogleAuthViewModel.swift */,
+				E4D904372DCCFBCB00BC190E /* Info.plist */,
 			);
 			path = "Music Room";
 			sourceTree = "<group>";
@@ -245,6 +254,9 @@
 				Base,
 			);
 			mainGroup = E47AF0D02D0B662200C3444F;
+			packageReferences = (
+				E4B84EEB2DCCE1F900D2DC6B /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+			);
 			productRefGroup = E47AF0DA2D0B662200C3444F /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -272,6 +284,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E43D22042D821182007BB44D /* BoxSession.swift in Sources */,
+				E4B84EF32DCCE80600D2DC6B /* GoogleAuthViewModel.swift in Sources */,
 				E456F5D82D9EB73F00E1640F /* PlaylistScreen.swift in Sources */,
 				E43D22022D81C4DD007BB44D /* InformationUser.swift in Sources */,
 				E47B1D122D7B04A2000F2758 /* AuthViewModel.swift in Sources */,
@@ -435,6 +448,7 @@
 				DEVELOPMENT_TEAM = UK8RD75RYT;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -464,6 +478,7 @@
 				DEVELOPMENT_TEAM = UK8RD75RYT;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -504,6 +519,30 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		E4B84EEB2DCCE1F900D2DC6B /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		E4B84EEC2DCCE1F900D2DC6B /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E4B84EEB2DCCE1F900D2DC6B /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+		E4B84EEE2DCCE1F900D2DC6B /* GoogleSignInSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E4B84EEB2DCCE1F900D2DC6B /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignInSwift;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = E47AF0D12D0B662200C3444F /* Project object */;
 }

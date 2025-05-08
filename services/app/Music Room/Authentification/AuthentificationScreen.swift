@@ -7,11 +7,13 @@
 
 import SwiftUI
 import SwiftData
+import GoogleSignIn
+import GoogleSignInSwift
 
 struct AuthentificationScreen: View {
     @StateObject private var authViewModel = AuthViewModel()
     @State private var navigateToForgotPassword = false
-
+    @StateObject private var viewModel = GoogleAuthViewModel()
     @State private var selectedOption: String = "Sign in"
 
     var body: some View {
@@ -35,13 +37,17 @@ struct AuthentificationScreen: View {
                     default:
                         Text("Unknown action")
                     }
-                    
+                    GoogleSignInButton {
+                                        viewModel.signIn()
+                                    }
+                                    .frame(width: 200, height: 50)
+                   
                     Spacer()
                 }
                 .padding()
                 .background(Color.gray.opacity(0.05).edgesIgnoringSafeArea(.all))
                 .navigationDestination(isPresented: $authViewModel.shouldNavigateToForgotPassword) {
-                    ForgotPassword()
+                    ForgotPassword(authViewModel: authViewModel)
                 }
             }
         }
