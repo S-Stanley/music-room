@@ -168,7 +168,7 @@
 		E47AF0D02D0B662200C3444F = {
 			isa = PBXGroup;
 			children = (
-				E47AF0DB2D0B662200C3444F /* Music Room */,
+				E47AF0DB2D0B662200C3444F /* Music_Room */,
 				E47AF0DA2D0B662200C3444F /* Products */,
 			);
 			sourceTree = "<group>";
@@ -181,7 +181,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		E47AF0DB2D0B662200C3444F /* Music Room */ = {
+		E47AF0DB2D0B662200C3444F /* Music_Room */ = {
 			isa = PBXGroup;
 			children = (
 				E456F5D52D9EB69A00E1640F /* PlaylistScreen */,
@@ -199,7 +199,7 @@
 				E4B84EF22DCCE80600D2DC6B /* GoogleAuthViewModel.swift */,
 				E4D904372DCCFBCB00BC190E /* Info.plist */,
 			);
-			path = "Music Room";
+			path = Music_Room;
 			sourceTree = "<group>";
 		};
 		E47AF0E42D0B662400C3444F /* Preview Content */ = {
@@ -245,7 +245,7 @@
 					};
 				};
 			};
-			buildConfigurationList = E47AF0D42D0B662200C3444F /* Build configuration list for PBXProject "Music Room" */;
+			buildConfigurationList = E47AF0D42D0B662200C3444F /* Build configuration list for PBXProject "Music_Room" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -447,7 +447,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"Music Room/Preview Content\"";
 				DEVELOPMENT_TEAM = UK8RD75RYT;
 				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -477,7 +477,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"Music Room/Preview Content\"";
 				DEVELOPMENT_TEAM = UK8RD75RYT;
 				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -500,7 +500,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		E47AF0D42D0B662200C3444F /* Build configuration list for PBXProject "Music Room" */ = {
+		E47AF0D42D0B662200C3444F /* Build configuration list for PBXProject "Music_Room" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				E47AF0E72D0B662400C3444F /* Debug */,
