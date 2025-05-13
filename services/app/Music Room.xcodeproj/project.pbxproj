@@ -40,7 +40,25 @@
 		E4B84EED2DCCE1F900D2DC6B /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = E4B84EEC2DCCE1F900D2DC6B /* GoogleSignIn */; };
 		E4B84EEF2DCCE1F900D2DC6B /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = E4B84EEE2DCCE1F900D2DC6B /* GoogleSignInSwift */; };
 		E4B84EF32DCCE80600D2DC6B /* GoogleAuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4B84EF22DCCE80600D2DC6B /* GoogleAuthViewModel.swift */; };
+		E4D9043E2DCD308300BC190E /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = E4D9043D2DCD308300BC190E /* GoogleSignIn */; };
+		E4D904402DCD308300BC190E /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = E4D9043F2DCD308300BC190E /* GoogleSignInSwift */; };
+		E4D904462DD1DAFD00BC190E /* FaceBookViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4D904452DD1DAFC00BC190E /* FaceBookViewModel.swift */; };
+		E4D9046B2DD37A9300BC190E /* FacebookCore in Frameworks */ = {isa = PBXBuildFile; productRef = E4D9046A2DD37A9300BC190E /* FacebookCore */; };
+		E4D9046D2DD37A9300BC190E /* FacebookLogin in Frameworks */ = {isa = PBXBuildFile; productRef = E4D9046C2DD37A9300BC190E /* FacebookLogin */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		E4D904682DD23D4F00BC190E /* Embed ExtensionKit Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(EXTENSIONS_FOLDER_PATH)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			name = "Embed ExtensionKit Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		E43018642D0F66A400E239AD /* NavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationBar.swift; sourceTree = "<group>"; };
@@ -76,6 +94,8 @@
 		E4B84EE52DCA318A00D2DC6B /* ForgotPassword.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPassword.swift; sourceTree = "<group>"; };
 		E4B84EF22DCCE80600D2DC6B /* GoogleAuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleAuthViewModel.swift; sourceTree = "<group>"; };
 		E4D904372DCCFBCB00BC190E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E4D904412DCD378F00BC190E /* Music-Room-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Music-Room-Info.plist"; sourceTree = SOURCE_ROOT; };
+		E4D904452DD1DAFC00BC190E /* FaceBookViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceBookViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -84,7 +104,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				E4B84EED2DCCE1F900D2DC6B /* GoogleSignIn in Frameworks */,
+				E4D9046B2DD37A9300BC190E /* FacebookCore in Frameworks */,
+				E4D9046D2DD37A9300BC190E /* FacebookLogin in Frameworks */,
 				E4B84EEF2DCCE1F900D2DC6B /* GoogleSignInSwift in Frameworks */,
+				E4D9043E2DCD308300BC190E /* GoogleSignIn in Frameworks */,
+				E4D904402DCD308300BC190E /* GoogleSignInSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -168,7 +192,7 @@
 		E47AF0D02D0B662200C3444F = {
 			isa = PBXGroup;
 			children = (
-				E47AF0DB2D0B662200C3444F /* Music_Room */,
+				E47AF0DB2D0B662200C3444F /* Music Room */,
 				E47AF0DA2D0B662200C3444F /* Products */,
 			);
 			sourceTree = "<group>";
@@ -181,9 +205,10 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		E47AF0DB2D0B662200C3444F /* Music_Room */ = {
+		E47AF0DB2D0B662200C3444F /* Music Room */ = {
 			isa = PBXGroup;
 			children = (
+				E4D904412DCD378F00BC190E /* Music-Room-Info.plist */,
 				E456F5D52D9EB69A00E1640F /* PlaylistScreen */,
 				E456F5D12D955D1200E1640F /* HomeScreen */,
 				E456F5D02D93EF5600E1640F /* ProfileScreen */,
@@ -198,8 +223,9 @@
 				E456F5DB2DA693EA00E1640F /* SettingScreen.swift */,
 				E4B84EF22DCCE80600D2DC6B /* GoogleAuthViewModel.swift */,
 				E4D904372DCCFBCB00BC190E /* Info.plist */,
+				E4D904452DD1DAFC00BC190E /* FaceBookViewModel.swift */,
 			);
-			path = Music_Room;
+			path = "Music Room";
 			sourceTree = "<group>";
 		};
 		E47AF0E42D0B662400C3444F /* Preview Content */ = {
@@ -220,6 +246,7 @@
 				E47AF0D52D0B662200C3444F /* Sources */,
 				E47AF0D62D0B662200C3444F /* Frameworks */,
 				E47AF0D72D0B662200C3444F /* Resources */,
+				E4D904682DD23D4F00BC190E /* Embed ExtensionKit Extensions */,
 			);
 			buildRules = (
 			);
@@ -237,7 +264,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1540;
+				LastSwiftUpdateCheck = 1630;
 				LastUpgradeCheck = 1540;
 				TargetAttributes = {
 					E47AF0D82D0B662200C3444F = {
@@ -245,7 +272,7 @@
 					};
 				};
 			};
-			buildConfigurationList = E47AF0D42D0B662200C3444F /* Build configuration list for PBXProject "Music_Room" */;
+			buildConfigurationList = E47AF0D42D0B662200C3444F /* Build configuration list for PBXProject "Music Room" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -256,6 +283,7 @@
 			mainGroup = E47AF0D02D0B662200C3444F;
 			packageReferences = (
 				E4B84EEB2DCCE1F900D2DC6B /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				E4D904692DD37A9300BC190E /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */,
 			);
 			productRefGroup = E47AF0DA2D0B662200C3444F /* Products */;
 			projectDirPath = "";
@@ -289,6 +317,7 @@
 				E43D22022D81C4DD007BB44D /* InformationUser.swift in Sources */,
 				E47B1D122D7B04A2000F2758 /* AuthViewModel.swift in Sources */,
 				E43D21FD2D81C355007BB44D /* ProfileScreen.swift in Sources */,
+				E4D904462DD1DAFD00BC190E /* FaceBookViewModel.swift in Sources */,
 				E47AF0DF2D0B662200C3444F /* AuthentificationScreen.swift in Sources */,
 				E456F5D32D955D3200E1640F /* HomeViewModel.swift in Sources */,
 				E456F5CA2D9203EF00E1640F /* MusicScreen.swift in Sources */,
@@ -370,6 +399,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = "services/app/Music Room/Info.plist\n";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -427,6 +457,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = "services/app/Music Room/Info.plist\n";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -447,8 +478,8 @@
 				DEVELOPMENT_ASSET_PATHS = "\"Music Room/Preview Content\"";
 				DEVELOPMENT_TEAM = UK8RD75RYT;
 				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Music-Room-Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -477,8 +508,8 @@
 				DEVELOPMENT_ASSET_PATHS = "\"Music Room/Preview Content\"";
 				DEVELOPMENT_TEAM = UK8RD75RYT;
 				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Music-Room-Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -500,7 +531,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		E47AF0D42D0B662200C3444F /* Build configuration list for PBXProject "Music_Room" */ = {
+		E47AF0D42D0B662200C3444F /* Build configuration list for PBXProject "Music Room" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				E47AF0E72D0B662400C3444F /* Debug */,
@@ -529,6 +560,14 @@
 				minimumVersion = 8.0.0;
 			};
 		};
+		E4D904692DD37A9300BC190E /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/facebook/facebook-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 14.1.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -541,6 +580,26 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E4B84EEB2DCCE1F900D2DC6B /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
 			productName = GoogleSignInSwift;
+		};
+		E4D9043D2DCD308300BC190E /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E4B84EEB2DCCE1F900D2DC6B /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+		E4D9043F2DCD308300BC190E /* GoogleSignInSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E4B84EEB2DCCE1F900D2DC6B /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignInSwift;
+		};
+		E4D9046A2DD37A9300BC190E /* FacebookCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E4D904692DD37A9300BC190E /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */;
+			productName = FacebookCore;
+		};
+		E4D9046C2DD37A9300BC190E /* FacebookLogin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E4D904692DD37A9300BC190E /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */;
+			productName = FacebookLogin;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

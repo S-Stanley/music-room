@@ -13,7 +13,8 @@ import GoogleSignInSwift
 struct AuthentificationScreen: View {
     @StateObject private var authViewModel = AuthViewModel()
     @State private var navigateToForgotPassword = false
-    @StateObject private var viewModel = GoogleAuthViewModel()
+    @StateObject private var googleViewModel = GoogleAuthViewModel()
+    @StateObject private var facebookViewModel = FaceBookViewModel()
     @State private var selectedOption: String = "Sign in"
 
     var body: some View {
@@ -38,10 +39,23 @@ struct AuthentificationScreen: View {
                         Text("Unknown action")
                     }
                     GoogleSignInButton {
-                                        viewModel.signIn()
+                        googleViewModel.signIn()
                                     }
                                     .frame(width: 200, height: 50)
-                   
+                    Button(action: {
+                        facebookViewModel.signInWithFacebook()
+                    }) {
+                        HStack {
+                            Image(systemName: "f.circle.fill")
+                            Text("Se connecter avec Facebook")
+                                .bold()
+                        }
+                        .frame(width: 250, height: 50)
+                        .foregroundColor(.white)
+                        .background(Color.blue)
+                        .cornerRadius(10)
+                    }
+                    
                     Spacer()
                 }
                 .padding()

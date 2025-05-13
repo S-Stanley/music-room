@@ -4,5 +4,25 @@
 <dict>
 	<key>GIDClientID</key>
 	<string>661791028175-fajapvuorbijpcrdejqhc2ni129cmfqd.apps.googleusercontent.com</string>
+	<key>FacebookAppID</key>
+	<string>719351127104313</string>
+	<key>FacebookDisplayName</key>
+	<string>music-room</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>fbapi</string>
+		<string>fb-messenger-share-api</string>
+		<string>fbauth2</string>
+		<string>fbshareextension</string>
+	</array>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>fb719351127104313</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>
