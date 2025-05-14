@@ -2,18 +2,42 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>App transport Security Settings</key>
-	<string></string>
-	<key>CFBundleURLTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>com.googleusercontent.apps.661791028175-fajapvuorbijpcrdejqhc2ni129cmfqd</string>
-			</array>
-		</dict>
-	</array>
-	<key>GIDClientID</key>
-	<string>661791028175-fajapvuorbijpcrdejqhc2ni129cmfqd.apps.googleusercontent.com</string>
+    <key>CFBundleURLTypes</key>
+    <array>
+        <!-- Google Sign-In -->
+        <dict>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>com.googleusercontent.apps.661791028175-fajapvuorbijpcrdejqhc2ni129cmfqd</string>
+            </array>
+        </dict>
+
+        <!-- Facebook Login -->
+        <dict>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>fb719351127104313</string>
+            </array>
+        </dict>
+    </array>
+
+    <!-- Google Sign-In -->
+    <key>GIDClientID</key>
+    <string>661791028175-fajapvuorbijpcrdejqhc2ni129cmfqd.apps.googleusercontent.com</string>
+
+    <!-- Facebook Login -->
+    <key>FacebookAppID</key>
+    <string>719351127104313</string>
+    <key>FacebookClientToken</key>
+    <string>abc123clienttoken456xyz</string>
+    <key>FacebookDisplayName</key>
+    <string>music-room</string>
+
+    <!-- Pour autoriser les appels non HTTPS (optionnel, à limiter en prod) -->
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsArbitraryLoads</key>
+        <true/>
+    </dict>
 </dict>
 </plist>
