@@ -12,8 +12,11 @@ import { playlistRouter } from "./routes/playlist.js";
 import { trackRouter } from "./routes/track.js";
 
 app.use(express.urlencoded({extended: false}));
+app.set('trust proxy', true);
 
 const _UNPROTECTED_ENDPOINT_ = [
+  "/up",
+  "/up/",
   "/users/email/signup",
   "/users/email/signin",
   "/users/email/signup/",

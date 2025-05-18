@@ -39,6 +39,10 @@ import {
 import {
   reorderTracks,
 } from "../utils/track.js"
+import {
+  getLocationFromIpAddr,
+  computeDistanceBetweenTwoLocations,
+} from "../providers/geoloc.js";
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -389,6 +393,7 @@ router.post("/:playlist_id/vote/:track_id", async(req, res) => {
   console.log("User is voting for next playlist");
   try {
     const { playlist_id, track_id } = req.params;
+    const { ip_addr } = req.body;
     const user = await findUserById(res?.locals?.user?.id);
     if (!user){
       return res.status(400).json({
@@ -412,6 +417,28 @@ router.post("/:playlist_id/vote/:track_id", async(req, res) => {
       return res.status(400).json({
         error: "User already voted"
       });
+    }
+    if (playlist.lat && playlist.lon){
+      if (!ip_addr){
+        return res.status(400).json({
+          error: "Playlist required geolocalisation and ip addr is not received"
+        });
+      }
+      const userIpAddr = getLocationFromIpAddr(ip_addr);
+      if (!userIpAddr){
+        return res.status(400).json({
+          error: "User IP addr error"
+        });
+      }
+      const distanceWithUser = computeDistanceBetweenTwoLocations(
+        { latitude: playlist.lat, longitude: playlist.long },
+        userIpAddr,
+      );
+      if (distanceWithUser >= 10){
+        return res.status(400).json({
+          error: "User need to be near playlist location to vote"
+        });
+      }
     }
     const newVote = await createUserVote(playlist?.id, user?.id, track?.id, track?.voteCount);
     return res.status(201).json(newVote);

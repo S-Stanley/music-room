@@ -93,6 +93,10 @@ curl -X POST "localhost:5001/playlist/2a8fd55d-b9f9-4ec9-9398-32a22d97e64c/join"
     * 400:
         * Playlist, user track not found
         * User already vote for this track in the playlist
+        * Playlist required localisation
+            * Ip of user is empty, not received
+            * Ip of user is not in the right format or untrackable
+            * User is to far away from playlist location autorisation to vote
     * 500 -> Server error
 
 ```bash
