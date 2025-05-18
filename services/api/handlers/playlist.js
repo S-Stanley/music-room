@@ -16,6 +16,30 @@ const PlaylistType = {
   PUBLIC: "PUBLIC",
 }
 
+export const updatePlaylistSession = async(playlist_id, start, end) => {
+  return await prisma.playlist.update({
+    where: {
+      id: playlist_id
+    },
+    data: {
+      startSession: start,
+      endSession: end,
+    },
+  });
+};
+
+export const updatePlaylistLocation = async(playlist_id, lat, lon) => {
+  return await prisma.playlist.update({
+    where: {
+      id: playlist_id
+    },
+    data: {
+      lon: lon,
+      lat: lat,
+    },
+  });
+};
+
 export const getManyPrivatePlaylistByIds = async(skip, take, playlistIds) => {
     return await prisma.playlist.findMany({
       where: {
