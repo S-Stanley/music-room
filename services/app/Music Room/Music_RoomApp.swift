@@ -10,7 +10,7 @@ import SwiftData
 
 @main
 struct Music_RoomApp: App {
-    
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             Item.self,

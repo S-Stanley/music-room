@@ -45,6 +45,7 @@
 		E4D904462DD1DAFD00BC190E /* FaceBookViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4D904452DD1DAFC00BC190E /* FaceBookViewModel.swift */; };
 		E4D9046B2DD37A9300BC190E /* FacebookCore in Frameworks */ = {isa = PBXBuildFile; productRef = E4D9046A2DD37A9300BC190E /* FacebookCore */; };
 		E4D9046D2DD37A9300BC190E /* FacebookLogin in Frameworks */ = {isa = PBXBuildFile; productRef = E4D9046C2DD37A9300BC190E /* FacebookLogin */; };
+		E4D9046F2DDA4EE100BC190E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4D9046E2DDA4EE100BC190E /* AppDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -96,6 +97,7 @@
 		E4D904372DCCFBCB00BC190E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E4D904412DCD378F00BC190E /* Music-Room-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Music-Room-Info.plist"; sourceTree = SOURCE_ROOT; };
 		E4D904452DD1DAFC00BC190E /* FaceBookViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceBookViewModel.swift; sourceTree = "<group>"; };
+		E4D9046E2DDA4EE100BC190E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -224,6 +226,7 @@
 				E4B84EF22DCCE80600D2DC6B /* GoogleAuthViewModel.swift */,
 				E4D904372DCCFBCB00BC190E /* Info.plist */,
 				E4D904452DD1DAFC00BC190E /* FaceBookViewModel.swift */,
+				E4D9046E2DDA4EE100BC190E /* AppDelegate.swift */,
 			);
 			path = "Music Room";
 			sourceTree = "<group>";
@@ -333,6 +336,7 @@
 				E430186D2D0F701000E239AD /* TextFieldItem.swift in Sources */,
 				E43ABE132D844197009624E9 /* ButtonActionItem.swift in Sources */,
 				E454FF292D7AFC8C00FAD268 /* HomeScreen.swift in Sources */,
+				E4D9046F2DDA4EE100BC190E /* AppDelegate.swift in Sources */,
 				E47AF0DD2D0B662200C3444F /* Music_RoomApp.swift in Sources */,
 				E43D21FB2D81BF73007BB44D /* NavBar.swift in Sources */,
 				E456F5DC2DA693EA00E1640F /* SettingScreen.swift in Sources */,
