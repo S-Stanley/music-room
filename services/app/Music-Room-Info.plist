@@ -24,6 +24,9 @@
     <!-- Google Sign-In -->
     <key>GIDClientID</key>
     <string>661791028175-fajapvuorbijpcrdejqhc2ni129cmfqd.apps.googleusercontent.com</string>
+    
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>Nous avons besoin de votre position pour vérifier si vous pouvez voter dans cette playlist.</string>
 
     <!-- Facebook Login -->
     <key>FacebookAppID</key>

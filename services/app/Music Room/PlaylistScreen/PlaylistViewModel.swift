@@ -17,6 +17,8 @@ class PlaylistViewModel: ObservableObject {
     private var audioPlayer = AudioPlayer.shared
     private var hasStartedPlaying = false
     var playlistId: String
+    @Published var locationManager = LocationManager()
+
     
     init(playlistId: String) {
             self.playlistId = playlistId
@@ -107,57 +109,80 @@ class PlaylistViewModel: ObservableObject {
             print("❌ Pas d’UUID pour ce morceau : \(track.title)")
             return
         }
-        print("\(uuid)")
-        print("\(playlistId)")
-        guard let url = URL(string: "http://localhost:5001/playlist/\(playlistId)/vote/\(uuid)") else {
-            print("❌ URL invalide")
-            return
-        }
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        if let user = User.load() {
-            request.setValue(user.token, forHTTPHeaderField: "token")
-        } else {
+
+        guard let user = User.load() else {
             print("❌ Utilisateur non authentifié")
             return
         }
-        if let httpBody = request.httpBody, let bodyString = String(data: httpBody, encoding: .utf8) {
-            print("Corps de la requête : \(bodyString)")
+
+        guard let ipURL = URL(string: "https://api.ipify.org?format=json") else {
+            print("❌ URL IP invalide")
+            return
         }
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            DispatchQueue.main.async {
-                if let error = error {
-                    print("❌ Erreur vote: \(error.localizedDescription)")
-                    return
-                }
-                if let httpResponse = response as? HTTPURLResponse {
-                    switch httpResponse.statusCode {
-                    case 201:
-                        print("✅ Vote enregistré pour \(track.title)")
-                        self.hasStartedPlaying = true
-                        self.fetchTracksForPlaylist(playlistId: playlistId) { success, error in
-                            if success {
-                                print("✅ Pistes de la playlist mises à jour après le vote")
-                                // Les données seront automatiquement mises à jour dans l'interface utilisateur
-                            } else {
-                                print("❌ Erreur lors de la mise à jour des pistes après le vote : \(error ?? "Inconnue")")
+
+        URLSession.shared.dataTask(with: ipURL) { data, _, error in
+            if let error = error {
+                print("❌ Erreur récupération IP : \(error.localizedDescription)")
+                return
+            }
+
+            guard let data = data,
+                  let json = try? JSONSerialization.jsonObject(with: data) as? [String: String],
+                  let userIP = json["ip"] else {
+                print("❌ Impossible de lire l'IP")
+                return
+            }
+
+            print("🌐 IP publique utilisateur : \(userIP)")
+
+            guard let voteURL = URL(string: "http://localhost:5001/playlist/\(playlistId)/vote/\(uuid)") else {
+                print("❌ URL de vote invalide")
+                return
+            }
+
+            var request = URLRequest(url: voteURL)
+            request.httpMethod = "POST"
+            request.setValue(user.token, forHTTPHeaderField: "token")
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+            // 🔧 Clé correcte attendue par l’API
+            let body = ["ip_addr": userIP]
+            request.httpBody = try? JSONSerialization.data(withJSONObject: body)
+
+            URLSession.shared.dataTask(with: request) { data, response, error in
+                DispatchQueue.main.async {
+                    if let error = error {
+                        print("❌ Erreur vote: \(error.localizedDescription)")
+                        return
+                    }
+
+                    if let httpResponse = response as? HTTPURLResponse {
+                        switch httpResponse.statusCode {
+                        case 200:
+                            print("✅ Vote enregistré pour \(track.title)")
+                            self.fetchTracksForPlaylist(playlistId: playlistId) { success, error in
+                                if success {
+                                    print("🔁 Pistes mises à jour après le vote")
+                                } else {
+                                    print("❌ Erreur MAJ pistes : \(error ?? "Inconnue")")
+                                }
                             }
+                        case 400:
+                            print("❌ Mauvaise requête : IP manquante ou invalide")
+                        default:
+                            print("❌ Erreur serveur : \(httpResponse.statusCode)")
                         }
-                    case 400:
-                        print("❌ Mauvaise requête : déjà voté ou données invalides")
-                    case 401:
-                        print("❌ Non autorisé")
-                    default:
-                        print("❌ Erreur serveur: \(httpResponse.statusCode)")
+                    }
+
+                    if let data = data, let responseString = String(data: data, encoding: .utf8) {
+                        print("📩 Réponse : \(responseString)")
                     }
                 }
-                if let data = data, let responseString = String(data: data, encoding: .utf8) {
-                    print("Réponse : \(responseString)")
-                }
-            }
+            }.resume()
+
         }.resume()
     }
-    
+
     func moveTrackInPlaylist(from source: IndexSet, to destination: Int, playlistId: String) {
         print("🔴 Début de moveTrackInPlaylist. Source: \(source), Destination: \(destination)")
         guard let fromIndex = source.first else {
@@ -353,3 +378,24 @@ class PlaylistViewModel: ObservableObject {
         }
     
 }
+
+import CoreLocation
+
+class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
+    private let locationManager = CLLocationManager()
+    
+    @Published var location: CLLocationCoordinate2D?
+    
+    override init() {
+        super.init()
+        locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        locationManager.requestWhenInUseAuthorization()
+        locationManager.startUpdatingLocation()
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        location = locations.last?.coordinate
+    }
+}
+
