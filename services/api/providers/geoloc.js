@@ -21,5 +21,5 @@ export const getLocationFromIpAddr = (ip_addr) => {
 };
 
 export const computeDistanceBetweenTwoLocations = (first, second) => {
-  return geolib.getDistance(first, second);
+  return geolib.getDistance(parseFloat(first), parseFloat(second));
 };
