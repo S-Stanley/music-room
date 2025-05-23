@@ -88,7 +88,7 @@ class PlaylistViewModel: ObservableObject {
 
                         self.playlistTracks = Set(playlistTracks.map { $0.trackId })
 
-                        print("Contenu de associatedUUIDs après fetchTracksForPlaylist : \(self.associatedUUIDs)")
+//                        print("Contenu de associatedUUIDs après fetchTracksForPlaylist : \(self.associatedUUIDs)")
 
                         completion(true, nil)
                         self.startAutomaticPlaybackIfNeeded()
@@ -140,14 +140,25 @@ class PlaylistViewModel: ObservableObject {
                 return
             }
 
+//            var request = URLRequest(url: voteURL)
+//            request.httpMethod = "POST"
+//            request.setValue(user.token, forHTTPHeaderField: "token")
+//            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+//
+//            // 🔧 Clé correcte attendue par l’API
+//            let body = ["ip_addr": userIP]
+//            if let bodyData = try? JSONSerialization.data(withJSONObject: body),
+//               let bodyString = String(data: bodyData, encoding: .utf8) {
+//                print("📤 Corps envoyé : \(bodyString)")
+//                request.httpBody = bodyData
+//            }
+
             var request = URLRequest(url: voteURL)
             request.httpMethod = "POST"
             request.setValue(user.token, forHTTPHeaderField: "token")
-            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-
-            // 🔧 Clé correcte attendue par l’API
-            let body = ["ip_addr": userIP]
-            request.httpBody = try? JSONSerialization.data(withJSONObject: body)
+            let bodyString = "ip_addr=\(userIP)"
+            request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+            request.httpBody = bodyString.data(using: .utf8)
 
             URLSession.shared.dataTask(with: request) { data, response, error in
                 DispatchQueue.main.async {
@@ -169,6 +180,8 @@ class PlaylistViewModel: ObservableObject {
                             }
                         case 400:
                             print("❌ Mauvaise requête : IP manquante ou invalide")
+                        case 500:
+                            print("Error: non geré")
                         default:
                             print("❌ Erreur serveur : \(httpResponse.statusCode)")
                         }
