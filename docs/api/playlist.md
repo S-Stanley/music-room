@@ -97,6 +97,7 @@ curl -X POST "localhost:5001/playlist/2a8fd55d-b9f9-4ec9-9398-32a22d97e64c/join"
             * Ip of user is empty, not received
             * Ip of user is not in the right format or untrackable
             * User is to far away from playlist location autorisation to vote
+        * Vote is not already open or already closed
     * 500 -> Server error
 
 ```bash
@@ -144,13 +145,14 @@ curl -X POST "localhost:5001/playlist/e41fa7e7-05a7-4812-9a8b-446ecbc78b2e/edit"
     * 400:
         * Playlist not found
         * Format of datetime is wrong
+        * You need to specify begin and end of session
         * Address localisation cannot be found
     * 500: Erreur serveur
 
 ```bash
 curl -X POST "localhost:5001/playlist/e41fa7e7-05a7-4812-9a8b-446ecbc78b2e/edit/session" \
 -H token:c055fb5c-7d35-42a8-b4e7-a20a706d999b \
--d start=2025 \
--d end=2025 \
+-d start="20 November 2025" \
+-d end="21 November 2025" \
 -d addr="Paris"
 ```

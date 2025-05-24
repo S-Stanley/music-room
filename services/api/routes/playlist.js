@@ -85,6 +85,15 @@ router.post("/:playlist_id/edit/session", async(req, res) => {
 
     const { addr, start, end } = req.body;
 
+    if (
+      (start && !end)
+      ||
+      (!start && end)
+    ) {
+      return res.status(400).json({
+        error: "You need to specify begin AND end of session"
+      });
+    }
     if (start && end) {
       const startSession = new Date(start);
       const endSession = new Date(end);
@@ -437,6 +446,20 @@ router.post("/:playlist_id/vote/:track_id", async(req, res) => {
       if (distanceWithUser >= 10){
         return res.status(400).json({
           error: "User need to be near playlist location to vote"
+        });
+      }
+    }
+    if (playlist.startSession){
+      if (new Date(playlist.startSession).getTime() > new Date().getTime()) {
+        return res.status(400).json({
+          error: "Vote for this playlist is not already open"
+        });
+      }
+    }
+    if (playlist.endSession){
+      if (new Date(playlist.endSession).getTime() < new Date().getTime()) {
+        return res.status(400).json({
+          error: "Vote for this playlist is already close"
         });
       }
     }
