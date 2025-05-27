@@ -36,6 +36,16 @@ Example de requete:
 curl localhost:5001/users/email/signup/ -X POST  -d email=user_to_create@music.room -d password=123
 ```
 
+#### Creer un utilisateur avec gmail
+
+* Endpoint: `POST /users/gmail/auth`
+* Data a envoyer:
+    * token (gmail token)
+* Reponse
+    * 200 -> OK
+    * 400
+    * 500 -> Erreur serveur
+
 #### Valider l'email d'un utilisateur
 
 * Endpoint `POST /users/email/validate`
