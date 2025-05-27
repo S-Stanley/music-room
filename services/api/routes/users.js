@@ -12,6 +12,7 @@ import {
   isUserEmailValidated,
   checkConfirmationCode,
   findUserByEmail,
+  createUserWithGoogle,
 } from "../handlers/user.js";
 import {
   createPasswordChangeRequest,
@@ -24,6 +25,9 @@ import {
 import {
   generateConfirmationCode,
 } from "../utils/user.js";
+import {
+  checkGoogleToken,
+} from "../providers/google.js";
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -213,6 +217,31 @@ router.post("/email/signin", async(req, res) => {
       token: token,
       name: user?.name,
     });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({
+      error: "Server error"
+    });
+  }
+});
+
+router.post("/gmail/auth", async(req, res) => {
+  try {
+    const { token } = req.body;
+    if (!token){
+      return res.status(400).json({
+        error: "Google token not provided"
+      });
+    }
+    const { user_id, email } = await checkGoogleToken(token);
+    if (!user_id || !email){
+      return res.status(400).json({
+        error: "Error while trying to check user token from google"
+      });
+    }
+    const token = uuidv4();
+    const userCreated = createUserWithGoogle(user_id, email, token);
+    return res.status(200).json(userCreated);
   } catch (e) {
     console.error(e);
     return res.status(500).json({
