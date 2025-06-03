@@ -239,8 +239,8 @@ router.post("/gmail/auth", async(req, res) => {
         error: "Error while trying to check user token from google"
       });
     }
-    const token = uuidv4();
-    const userCreated = createUserWithGoogle(user_id, email, token);
+    const connectionToken = uuidv4();
+    const userCreated = createUserWithGoogle(user_id, email, connectionToken);
     return res.status(200).json(userCreated);
   } catch (e) {
     console.error(e);
