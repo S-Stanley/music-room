@@ -14,6 +14,7 @@ export const checkGoogleToken = async(token) => {
       email: payload["email"]
     });
   } catch (e) {
+    console.error(e);
     return (false);
   }
 };
