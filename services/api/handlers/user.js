@@ -89,7 +89,11 @@ export const checkConfirmationCode = async(user_id, input_confirmation_code) => 
   return (true);
 };
 
-export const createUserWithGoogle = async({ user_id, email, token }) => {
+export const createUserWithGoogle = async(user_id, email, token) => {
+  const usr = await findUserByEmail(email);
+  if (usr){
+    return (usr);
+  }
   return await prisma.user.create({
     data: {
       email: email,

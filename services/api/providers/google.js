@@ -9,6 +9,7 @@ export const checkGoogleToken = async(token) => {
         audience: process.env.GOOGLE_CLIENT_ID,
     });
     const payload = ticket.getPayload();
+    console.log(payload)
     return ({
       user_id: payload["sub"],
       email: payload["email"]
