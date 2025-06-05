@@ -19,7 +19,7 @@ export const findUserByEmail = async(user_email) => {
       email: user_email,
     }
   });
-  user.password = undefined;
+  user?.password = undefined;
   return (user);
 };
 
