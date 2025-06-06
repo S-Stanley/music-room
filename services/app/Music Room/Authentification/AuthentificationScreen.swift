@@ -63,6 +63,11 @@ struct AuthentificationScreen: View {
                 .navigationDestination(isPresented: $authViewModel.shouldNavigateToForgotPassword) {
                     ForgotPassword(authViewModel: authViewModel)
                 }
+                .onChange(of: googleViewModel.isAuthenticated) { isAuthenticated in
+                    if isAuthenticated {
+                        authViewModel.isAuthenticated = true
+                    }
+                }
             }
         }
     }

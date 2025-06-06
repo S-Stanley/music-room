@@ -67,7 +67,27 @@ class GoogleAuthViewModel: ObservableObject {
 
                 switch httpResponse.statusCode {
                 case 200:
-                    print("✅ Utilisateur Gmail authentifié avec succès")
+                    if let data = data {
+                        do {
+                            let response = try JSONDecoder().decode(SignInResponse.self, from: data)
+                            if let id = response.id, let email = response.email, let token = response.token, let name = response.name {
+                                let user = User(id: id, email: email, token: token, name: name)
+                                user.save()
+
+                                print("✅ Utilisateur connecté via Gmail : \(email)")
+
+                                // MAJ de l'état de ton ViewModel si nécessaire
+                                DispatchQueue.main.async {
+                                    self.userEmail = email
+                                    self.isAuthenticated = true
+                                }
+                            } else {
+                                print("⚠️ Réponse incomplète du serveur")
+                            }
+                        } catch {
+                            print("❌ Erreur lors du décodage : \(error.localizedDescription)")
+                        }
+                    }
                 case 400:
                     print("❌ Requête invalide")
                 case 500:
