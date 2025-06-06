@@ -9,10 +9,7 @@ import SwiftUI
 
 struct SettingScreen: View {
     @StateObject var usersViewModel = UsersViewModel()
-    @State private var selectedUserId: String?
-    @State private var message: String?
-    @State private var address: String = ""
-
+    @StateObject var settingsScreenViewModel = SettingsScreenViewModel()
     let playlistId: String
     let creatorUserName: String
 
@@ -27,8 +24,8 @@ struct SettingScreen: View {
 
             List(usersViewModel.users) { user in
                 Button(action: {
-                    selectedUserId = user.id
-                    sendInvitation()
+                    settingsScreenViewModel.selectedUserId = user.id
+                    settingsScreenViewModel.sendInvitation()
                 }) {
                     VStack(alignment: .leading) {
                         Text(user.email)
@@ -39,21 +36,28 @@ struct SettingScreen: View {
                 }
             }
 
-            if isAdmin() {
+            if settingsScreenViewModel.isAdmin() {
                 Divider()
                 Text("Créer une session de vote (Admin seulement)")
                     .font(.headline)
 
-                TextField("Adresse (ex: Paris)", text: $address)
+                TextField("Adresse (ex: Paris)", text: $settingsScreenViewModel.address)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
 
+                DatePicker("Date de début", selection: $settingsScreenViewModel.startDate, displayedComponents: [.date])
+                    .datePickerStyle(.compact)
+                
+                DatePicker("Date de fin", selection: $settingsScreenViewModel.endDate, displayedComponents: [.date])
+                    .datePickerStyle(.compact)
+
                 Button("Lancer la session") {
-                    createVotingSession()
+                    settingsScreenViewModel.createVotingSession()
                 }
                 .buttonStyle(.borderedProminent)
             }
 
-            if let message = message {
+
+            if let message = settingsScreenViewModel.message {
                 Text(message)
                     .foregroundColor(.gray)
                     .padding()
@@ -64,97 +68,9 @@ struct SettingScreen: View {
         .padding()
         .onAppear {
             usersViewModel.fetchUsers()
+            settingsScreenViewModel.playlistId = playlistId
+            settingsScreenViewModel.creatorUserName = creatorUserName
         }
-    }
-
-    // MARK: - Vérifie si l'utilisateur courant est le créateur (admin)
-    func isAdmin() -> Bool {
-        guard let user = User.load() else { return false }
-        return user.name == creatorUserName
-    }
-
-    // MARK: - Envoi d'une invitation
-    func sendInvitation() {
-        guard let user = User.load(), let selectedUserId = selectedUserId else {
-            message = "Utilisateur non authentifié ou utilisateur non sélectionné"
-            return
-        }
-
-        guard let url = URL(string: "http://localhost:5001/playlist/\(playlistId)/invitations") else {
-            message = "URL invalide"
-            return
-        }
-
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue(user.token, forHTTPHeaderField: "token")
-        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-
-        let body = "userId=\(selectedUserId)"
-        request.httpBody = body.data(using: .utf8)
-
-        URLSession.shared.dataTask(with: request) { _, response, error in
-            DispatchQueue.main.async {
-                if let error = error {
-                    message = "Erreur : \(error.localizedDescription)"
-                    return
-                }
-
-                if let httpResponse = response as? HTTPURLResponse {
-                    switch httpResponse.statusCode {
-                    case 201:
-                        message = "✅ Invitation envoyée à \(selectedUserId)"
-                    case 400:
-                        message = "❌ Données invalides"
-                    default:
-                        message = "🔥 Erreur serveur (\(httpResponse.statusCode))"
-                    }
-                }
-            }
-        }.resume()
-    }
-
-    // MARK: - Créer une session de vote
-    func createVotingSession() {
-        guard let user = User.load() else {
-            message = "Utilisateur non authentifié"
-            return
-        }
-
-        guard let url = URL(string: "http://localhost:5001/playlist/\(playlistId)/edit/session") else {
-            message = "URL invalide"
-            return
-        }
-
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue(user.token, forHTTPHeaderField: "token")
-        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-
-        // 🕒 Simplicité : start et end mis à l'année courante pour l'exemple
-        let year = Calendar.current.component(.year, from: Date())
-        let body = "start=\(year)&end=\(year)&addr=\(address)"
-        request.httpBody = body.data(using: .utf8)
-
-        URLSession.shared.dataTask(with: request) { _, response, error in
-            DispatchQueue.main.async {
-                if let error = error {
-                    message = "Erreur : \(error.localizedDescription)"
-                    return
-                }
-
-                if let httpResponse = response as? HTTPURLResponse {
-                    switch httpResponse.statusCode {
-                    case 200:
-                        message = "✅ Session de vote créée à l'adresse « \(address) »"
-                    case 400:
-                        message = "❌ Adresse invalide ou format date incorrect"
-                    default:
-                        message = "🔥 Erreur serveur (\(httpResponse.statusCode))"
-                    }
-                }
-            }
-        }.resume()
     }
 }
 
