@@ -28,6 +28,10 @@ import {
 import {
   checkGoogleToken,
 } from "../providers/google.js";
+import {
+  checkFacebokToken,
+} from "../providers/facebook.js";
+
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -241,6 +245,31 @@ router.post("/gmail/auth", async(req, res) => {
     }
     const connectionToken = uuidv4();
     const userCreated = await createUserWithGoogle(user_id, email, connectionToken);
+    return res.status(200).json(userCreated);
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({
+      error: "Server error"
+    });
+  }
+});
+
+router.post("/facebook/auth", async(req, res) => {
+  try {
+    const { token } = req.body;
+    if (!token){
+      return res.status(400).json({
+        error: "Facebook token not provided"
+      });
+    }
+    const { user_id, email } = await checkFacebokToken(token);
+    if (!user_id || !email){
+      return res.status(400).json({
+        error: "Error while trying to check user token from facebook"
+      });
+    }
+    const connectionToken = uuidv4();
+    const userCreated = createUserWithFacebook(user_id, email, connectionToken);
     return res.status(200).json(userCreated);
   } catch (e) {
     console.error(e);
