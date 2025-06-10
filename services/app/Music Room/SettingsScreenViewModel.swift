@@ -16,6 +16,7 @@ class SettingsScreenViewModel: ObservableObject {
     
     @Published var playlistId: String = ""
     @Published var creatorUserName: String = ""
+
     
     func isAdmin() -> Bool {
         guard let user = User.load() else { return false }

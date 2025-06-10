@@ -2,6 +2,7 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+    <!-- URL Schemes -->
     <key>CFBundleURLTypes</key>
     <array>
         <!-- Google Sign-In -->
@@ -24,7 +25,8 @@
     <!-- Google Sign-In -->
     <key>GIDClientID</key>
     <string>661791028175-fajapvuorbijpcrdejqhc2ni129cmfqd.apps.googleusercontent.com</string>
-    
+
+    <!-- Localisation -->
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>Nous avons besoin de votre position pour vérifier si vous pouvez voter dans cette playlist.</string>
 
@@ -36,7 +38,22 @@
     <key>FacebookDisplayName</key>
     <string>music-room</string>
 
-    <!-- Pour autoriser les appels non HTTPS (optionnel, à limiter en prod) -->
+    <!-- Facebook tracking settings -->
+    <key>FacebookAutoLogAppEventsEnabled</key>
+    <true/>
+    <key>FacebookAdvertiserIDCollectionEnabled</key>
+    <true/>
+
+    <!-- URL Schemes autorisés par iOS -->
+    <key>LSApplicationQueriesSchemes</key>
+    <array>
+        <string>fbapi</string>
+        <string>fb-messenger-share-api</string>
+        <string>fbauth2</string>
+        <string>fbshareextension</string>
+    </array>
+
+    <!-- HTTP non sécurisé (à désactiver en prod) -->
     <key>NSAppTransportSecurity</key>
     <dict>
         <key>NSAllowsArbitraryLoads</key>
