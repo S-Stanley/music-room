@@ -1,16 +1,12 @@
 export const checkFacebokToken = async(token) => {
   try {
     const req = await fetch(
-      `https://graph.facebook.com/me?access_token=${token}`,
-      {
-        method: "POST"
-      }
+      `https://graph.facebook.com/me?fields=id,email&access_token=${token}`,
     );
-    console.log(req.json());
-    const data = req.json();
+    const data = await req.json();
     return ({
-      user_id: data.user.id,
-      email: data.user.email,
+      user_id: data.id,
+      email: data.email,
     });
   } catch (e) {
     console.error(e);

@@ -38,25 +38,54 @@ class FaceBookViewModel: ObservableObject {
     }
 
     func sendFacebookTokenToBackend(_ token: String) {
-        let url = URL(string: "https://ton-backend.com/api/auth/facebook")!
+        let url = URL(string: "http://localhost:5001/users/facebook/auth/")!
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 
-        let body: [String: Any] = ["accessToken": token]
-        request.httpBody = try? JSONSerialization.data(withJSONObject: body)
+        let body = "token=\(token)"
+        request.httpBody = body.data(using: .utf8)
 
         URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
                 print("❌ Erreur backend: \(error)")
                 return
             }
+            DispatchQueue.main.async {
+                guard let httpResponse = response as? HTTPURLResponse else {
+                    print("❌ Réponse invalide")
+                    return
+                }
+                switch httpResponse.statusCode {
+                case 200:
+                    if let data = data {
+                        do {
+                            let response = try JSONDecoder().decode(SignInResponse.self, from: data)
+                            if let id = response.id, let email = response.email, let token = response.token, let name = response.name {
+                                let user = User(id: id, email: email, token: token, name: name)
+                                user.save()
 
-            // ✅ Ton backend te renvoie un JWT + infos utilisateur
-            if let data = data,
-               let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
-                print("✅ Réponse backend: \(json)")
-                // Stocker le token et mettre à jour l’état
+                                print("✅ Utilisateur connecté via facebook : \(email)")
+
+                                // MAJ de l'état de ton ViewModel si nécessaire
+                                DispatchQueue.main.async {
+                                    self.userEmail = email
+                                    self.isAuthenticated = true
+                                }
+                            } else {
+                                print("⚠️ Réponse incomplète du serveur")
+                            }
+                        } catch {
+                            print("❌ Erreur lors du décodage : \(error.localizedDescription)")
+                        }
+                    }
+                case 400:
+                    print("❌ Requête invalide")
+                case 500:
+                    print("🔥 Erreur serveur")
+                default:
+                    print("❗️Code HTTP inattendu : \(httpResponse.statusCode)")
+                }
             }
         }.resume()
     }

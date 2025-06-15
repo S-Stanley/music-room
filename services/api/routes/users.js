@@ -13,6 +13,7 @@ import {
   checkConfirmationCode,
   findUserByEmail,
   createUserWithGoogle,
+  createUserWithFacebook,
 } from "../handlers/user.js";
 import {
   createPasswordChangeRequest,
@@ -255,6 +256,7 @@ router.post("/gmail/auth", async(req, res) => {
 });
 
 router.post("/facebook/auth", async(req, res) => {
+  console.log("User is trying to loggin with facebook");
   try {
     const { token } = req.body;
     if (!token){
@@ -262,14 +264,14 @@ router.post("/facebook/auth", async(req, res) => {
         error: "Facebook token not provided"
       });
     }
-    const { user_id, email } = await checkFacebokToken(token);
-    if (!user_id || !email){
+    const { email } = await checkFacebokToken(token);
+    if (!email){
       return res.status(400).json({
         error: "Error while trying to check user token from facebook"
       });
     }
     const connectionToken = uuidv4();
-    const userCreated = createUserWithFacebook(user_id, email, connectionToken);
+    const userCreated = await createUserWithFacebook(email, connectionToken);
     return res.status(200).json(userCreated);
   } catch (e) {
     console.error(e);

@@ -68,6 +68,11 @@ struct AuthentificationScreen: View {
                         authViewModel.isAuthenticated = true
                     }
                 }
+                .onChange(of: facebookViewModel.isAuthenticated) { isAuthenticated in
+                    if isAuthenticated {
+                        authViewModel.isAuthenticated = true
+                    }
+                }
             }
         }
     }
