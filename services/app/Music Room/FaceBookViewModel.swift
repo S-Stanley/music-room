@@ -5,19 +5,16 @@
 //  Created by Nathan Bechon on 12/05/2025.
 //
 
-import FBSDKLoginKit
+import SwiftUI
+import FacebookLogin
 
 class FaceBookViewModel: ObservableObject {
-    @Published var userEmail: String = ""
-    @Published var isAuthenticated: Bool = false
+    @Published var isAuthenticated = false
+    @Published var userEmail = ""
 
     func signInWithFacebook() {
-        guard let rootVC = UIApplication.shared.windows.first?.rootViewController else {
-            print("❌ Pas de rootViewController")
-            return
-        }
         let loginManager = LoginManager()
-        loginManager.logIn(permissions: ["email", "public_profile"], from: rootVC) { result, error in
+        loginManager.logIn(permissions: ["email", "public_profile"], from: nil) { result, error in
             if let error = error {
                 print("❌ Erreur Facebook Login: \(error.localizedDescription)")
                 return
@@ -28,30 +25,20 @@ class FaceBookViewModel: ObservableObject {
                 return
             }
 
-            if let tokenString = AccessToken.current?.tokenString {
-                print("✅ Token Facebook obtenu: \(tokenString)")
-                // Tu peux envoyer ce token à ton backend ici
-            } else {
-                print("❌ Pas de token Facebook après login")
+            guard let accessToken = AccessToken.current?.tokenString else {
+                print("❌ Pas de token Facebook")
+                return
             }
+
+            print("✅ Token Facebook obtenu : \(accessToken)")
+
+            // 👉 Envoie ce token à ton backend :
+            self.sendFacebookTokenToBackend(accessToken)
         }
     }
 
-
-    func signOut() {
-        LoginManager().logOut()
-        self.isAuthenticated = false
-        self.userEmail = ""
-    }
-
-    private func sendTokenToBackend(token: String) {
-        guard let url = URL(string: "http://localhost:5001/users/facebook/auth") else {
-            print("❌ URL invalide")
-            return
-        }
-
-        print("🔑 Facebook AccessToken envoyé: \(token)")
-
+    func sendFacebookTokenToBackend(_ token: String) {
+        let url = URL(string: "http://localhost:5001/users/facebook/auth/")!
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
@@ -60,17 +47,15 @@ class FaceBookViewModel: ObservableObject {
         request.httpBody = body.data(using: .utf8)
 
         URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                print("❌ Erreur backend: \(error)")
+                return
+            }
             DispatchQueue.main.async {
-                if let error = error {
-                    print("❌ Erreur réseau : \(error.localizedDescription)")
-                    return
-                }
-
                 guard let httpResponse = response as? HTTPURLResponse else {
                     print("❌ Réponse invalide")
                     return
                 }
-
                 switch httpResponse.statusCode {
                 case 200:
                     if let data = data {
@@ -80,11 +65,13 @@ class FaceBookViewModel: ObservableObject {
                                 let user = User(id: id, email: email, token: token, name: name)
                                 user.save()
 
-                                print("✅ Utilisateur connecté via Facebook : \(email)")
+                                print("✅ Utilisateur connecté via facebook : \(email)")
 
-                                // MAJ de l'état
-                                self.userEmail = email
-                                self.isAuthenticated = true
+                                // MAJ de l'état de ton ViewModel si nécessaire
+                                DispatchQueue.main.async {
+                                    self.userEmail = email
+                                    self.isAuthenticated = true
+                                }
                             } else {
                                 print("⚠️ Réponse incomplète du serveur")
                             }
@@ -103,4 +90,3 @@ class FaceBookViewModel: ObservableObject {
         }.resume()
     }
 }
-

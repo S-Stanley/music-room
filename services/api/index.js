@@ -29,6 +29,8 @@ const _UNPROTECTED_ENDPOINT_ = [
   "/users/password/confirm/",
   "/users/gmail/auth",
   "/users/gmail/auth/",
+  "/users/facebook/auth",
+  "/users/facebook/auth/",
 ]
 
 app.use("/", async(req, res, next) => {

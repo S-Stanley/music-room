@@ -111,7 +111,11 @@ export const createUserWithGoogle = async(user_id, email, token) => {
   });
 };
 
-export const createUserWithFacebook = async({ user_id, email, token }) => {
+export const createUserWithFacebook = async(email, token) => {
+  const usr = await findUserByEmail(email);
+  if (usr){
+    return (usr);
+  }
   return await prisma.user.create({
     data: {
       email: email,
