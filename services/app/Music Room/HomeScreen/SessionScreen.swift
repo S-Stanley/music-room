@@ -20,7 +20,8 @@ struct SessionScreen: View {
     @State private var hasStartedPlayback = false
     @State private var selectedScreen: String = "Playlist"
     @Environment(\.presentationMode) var presentationMode
-
+    @State private var navigateToNavigationScreen = false
+    
     init(sessionId: String, nameSession: String, creatorUserName: String, orderType: String) {
             self.sessionId = sessionId
             self.nameSession = nameSession
@@ -57,10 +58,10 @@ struct SessionScreen: View {
                         .font(.system(size: 30))
                         .padding()
                 }
-	
+
                 Button(action: {
                     audioPlayer.stop()
-                    quitterLaSession()
+                    navigateToNavigationScreen = true
                 }) {
                     Image(systemName: "arrow.forward.square.fill")
                         .foregroundColor(.red)
@@ -68,19 +69,21 @@ struct SessionScreen: View {
                         .padding()
                 }
             }
+            
+            NavigationLink(destination: NavigationScreen(), isActive: $navigateToNavigationScreen) {
+                EmptyView()
+            }
 
-            // 🧭 Navigation
             NavigationBar(selectedOption: $selectedScreen, text: "Playlist", text2: "Add music")
                 .padding(.bottom, 5)
 
             Spacer()
 
-            // 🎵 Affichage de l'écran
             switch selectedScreen {
                 case "Playlist":
-                    PlaylistScreen(orderType: orderType,playlistViewModel: playlistViewModel, playlistId: sessionId) // Passez l'instance existante
+                    PlaylistScreen(orderType: orderType,playlistViewModel: playlistViewModel, playlistId: sessionId)
                 case "Add music":
-                    MusicScreen(playlistViewModel: playlistViewModel, musicViewModel: musicViewModel, playlistId: sessionId) // Passez l'instance existante
+                    MusicScreen(playlistViewModel: playlistViewModel, musicViewModel: musicViewModel, playlistId: sessionId)
                 default:
                     Text("Unknown action")
                         .font(.title2)
@@ -90,9 +93,5 @@ struct SessionScreen: View {
         .padding()
         .background(Color.gray.opacity(0.05).edgesIgnoringSafeArea(.all))
         .navigationBarBackButtonHidden(true)
-    }
-
-    func quitterLaSession() {
-        presentationMode.wrappedValue.dismiss()
     }
 }

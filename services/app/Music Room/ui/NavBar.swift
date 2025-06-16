@@ -30,6 +30,7 @@ struct NavigationScreen: View {
             // Vérifier si l'utilisateur est authentifié lors du lancement de la vue
             authViewModel.loadUserInfo()
         }
+        .navigationBarBackButtonHidden(true)
     }
 }
 

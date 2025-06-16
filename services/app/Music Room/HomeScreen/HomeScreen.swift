@@ -16,14 +16,27 @@ struct HomeScreen: View {
     @State private var isPasswordCorrect = false
     @State private var navigateToSession = false
     @State private var sessionCreatorName: String = "unknown"
+    
 
     var body: some View {
         NavigationStack {
             VStack {
-                Text("Session in progress")
-                    .font(.title)
-                    .padding()
-
+                HStack {
+                    Text("Session in progress")
+                        .font(.title)
+                        .padding()
+                    
+                    Button(action: {
+                        homeViewModel.fetchActiveSessions { success, error in
+                            if !success {
+                                print("Erreur: \(error ?? "Inconnue")")
+                            }
+                        }
+                    }) {
+                        Image(systemName: "arrow.clockwise")
+                            .foregroundColor(.blue)
+                    }
+                }
                 if homeViewModel.activeSessions.isEmpty {
                     Text("No active sessions")
                         .foregroundColor(.gray)
@@ -88,45 +101,44 @@ struct HomeScreen: View {
                     }
                 }
             }
-
-            .sheet(isPresented: $showPasswordField) {
-                VStack {
-                    SecureField("Enter password", text: $password)
-                        .padding()
-                        .background(Color(.systemGray6))
-                        .cornerRadius(8)
-                        .padding()
-
-                    if !homeViewModel.passwordErrorMessage.isEmpty {
-                        Text(homeViewModel.passwordErrorMessage)
-                            .foregroundColor(.red)
-                    }
-
-                    Button("Join Session") {
-                        if let session = selectedSession {
-                            homeViewModel.joinSession(session: session, password: password) { success, userId in
-                                if success {
-                                    self.showPasswordField = false
-                                    self.isPasswordCorrect = true
-                                    self.navigateToSession = true
-                                }
-                                print("Private Session User ID: \(userId ?? "unknown")")
-                            }
-                        }
-                    }
-                    .padding()
-                    .background(Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
-                    .padding()
-                }
-                .padding()
-                .onDisappear {
-                    homeViewModel.passwordErrorMessage = ""
-                    password = ""
-                }
-                .ignoresSafeArea(.keyboard)
-            }
+//            .sheet(isPresented: $showPasswordField) {
+//                VStack {
+//                    SecureField("Enter password", text: $password)
+//                        .padding()
+//                        .background(Color(.systemGray6))
+//                        .cornerRadius(8)
+//                        .padding()
+//
+//                    if !homeViewModel.passwordErrorMessage.isEmpty {
+//                        Text(homeViewModel.passwordErrorMessage)
+//                            .foregroundColor(.red)
+//                    }
+//
+//                    Button("Join Session") {
+//                        if let session = selectedSession {
+//                            homeViewModel.joinSession(session: session, password: password) { success, userId in
+//                                if success {
+//                                    self.showPasswordField = false
+//                                    self.isPasswordCorrect = true
+//                                    self.navigateToSession = true
+//                                }
+//                                print("Private Session User ID: \(userId ?? "unknown")")
+//                            }
+//                        }
+//                    }
+//                    .padding()
+//                    .background(Color.blue)
+//                    .foregroundColor(.white)
+//                    .cornerRadius(8)
+//                    .padding()
+//                }
+//                .padding()
+//                .onDisappear {
+//                    homeViewModel.passwordErrorMessage = ""
+//                    password = ""
+//                }
+//                .ignoresSafeArea(.keyboard)
+//            }
 
             .navigationDestination(isPresented: $navigateToSession) {
                 if let session = selectedSession {
