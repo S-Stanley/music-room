@@ -101,44 +101,44 @@ struct HomeScreen: View {
                     }
                 }
             }
-//            .sheet(isPresented: $showPasswordField) {
-//                VStack {
-//                    SecureField("Enter password", text: $password)
-//                        .padding()
-//                        .background(Color(.systemGray6))
-//                        .cornerRadius(8)
-//                        .padding()
-//
-//                    if !homeViewModel.passwordErrorMessage.isEmpty {
-//                        Text(homeViewModel.passwordErrorMessage)
-//                            .foregroundColor(.red)
-//                    }
-//
-//                    Button("Join Session") {
-//                        if let session = selectedSession {
-//                            homeViewModel.joinSession(session: session, password: password) { success, userId in
-//                                if success {
-//                                    self.showPasswordField = false
-//                                    self.isPasswordCorrect = true
-//                                    self.navigateToSession = true
-//                                }
-//                                print("Private Session User ID: \(userId ?? "unknown")")
-//                            }
-//                        }
-//                    }
-//                    .padding()
-//                    .background(Color.blue)
-//                    .foregroundColor(.white)
-//                    .cornerRadius(8)
-//                    .padding()
-//                }
-//                .padding()
-//                .onDisappear {
-//                    homeViewModel.passwordErrorMessage = ""
-//                    password = ""
-//                }
-//                .ignoresSafeArea(.keyboard)
-//            }
+            .sheet(isPresented: $showPasswordField) {
+                VStack {
+                    SecureField("Enter password", text: $password)
+                        .padding()
+                        .background(Color(.systemGray6))
+                        .cornerRadius(8)
+                        .padding()
+
+                    if !homeViewModel.passwordErrorMessage.isEmpty {
+                        Text(homeViewModel.passwordErrorMessage)
+                            .foregroundColor(.red)
+                    }
+
+                    Button("Join Session") {
+                        if let session = selectedSession {
+                            homeViewModel.joinSession(session: session, password: password) { success, userId in
+                                if success {
+                                    self.showPasswordField = false
+                                    self.isPasswordCorrect = true
+                                    self.navigateToSession = true
+                                }
+                                print("Private Session User ID: \(userId ?? "unknown")")
+                            }
+                        }
+                    }
+                    .padding()
+                    .background(Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(8)
+                    .padding()
+                }
+                .padding()
+                .onDisappear {
+                    homeViewModel.passwordErrorMessage = ""
+                    password = ""
+                }
+                .ignoresSafeArea(.keyboard)
+            }
 
             .navigationDestination(isPresented: $navigateToSession) {
                 if let session = selectedSession {
