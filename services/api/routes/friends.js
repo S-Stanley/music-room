@@ -6,14 +6,17 @@ const prisma = new PrismaClient();
 
 import {
   createFriendRequest,
+  getAllFriendRequest,
 } from "../handlers/friends.js";
 import {
   findUserById,
 } from "../handlers/user.js";
 
 router.get("/invitation", async(req, res) => {
-  console.log("User is listing invitations");
+  console.log("User is listing his invitations");
   try {
+    console.log(await getAllFriendRequest(res.locals.user.id));
+    return res.status(200).json(await getAllFriendRequest(res.locals.user.id) ?? []);
   } catch (e){
     console.error(e); 
     return res.status(500).json({

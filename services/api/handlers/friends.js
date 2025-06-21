@@ -2,6 +2,19 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
+export const getAllFriendRequest = async(userId) => {
+  try {
+    return await prisma.friendRequest.findMany({
+      where: {
+        invitedUserId: userId,
+      }
+    })
+  } catch (e){
+    console.error(e);
+    return ([]);
+  }
+};
+
 export const findFriendRequest = async(invitedBy, invitedUserId) => {
   try {
     return await prisma.friendRequest.findFirst({
