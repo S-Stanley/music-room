@@ -6,11 +6,16 @@ import {
 const prisma = new PrismaClient();
 
 export const findUserById = async(user_id) => {
-  return await prisma.user.findUnique({
-    where: {
-      id: user_id,
-    }
-  })
+  try {
+    return await prisma.user.findUnique({
+      where: {
+        id: user_id,
+      }
+    })
+  } catch (e) {
+    console.error(e);
+    return (false);
+  }
 };
 
 export const findUserByEmail = async(user_email) => {

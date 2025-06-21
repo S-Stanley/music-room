@@ -59,4 +59,4 @@ router.patch("/:track_id/played", async(req, res) => {
   }
 });
 
-export const trackRouter = router;;
+export const trackRouter = router;

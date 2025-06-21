@@ -10,6 +10,7 @@ const prisma = new PrismaClient();
 import { usersRouter } from "./routes/users.js";
 import { playlistRouter } from "./routes/playlist.js";
 import { trackRouter } from "./routes/track.js";
+import { friendRouter } from "./routes/friends.js"; 
 
 app.use(express.urlencoded({extended: false}));
 app.set('trust proxy', true);
@@ -66,6 +67,7 @@ app.use("/", async(req, res, next) => {
 app.use("/users", usersRouter);
 app.use("/playlist", playlistRouter);
 app.use("/track", trackRouter);
+app.use("/friends/", friendRouter);
 
 app.get("/up", (req, res) => {
   res.status(200).send({
