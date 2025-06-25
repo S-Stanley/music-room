@@ -24,3 +24,27 @@ curl -X POST "localhost:5001/friends/invitation" -H token:c055fb5c-7d35-42a8-b4e
 ```bash
 curl "localhost:5001/friends/invitation" -H token:4890af5d-5031-405e-ac5c-5c29c89a9746
 ```
+
+#### Accept friend request [PROTECTED]
+
+* Endpoint: `POST /friends/invitation/accept`
+* Reponse:
+    * 500: Erreur serveur
+    * 400: Request id not found
+    * 200: OK
+
+```bash
+curl -X POST "localhost:5001/friends/invitation/accept" -H token:4890af5d-5031-405e-ac5c-5c29c89a9746 -d request_id=xxx
+```
+
+#### Decline friend request [PROTECTED]
+
+* Endpoint: `POST /friends/invitation/decline`
+* Reponse:
+    * 500: Erreur serveur
+    * 400: Request id not found
+    * 200: OK
+
+```bash
+curl -X POST "localhost:5001/friends/invitation/accept" -H token:4890af5d-5031-405e-ac5c-5c29c89a9746 -d request_id=xxx
+```

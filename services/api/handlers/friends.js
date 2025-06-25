@@ -1,17 +1,50 @@
 import { PrismaClient } from '@prisma/client';
 
+import { FRIENDS_REQUEST_STATUS } from "../constants.js";
+
 const prisma = new PrismaClient();
+
+export const updateFriendRequest = async(requestId, state) => {
+  try {
+    return await prisma.friendRequest.update({
+      where: {
+        id: requestId,
+      },
+      data: {
+        state: state,
+      }
+    })
+  } catch (e) {
+    console.error(e);
+    return (null);
+  }
+};
 
 export const getAllFriendRequest = async(userId) => {
   try {
     return await prisma.friendRequest.findMany({
       where: {
         invitedUserId: userId,
+        state: FRIENDS_REQUEST_STATUS.PENDING,
       }
     })
   } catch (e){
     console.error(e);
     return ([]);
+  }
+};
+
+export const findFriendRequestById = async(requestId) => {
+  try {
+    return await prisma.friendRequest.findFirst({
+      where: {
+        id: requestId
+      }
+    })
+  }
+  catch (e) {
+    console.error(e);
+    return (null);
   }
 };
 
