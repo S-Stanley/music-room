@@ -4,6 +4,28 @@ import { FRIENDS_REQUEST_STATUS } from "../constants.js";
 
 const prisma = new PrismaClient();
 
+export const createFriendRelationship = async(userId, friendId) => {
+  try {
+    return await prisma.friend.create({
+      data: {
+        user: {
+          connect: {
+            id: userId,
+          }
+        },
+        friend: {
+          connect: {
+            id: userId,
+          }
+        },
+      }
+    });
+  } catch (e) {
+    console.error(e);
+    return (null);
+  }
+};
+
 export const updateFriendRequest = async(requestId, state) => {
   try {
     return await prisma.friendRequest.update({

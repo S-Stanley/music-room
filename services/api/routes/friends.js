@@ -9,6 +9,7 @@ import {
   getAllFriendRequest,
   updateFriendRequest,
   findFriendRequestById,
+  createFriendRelationship,
 } from "../handlers/friends.js";
 import {
   findUserById,
@@ -26,7 +27,10 @@ router.post("/invitation/accept", async(req, res) => {
         error: "Request id not found"
       }); 
     }
+    const friendRequest = await findFriendRequestById(request_id);
     const acceptFriendRequest = await updateFriendRequest(request_id, FRIENDS_REQUEST_STATUS.ACCEPTED)
+    await createFriendRelationship(friendRequest.requestedById, friendRequest.invitedUserId);
+    await createFriendRelationship(friendRequest.invitedUserId, friendRequest.requestedById);
     return res.status(200).json(acceptFriendRequest); 
   } catch (e) {
     console.error(e);
