@@ -10,6 +10,7 @@ import {
   updateFriendRequest,
   findFriendRequestById,
   createFriendRelationship,
+  getAllFriendsOfUser,
 } from "../handlers/friends.js";
 import {
   findUserById,
@@ -17,6 +18,16 @@ import {
 import {
   FRIENDS_REQUEST_STATUS,
 } from "../constants.js";
+
+router.get("/", async(req, res) => {
+  try {
+    return res.status(200).json(await getAllFriendsOfUser(res.locals.user.id))
+  } catch (e) {
+    return res.status(500).json({
+      error: "Server error"
+    })
+  }
+});
 
 router.post("/invitation/accept", async(req, res) => {
   console.log("user is acceping friend request");

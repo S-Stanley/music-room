@@ -48,3 +48,14 @@ curl -X POST "localhost:5001/friends/invitation/accept" -H token:4890af5d-5031-4
 ```bash
 curl -X POST "localhost:5001/friends/invitation/accept" -H token:4890af5d-5031-405e-ac5c-5c29c89a9746 -d request_id=xxx
 ```
+
+#### List all friends of users [PROTECTED]
+
+* Endpoint: `GET /friends`
+* Reponse:
+    * 500: Erreur serveur
+    * 200: List of friends
+
+```bash
+curl "localhost:5001/friends" -H token:4890af5d-5031-405e-ac5c-5c29c89a9746
+```
