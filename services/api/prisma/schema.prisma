@@ -13,12 +13,20 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum MusicType {
+  HIP_HOP
+  HOUSE
+  REGGEA
+  RNB
+}
+
 model User {
   id                String      @id @default(uuid()) @db.Uuid
   email             String      @unique
   password          String?
   token             String?     @db.Uuid @unique
   name              String
+  musicPreferences  MusicType?
   playlists         Playlist[]
   trackPlaylist     TrackPlaylist[]
   votes             TrackVote[]

@@ -80,6 +80,10 @@ curl localhost:5001/users/f6cb6e9e-7e19-485c-a4b2-fc10128e4b71 -H token:c055fb5c
 
 * Endpoint: POST `/users/info`
 * Header: token
+* Data:
+    * email
+    * name
+    * musicType: HIP_HOP, HOUSE, REGGEA or RNB
 * Reponse
   * 200 -> Utilisateur modifie
 

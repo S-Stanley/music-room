@@ -105,24 +105,39 @@ router.post("/password/confirm", async(req, res) => {
   }
 });
 
+const MusicType = {
+  HIP_HOP: "HIP_HOP",
+  HOUSE: "HOUSE",
+  REGGEA: "REGGEA",
+  RNB: "RNB"
+}
+
 router.post("/info", async(req, res) => {
 	try {
+    const { email, name, musicType, password } = req.body;
+    if (!Object.keys(MusicType).includes(musicType)){
+      return res.status(400).json({
+        error: "Unknow music type"
+      });
+    }
 		const userUpdated = await prisma.user.update({
 			where: {
 				id: res.locals.user?.id,
 			},
 			data: {
-				email: req.body?.email ?? undefined,
-				password: req.body?.password
-					? await bcrypt.hash(req.body?.password, 7) 
+				email: email ?? undefined,
+				password: password
+					? await bcrypt.hash(password, 7) 
 					: undefined,
+				name: name ?? undefined,
+        musicPreferences: musicType,
 			}
 		});
 		return res.status(200).send({
 			id: userUpdated?.id,
 			email: userUpdated?.email,
-			password: userUpdated?.password,
-			token: userUpdated?.token,
+			name: userUpdated?.name,
+		  musicType: userUpdated?.musicPreferences,
 		});
 	} catch (e) {
 		console.error(e);
@@ -165,6 +180,8 @@ router.get("/:user_id", async(req, res) => {
     return res.status(200).send({
       id: user?.id,
       email: user?.email,
+      name: user?.name,
+		  musicType: user?.musicPreferences,
     });
   } catch (e) {
     console.error(e);
