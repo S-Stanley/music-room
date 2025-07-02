@@ -12,6 +12,7 @@ struct MusicScreen: View {
     @ObservedObject var musicViewModel: MusicViewModel
     @State private var searchQuery: String = ""
     var playlistId: String?
+    @State private var locallyAddedTracks: Set<String> = []
 
     var body: some View {
         VStack {
@@ -30,10 +31,18 @@ struct MusicScreen: View {
                     ) { track in
                         TrackRow(
                             track: track,
-                            isAlreadyAdded: playlistViewModel.playlistTracks.contains(String(track.id)),
+                            isAlreadyAdded: playlistViewModel.playlistTracks.contains(String(track.id)) || locallyAddedTracks.contains(String(track.id)),
                             onAdd: {
+                                let trackId = String(track.id)
+                                locallyAddedTracks.insert(trackId)
+                                
                                 if let playlistId = playlistId {
                                     musicViewModel.addMusicToPlaylist(playlistId: playlistId, trackId: String(track.id))
+                                    playlistViewModel.fetchTracksForPlaylist(playlistId: playlistId) { success, error in
+                                        if !success {
+                                            print("Erreur lors du chargement des musiques: \(error ?? "Inconnue")")
+                                        }
+                                    }
                                 }
                             }
                         )

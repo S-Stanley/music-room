@@ -36,6 +36,8 @@
 		E47AF0E32D0B662400C3444F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E47AF0E22D0B662400C3444F /* Assets.xcassets */; };
 		E47AF0E62D0B662400C3444F /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E47AF0E52D0B662400C3444F /* Preview Assets.xcassets */; };
 		E47B1D122D7B04A2000F2758 /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E47B1D112D7B04A2000F2758 /* AuthViewModel.swift */; };
+		E49B31F72E0EBD3D001E39C4 /* FiendsSessionScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = E49B31F62E0EBD3D001E39C4 /* FiendsSessionScreen.swift */; };
+		E49B31F92E0EBE2F001E39C4 /* FriendsScreenViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E49B31F82E0EBE2F001E39C4 /* FriendsScreenViewModel.swift */; };
 		E4B84EE62DCA318A00D2DC6B /* ForgotPassword.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4B84EE52DCA318A00D2DC6B /* ForgotPassword.swift */; };
 		E4B84EED2DCCE1F900D2DC6B /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = E4B84EEC2DCCE1F900D2DC6B /* GoogleSignIn */; };
 		E4B84EEF2DCCE1F900D2DC6B /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = E4B84EEE2DCCE1F900D2DC6B /* GoogleSignInSwift */; };
@@ -93,6 +95,8 @@
 		E47AF0E22D0B662400C3444F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E47AF0E52D0B662400C3444F /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		E47B1D112D7B04A2000F2758 /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
+		E49B31F62E0EBD3D001E39C4 /* FiendsSessionScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FiendsSessionScreen.swift; sourceTree = "<group>"; };
+		E49B31F82E0EBE2F001E39C4 /* FriendsScreenViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendsScreenViewModel.swift; sourceTree = "<group>"; };
 		E4B84EE52DCA318A00D2DC6B /* ForgotPassword.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPassword.swift; sourceTree = "<group>"; };
 		E4B84EF22DCCE80600D2DC6B /* GoogleAuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleAuthViewModel.swift; sourceTree = "<group>"; };
 		E4D904372DCCFBCB00BC190E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -230,6 +234,8 @@
 				E4D904372DCCFBCB00BC190E /* Info.plist */,
 				E4D904452DD1DAFC00BC190E /* FaceBookViewModel.swift */,
 				E4D9046E2DDA4EE100BC190E /* AppDelegate.swift */,
+				E49B31F62E0EBD3D001E39C4 /* FiendsSessionScreen.swift */,
+				E49B31F82E0EBE2F001E39C4 /* FriendsScreenViewModel.swift */,
 			);
 			path = "Music Room";
 			sourceTree = "<group>";
@@ -317,6 +323,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E49B31F92E0EBE2F001E39C4 /* FriendsScreenViewModel.swift in Sources */,
 				E43D22042D821182007BB44D /* BoxSession.swift in Sources */,
 				E4B84EF32DCCE80600D2DC6B /* GoogleAuthViewModel.swift in Sources */,
 				E456F5D82D9EB73F00E1640F /* PlaylistScreen.swift in Sources */,
@@ -349,6 +356,7 @@
 				E43018652D0F66A400E239AD /* NavigationBar.swift in Sources */,
 				E430186B2D0F6F7700E239AD /* SignUpScreen.swift in Sources */,
 				E43018712D0F73AC00E239AD /* SignInScreen.swift in Sources */,
+				E49B31F72E0EBD3D001E39C4 /* FiendsSessionScreen.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

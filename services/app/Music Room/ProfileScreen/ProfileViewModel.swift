@@ -9,6 +9,8 @@ import SwiftUI
 
 class ProfileViewModel: ObservableObject {
     @Published var email: String = ""
+    @Published var name: String = ""
+    @Published var musicType: String = ""
     @Published var password: String = ""
     @Published var errorMessage: String?
     @Published var isAuthenticated: Bool = false
@@ -18,10 +20,14 @@ class ProfileViewModel: ObservableObject {
         if let savedUser = User.load() {
             self.isAuthenticated = true
             self.email = savedUser.email
+            self.name = savedUser.name
+            self.musicType = savedUser.musicType
             print("🔄 Utilisateur chargé: \(savedUser.email)")
         } else {
             self.isAuthenticated = false
             self.email = ""
+            self.name = ""
+            self.musicType = ""
             print("⚠️ Aucun utilisateur trouvé")
         }
     }
@@ -64,7 +70,7 @@ class ProfileViewModel: ObservableObject {
                         self.email = newEmail // Mettre à jour l'interface utilisateur
                         
                         // Sauvegarde les nouvelles infos de l'utilisateur
-                    let updatedUser = User(id: user.id, email: newEmail, token: user.token, name: user.name)
+                    let updatedUser = User(id: user.id, email: newEmail, token: user.token, name: user.name, musicType: "")
                         updatedUser.save()
                     
                     case 400:
@@ -75,6 +81,116 @@ class ProfileViewModel: ObservableObject {
                     
                     default:
                         self.errorMessage = "Erreur inconnue (\(httpResponse.statusCode))"
+                }
+            }
+        }.resume()
+    }
+    
+    func updateMusicType(newMusicType: String) {
+        guard let user = User.load() else {
+            self.errorMessage = "Utilisateur non authentifié"
+            return
+        }
+        
+        guard let url = URL(string: "http://localhost:5001/users/info") else {
+            self.errorMessage = "URL invalide"
+            return
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue(user.token, forHTTPHeaderField: "token")
+        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+        
+        let body = "musicType=\(newMusicType)"
+        request.httpBody = body.data(using: .utf8)
+
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            DispatchQueue.main.async {
+                if let error = error {
+                    self.errorMessage = "Erreur: \(error.localizedDescription)"
+                    return
+                }
+                
+                guard let httpResponse = response as? HTTPURLResponse else {
+                    self.errorMessage = "Réponse invalide du serveur"
+                    return
+                }
+
+                switch httpResponse.statusCode {
+                    case 200:
+                        print("MusicType mis à jour avec succès ✅")
+                        self.musicType = newMusicType // Mettre à jour l'interface utilisateur
+                        
+                        // Sauvegarde les nouvelles infos de l'utilisateur
+                    let updatedUser = User(id: user.id, email: user.email, token: user.token, name: user.name, musicType: newMusicType)
+                        updatedUser.save()
+                    
+                    case 400:
+                        self.errorMessage = "musicType invalide"
+                    
+                    case 401:
+                        self.errorMessage = "Non autorisé. Vérifiez votre token d'authentification."
+                    
+                    default:
+                        self.errorMessage = "Erreur inconnue (\(httpResponse.statusCode))"
+                }
+            }
+        }.resume()
+    }
+    
+    func updateName(newName: String) {
+        guard let user = User.load() else {
+            self.errorMessage = "Utilisateur non authentifié"
+            return
+        }
+        
+        guard let url = URL(string: "http://localhost:5001/users/info") else {
+            self.errorMessage = "URL invalide"
+            return
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue(user.token, forHTTPHeaderField: "token")
+        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+
+        let emailEncoded = user.email.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+        let nameEncoded = newName.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+        let musicType = user.musicType // ou récupère depuis le user si tu le stockes
+
+        let body = "email=\(emailEncoded)&name=\(nameEncoded)&musicType=\(musicType)"
+        request.httpBody = body.data(using: .utf8)
+
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            DispatchQueue.main.async {
+                if let error = error {
+                    self.errorMessage = "Erreur: \(error.localizedDescription)"
+                    return
+                }
+
+                guard let httpResponse = response as? HTTPURLResponse else {
+                    self.errorMessage = "Réponse invalide du serveur"
+                    return
+                }
+
+                switch httpResponse.statusCode {
+                case 200:
+                    print("✅ Nom mis à jour avec succès")
+                    self.name = newName
+                    let updatedUser = User(id: user.id, email: user.email, token: user.token, name: newName, musicType: "")
+                    updatedUser.save()
+
+                case 400:
+                    self.errorMessage = "Données invalides ou incomplètes"
+                    print("❌ Erreur 400")
+
+                case 401:
+                    self.errorMessage = "Non autorisé. Vérifiez votre token."
+                    print("🔒 Erreur 401")
+
+                default:
+                    self.errorMessage = "Erreur inconnue (\(httpResponse.statusCode))"
                 }
             }
         }.resume()
@@ -117,7 +233,7 @@ class ProfileViewModel: ObservableObject {
                         self.password = newPassword
                         
                         // Sauvegarde les nouvelles infos de l'utilisateur (même si ici c'est juste le mot de passe)
-                    let updatedUser = User(id: user.id, email: user.email, token: user.token, name: user.name)
+                    let updatedUser = User(id: user.id, email: user.email, token: user.token, name: user.name, musicType: "")
                         updatedUser.save()
                     
                     case 400:
@@ -182,8 +298,14 @@ struct Playlist: Codable {
     let orderType: String
 }
 
-struct UserSummary: Codable {
+struct UserSummary: Codable, Identifiable {
     let id: String
     let name: String
+    // ATTENTION A CETTE AJOUT , VERIFICATION QUE TOUT MARCHE CORRECRTEMENT SINON DELETE EMAIL
+    let email: String
 }
+
+
+
+
 

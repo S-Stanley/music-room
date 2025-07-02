@@ -8,18 +8,31 @@
 import SwiftUI
 
 struct ProfileScreen: View {
+    @State private var selectedGenre = "nothing"
     @ObservedObject var profileViewModel: ProfileViewModel
     @ObservedObject var homeViewModel: HomeViewModel
     @State private var isPopUpPassword: Bool = false
     @State private var isPopUpEmail: Bool = false
+    @State private var isPopUpName: Bool = false
     @State private var navigateToSession: Bool = false
     @State private var selectedSession: Session? = nil
     @State private var sessionCreatorName: String = "unknown"
 
+    let genres = ["HIP HOP", "HOUSE", "REGGEA", "RNB"   ]
     var body: some View {
         NavigationStack {
             ZStack {
                 VStack(alignment: .leading, spacing: 20) {
+                    
+                    NavigationLink(destination: FiendsSessionScreen()) {
+                        Text("Friends")
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 8)
+                            .background(Color.blue)
+                            .foregroundColor(.white)
+                            .cornerRadius(8)
+                    }
+                    .padding()
                     // Avatar
                     HStack {
                         Spacer()
@@ -28,6 +41,47 @@ struct ProfileScreen: View {
                             .frame(width: 100, height: 100)
                             .foregroundColor(.black)
                         Spacer()
+                    }
+                    
+                    Text("Préference musicale")
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                    
+                    Picker("Genre", selection: $selectedGenre) {
+                        ForEach(genres, id: \.self) { genre in
+                            Text(genre)
+                        }
+                    }
+                    .pickerStyle(SegmentedPickerStyle())
+                    
+                    HStack {
+                        Text("Vous avez choisi : \(selectedGenre)")
+                            .padding()
+                        Button(action: {
+                            profileViewModel.updateMusicType(newMusicType: selectedGenre)
+                        }) {
+                            Text("save")
+                        }
+                    }
+                    
+                    //NAME
+                    HStack {
+                        Text("Name")
+                            .font(.title3)
+                            .fontWeight(.semibold)
+                        Spacer()
+                        Button(action: {
+                            isPopUpName = true
+                        }) {
+                            Image(systemName: "pencil")
+                                .foregroundColor(.blue)
+                        }
+                    }
+                    
+                    if profileViewModel.isAuthenticated {
+                        InformationUser(text: profileViewModel.name)
+                    } else {
+                        InformationUser(text: "Chargement...")
                     }
                     
                     // EMAIL
@@ -98,8 +152,9 @@ struct ProfileScreen: View {
                 .padding(.top, 40)
                 .background(Color.gray.opacity(0.05).edgesIgnoringSafeArea(.all))
                 .onAppear {
+                    selectedGenre = profileViewModel.musicType.uppercased()
                     profileViewModel.loadUserInfo()
-                    profileViewModel.fetchInvitations() // ⬅️ C'est ça qui manque !
+                    profileViewModel.fetchInvitations()
                 }
                 
                 if isPopUpPassword {
@@ -121,6 +176,17 @@ struct ProfileScreen: View {
                         },
                         isPassword: false,
                         title: "Change your Email"
+                    )
+                }
+                
+                if isPopUpName{
+                    PopUpChangeInfo(
+                        isPresented: $isPopUpName,
+                        onConfirm: { newName in
+                            profileViewModel.updateName(newName: newName)
+                        },
+                        isPassword: false,
+                        title: "Change your Name"
                     )
                 }
             }
