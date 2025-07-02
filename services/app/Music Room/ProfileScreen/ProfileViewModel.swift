@@ -21,16 +21,51 @@ class ProfileViewModel: ObservableObject {
             self.isAuthenticated = true
             self.email = savedUser.email
             self.name = savedUser.name
-            self.musicType = savedUser.musicType
             print("🔄 Utilisateur chargé: \(savedUser.email)")
+            
+            // 🔽 Ajout : appel à l’API pour récupérer musicType
+            guard let url = URL(string: "http://localhost:5001/users/\(savedUser.id)") else {
+                self.errorMessage = "URL invalide"
+                return
+            }
+            
+            var request = URLRequest(url: url)
+            request.setValue(savedUser.token, forHTTPHeaderField: "token")
+            
+            URLSession.shared.dataTask(with: request) { data, response, error in
+                DispatchQueue.main.async {
+                    if let error = error {
+                        self.errorMessage = "Erreur: \(error.localizedDescription)"
+                        return
+                    }
+
+                    guard let data = data else {
+                        self.errorMessage = "Aucune donnée reçue"
+                        return
+                    }
+
+                    do {
+                        // Tu peux faire un `print(String(data: data, encoding: .utf8))` ici pour debugger
+                        if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+                           let musicType = json["musicType"] as? String {
+                            self.musicType = musicType.uppercased()
+                        } else {
+                            self.errorMessage = "Format de réponse invalide"
+                        }
+                    } catch {
+                        self.errorMessage = "Erreur de décodage JSON: \(error.localizedDescription)"
+                    }
+                }
+            }.resume()
+            
         } else {
             self.isAuthenticated = false
             self.email = ""
             self.name = ""
-            self.musicType = ""
             print("⚠️ Aucun utilisateur trouvé")
         }
     }
+
 
     
     func updateEmail(newEmail: String) {
@@ -70,7 +105,7 @@ class ProfileViewModel: ObservableObject {
                         self.email = newEmail // Mettre à jour l'interface utilisateur
                         
                         // Sauvegarde les nouvelles infos de l'utilisateur
-                    let updatedUser = User(id: user.id, email: newEmail, token: user.token, name: user.name, musicType: "")
+                    let updatedUser = User(id: user.id, email: newEmail, token: user.token, name: user.name)
                         updatedUser.save()
                     
                     case 400:
@@ -85,6 +120,51 @@ class ProfileViewModel: ObservableObject {
             }
         }.resume()
     }
+    
+    
+    func fetchUserInfo() {
+        guard let user = User.load() else {
+            self.errorMessage = "Utilisateur non authentifié"
+            return
+        }
+
+        guard let url = URL(string: "http://localhost:5001/users/\(user.id)") else {
+            self.errorMessage = "URL invalide"
+            return
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.setValue(user.token, forHTTPHeaderField: "token")
+
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            DispatchQueue.main.async {
+                if let error = error {
+                    self.errorMessage = "Erreur réseau: \(error.localizedDescription)"
+                    return
+                }
+
+                guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+                    self.errorMessage = "Impossible de récupérer les infos utilisateur"
+                    return
+                }
+
+                if let data = data {
+                    do {
+                        let userInfo = try JSONDecoder().decode(UserInfoResponse.self, from: data)
+                        self.musicType = userInfo.musicPreferences // MàJ dans ViewModel uniquement
+                        self.name = userInfo.name
+                        self.email = userInfo.email
+                        print("🎵 musicType chargé depuis l'API :", self.musicType)
+                    } catch {
+                        self.errorMessage = "Erreur de décodage des infos utilisateur"
+                        print("❌ JSON Decode Error:", error)
+                    }
+                }
+            }
+        }.resume()
+    }
+
     
     func updateMusicType(newMusicType: String) {
         guard let user = User.load() else {
@@ -123,7 +203,7 @@ class ProfileViewModel: ObservableObject {
                         self.musicType = newMusicType // Mettre à jour l'interface utilisateur
                         
                         // Sauvegarde les nouvelles infos de l'utilisateur
-                    let updatedUser = User(id: user.id, email: user.email, token: user.token, name: user.name, musicType: newMusicType)
+                    let updatedUser = User(id: user.id, email: user.email, token: user.token, name: user.name)
                         updatedUser.save()
                     
                     case 400:
@@ -157,9 +237,8 @@ class ProfileViewModel: ObservableObject {
 
         let emailEncoded = user.email.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
         let nameEncoded = newName.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
-        let musicType = user.musicType // ou récupère depuis le user si tu le stockes
 
-        let body = "email=\(emailEncoded)&name=\(nameEncoded)&musicType=\(musicType)"
+        let body = "email=\(emailEncoded)&name=\(nameEncoded)"
         request.httpBody = body.data(using: .utf8)
 
         URLSession.shared.dataTask(with: request) { data, response, error in
@@ -178,7 +257,7 @@ class ProfileViewModel: ObservableObject {
                 case 200:
                     print("✅ Nom mis à jour avec succès")
                     self.name = newName
-                    let updatedUser = User(id: user.id, email: user.email, token: user.token, name: newName, musicType: "")
+                    let updatedUser = User(id: user.id, email: user.email, token: user.token, name: newName)
                     updatedUser.save()
 
                 case 400:
@@ -233,7 +312,7 @@ class ProfileViewModel: ObservableObject {
                         self.password = newPassword
                         
                         // Sauvegarde les nouvelles infos de l'utilisateur (même si ici c'est juste le mot de passe)
-                    let updatedUser = User(id: user.id, email: user.email, token: user.token, name: user.name, musicType: "")
+                    let updatedUser = User(id: user.id, email: user.email, token: user.token, name: user.name)
                         updatedUser.save()
                     
                     case 400:
@@ -274,6 +353,13 @@ class ProfileViewModel: ObservableObject {
             }
         }.resume()
     }
+}
+
+struct UserInfoResponse: Codable {
+    let id: String
+    let email: String
+    let name: String
+    let musicPreferences: String
 }
 
 struct Invitation: Codable, Identifiable {

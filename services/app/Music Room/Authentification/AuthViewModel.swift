@@ -56,8 +56,8 @@ class AuthViewModel: ObservableObject {
                     if let data = data {
                         do {
                             let response = try JSONDecoder().decode(SignInResponse.self, from: data)
-                            if let id = response.id, let email = response.email, let token = response.token, let name = response.name, let musicType = response.musicType { // Récupérer le nom
-                                let user = User(id: id, email: email, token: token, name: name, musicType: musicType) // Inclure le nom
+                            if let id = response.id, let email = response.email, let token = response.token, let name = response.name { // Récupérer le nom
+                                let user = User(id: id, email: email, token: token, name: name) // Inclure le nom
                                 user.save()
                                 
                                 print("✅ Utilisateur enregistré :", email)
@@ -253,6 +253,5 @@ struct SignInResponse: Codable {
     let email: String?
     let token: String?
     let name: String?
-    let musicType: String?
     let error: String?
 }

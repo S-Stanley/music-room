@@ -62,7 +62,7 @@ class FaceBookViewModel: ObservableObject {
                         do {
                             let response = try JSONDecoder().decode(SignInResponse.self, from: data)
                             if let id = response.id, let email = response.email, let token = response.token, let name = response.name {
-                                let user = User(id: id, email: email, token: token, name: name, musicType: "")
+                                let user = User(id: id, email: email, token: token, name: name)
                                 user.save()
 
                                 print("✅ Utilisateur connecté via facebook : \(email)")

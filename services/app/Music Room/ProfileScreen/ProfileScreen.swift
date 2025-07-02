@@ -152,9 +152,13 @@ struct ProfileScreen: View {
                 .padding(.top, 40)
                 .background(Color.gray.opacity(0.05).edgesIgnoringSafeArea(.all))
                 .onAppear {
-                    selectedGenre = profileViewModel.musicType.uppercased()
                     profileViewModel.loadUserInfo()
                     profileViewModel.fetchInvitations()
+                }
+                .onChange(of: profileViewModel.musicType) { newValue in
+                    if !newValue.isEmpty {
+                        selectedGenre = newValue
+                    }
                 }
                 
                 if isPopUpPassword {

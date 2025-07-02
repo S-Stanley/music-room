@@ -12,7 +12,6 @@ struct User: Codable {
     var email: String
     let token: String
     let name: String
-    let musicType: String
 
     func save() {
         if let encoded = try? JSONEncoder().encode(self) {
