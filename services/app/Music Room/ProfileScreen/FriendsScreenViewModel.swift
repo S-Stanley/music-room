@@ -81,7 +81,19 @@ class FriendsScreenViewModel: ObservableObject {
         URLSession.shared.dataTask(with: request) { data, response, error in
             DispatchQueue.main.async {
                 if let error = error {
-                    self.errorMessage = "Erreur: \(error.localizedDescription)"
+                    self.errorMessage = "Erreur réseau: \(error.localizedDescription)"
+                    return
+                }
+
+                // ✅ Vérification du code HTTP
+                guard let httpResponse = response as? HTTPURLResponse else {
+                    self.errorMessage = "Réponse invalide du serveur"
+                    return
+                }
+
+                guard httpResponse.statusCode == 200 else {
+                    self.errorMessage = "Erreur serveur: \(httpResponse.statusCode)"
+                    print("❌ Code de statut HTTP:", httpResponse.statusCode)
                     return
                 }
 
@@ -89,6 +101,7 @@ class FriendsScreenViewModel: ObservableObject {
                     self.errorMessage = "Aucune donnée reçue"
                     return
                 }
+
                 print("🔍 Réponse brute amis:", String(data: data, encoding: .utf8) ?? "nil")
 
                 do {
@@ -100,6 +113,7 @@ class FriendsScreenViewModel: ObservableObject {
             }
         }.resume()
     }
+
 
     func sendFriendRequest(to invitedUserId: String) {
         guard let url = URL(string: "\(baseURL)/friends/invitation") else { return }

@@ -171,6 +171,8 @@
 		E456F5D02D93EF5600E1640F /* ProfileScreen */ = {
 			isa = PBXGroup;
 			children = (
+				E49B31F82E0EBE2F001E39C4 /* FriendsScreenViewModel.swift */,
+				E49B31F62E0EBD3D001E39C4 /* FiendsSessionScreen.swift */,
 				E456F5CE2D93EDCE00E1640F /* ProfileViewModel.swift */,
 				E43D21FC2D81C355007BB44D /* ProfileScreen.swift */,
 			);
@@ -234,8 +236,6 @@
 				E4D904372DCCFBCB00BC190E /* Info.plist */,
 				E4D904452DD1DAFC00BC190E /* FaceBookViewModel.swift */,
 				E4D9046E2DDA4EE100BC190E /* AppDelegate.swift */,
-				E49B31F62E0EBD3D001E39C4 /* FiendsSessionScreen.swift */,
-				E49B31F82E0EBE2F001E39C4 /* FriendsScreenViewModel.swift */,
 			);
 			path = "Music Room";
 			sourceTree = "<group>";

@@ -20,186 +20,181 @@ struct ProfileScreen: View {
 
     let genres = ["HIP HOP", "HOUSE", "REGGEA", "RNB"   ]
     var body: some View {
-        NavigationStack {
-            ZStack {
-                VStack(alignment: .leading, spacing: 20) {
-                    
-                    NavigationLink(destination: FiendsSessionScreen()) {
-                        Text("Friends")
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 8)
-                            .background(Color.blue)
-                            .foregroundColor(.white)
-                            .cornerRadius(8)
-                    }
-                    .padding()
-                    // Avatar
-                    HStack {
-                        Spacer()
-                        Image(systemName: "person.fill")
-                            .resizable()
-                            .frame(width: 100, height: 100)
-                            .foregroundColor(.black)
-                        Spacer()
-                    }
-                    
-                    Text("Préference musicale")
-                        .font(.title3)
-                        .fontWeight(.semibold)
-                    
-                    Picker("Genre", selection: $selectedGenre) {
-                        ForEach(genres, id: \.self) { genre in
-                            Text(genre)
-                        }
-                    }
-                    .pickerStyle(SegmentedPickerStyle())
-                    
-                    HStack {
-                        Text("Vous avez choisi : \(selectedGenre)")
+        ScrollView {
+            NavigationStack {
+                ZStack {
+                    VStack(alignment: .leading, spacing: 20) {
+                        
+                        HStack {
+                            Spacer()
+                            NavigationLink(destination: FiendsSessionScreen(profileViewModel: profileViewModel)) {
+                                Text("Friends")
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 8)
+                                    .background(Color.blue)
+                                    .foregroundColor(.white)
+                                    .cornerRadius(8)
+                            }
                             .padding()
-                        Button(action: {
-                            profileViewModel.updateMusicType(newMusicType: selectedGenre)
-                        }) {
-                            Text("save")
                         }
-                    }
-                    
-                    //NAME
-                    HStack {
-                        Text("Name")
+                        
+                        
+                        //NAME
+                        HStack {
+                            Text("Name")
+                                .font(.title3)
+                                .fontWeight(.semibold)
+                            Spacer()
+                            Button(action: {
+                                isPopUpName = true
+                            }) {
+                                Image(systemName: "pencil")
+                                    .foregroundColor(.blue)
+                            }
+                        }
+                        
+                        if profileViewModel.isAuthenticated {
+                            InformationUser(text: profileViewModel.name)
+                        } else {
+                            InformationUser(text: "Chargement...")
+                        }
+                        
+                        // EMAIL
+                        HStack {
+                            Text("Email")
+                                .font(.title3)
+                                .fontWeight(.semibold)
+                            Spacer()
+                            Button(action: {
+                                isPopUpEmail = true
+                            }) {
+                                Image(systemName: "pencil")
+                                    .foregroundColor(.blue)
+                            }
+                        }
+                        
+                        if profileViewModel.isAuthenticated {
+                            InformationUser(text: profileViewModel.email)
+                        } else {
+                            InformationUser(text: "Chargement...")
+                        }
+                        
+                        // PASSWORD
+                        HStack {
+                            Text("Password")
+                                .font(.title3)
+                                .fontWeight(.semibold)
+                            Spacer()
+                            Button(action: {
+                                isPopUpPassword = true
+                            }) {
+                                Image(systemName: "pencil")
+                                    .foregroundColor(.blue)
+                            }
+                        }
+                        
+                        InformationUser(text: "********")
+                        
+                        Text("Préference musicale")
                             .font(.title3)
                             .fontWeight(.semibold)
-                        Spacer()
-                        Button(action: {
-                            isPopUpName = true
-                        }) {
-                            Image(systemName: "pencil")
-                                .foregroundColor(.blue)
+                        
+                        Picker("Genre", selection: $selectedGenre) {
+                            ForEach(genres, id: \.self) { genre in
+                                Text(genre)
+                            }
                         }
-                    }
-                    
-                    if profileViewModel.isAuthenticated {
-                        InformationUser(text: profileViewModel.name)
-                    } else {
-                        InformationUser(text: "Chargement...")
-                    }
-                    
-                    // EMAIL
-                    HStack {
-                        Text("Email")
+                        .pickerStyle(SegmentedPickerStyle())
+                        
+                        HStack {
+                            Spacer()
+                            Button(action: {
+                                profileViewModel.updateMusicType(newMusicType: selectedGenre)
+                            }) {
+                                Text("save ")
+                            }
+                        }
+                        
+                        Text("Invitations à une Session")
                             .font(.title3)
                             .fontWeight(.semibold)
-                        Spacer()
-                        Button(action: {
-                            isPopUpEmail = true
-                        }) {
-                            Image(systemName: "pencil")
-                                .foregroundColor(.blue)
-                        }
-                    }
-                    
-                    if profileViewModel.isAuthenticated {
-                        InformationUser(text: profileViewModel.email)
-                    } else {
-                        InformationUser(text: "Chargement...")
-                    }
-                    
-                    // PASSWORD
-                    HStack {
-                        Text("Password")
-                            .font(.title3)
-                            .fontWeight(.semibold)
-                        Spacer()
-                        Button(action: {
-                            isPopUpPassword = true
-                        }) {
-                            Image(systemName: "pencil")
-                                .foregroundColor(.blue)
-                        }
-                    }
-                    
-                    InformationUser(text: "********")
-                    
-                    Text("Mes Invitations")
-                        .font(.title3)
-                        .fontWeight(.semibold)
-
-                    if profileViewModel.invitations.isEmpty {
-                        Text("Aucune invitation reçue.")
-                            .foregroundColor(.gray)
-                    } else {
-                        ScrollView {
-                            VStack(spacing: 12) {
-                                ForEach(profileViewModel.invitations) { invite in
-                                    InvitationCard(invite: invite) { session in
-                                        homeViewModel.joinSession(session: session, password: nil) { success, username in
-                                            if success {
-                                                selectedSession = session
-                                                sessionCreatorName = username ?? "unknown"
-                                                navigateToSession = true
+                        
+                        if profileViewModel.invitations.isEmpty {
+                            Text("Aucune invitation reçue.")
+                                .foregroundColor(.gray)
+                        } else {
+                            ScrollView {
+                                VStack(spacing: 12) {
+                                    ForEach(profileViewModel.invitations) { invite in
+                                        InvitationCard(invite: invite) { session in
+                                            homeViewModel.joinSession(session: session, password: nil) { success, username in
+                                                if success {
+                                                    selectedSession = session
+                                                    sessionCreatorName = username ?? "unknown"
+                                                    navigateToSession = true
+                                                }
                                             }
                                         }
                                     }
                                 }
+                                .padding(.vertical, 8)
                             }
-                            .padding(.vertical, 8)
+                            .frame(maxHeight: 250) // Tu peux adapter la hauteur visible
                         }
-                        .frame(maxHeight: 250) // Tu peux adapter la hauteur visible
+                        
                     }
-
-                }
-                .padding(.horizontal, 20)
-                .padding(.top, 40)
-                .background(Color.gray.opacity(0.05).edgesIgnoringSafeArea(.all))
-                .onAppear {
-                    profileViewModel.loadUserInfo()
-                    profileViewModel.fetchInvitations()
-                }
-                .onChange(of: profileViewModel.musicType) { newValue in
-                    if !newValue.isEmpty {
-                        selectedGenre = newValue
+                    .padding(.horizontal, 20)
+                    .padding(.top, 40)
+                    .background(Color.gray.opacity(0.05).edgesIgnoringSafeArea(.all))
+                    .onAppear {
+                        profileViewModel.loadUserInfo()
+                        profileViewModel.fetchInvitations()
+                    }
+                    .onChange(of: profileViewModel.musicType) { newValue in
+                        if !newValue.isEmpty {
+                            selectedGenre = newValue
+                        }
+                    }
+                    
+                    if isPopUpPassword {
+                        PopUpChangeInfo(
+                            isPresented: $isPopUpPassword,
+                            onConfirm: { newPassword in
+                                profileViewModel.updatePassword(newPassword: newPassword)
+                            },
+                            isPassword: true,
+                            title: "Change your Password"
+                        )
+                    }
+                    
+                    if isPopUpEmail {
+                        PopUpChangeInfo(
+                            isPresented: $isPopUpEmail,
+                            onConfirm: { newEmail in
+                                profileViewModel.updateEmail(newEmail: newEmail.lowercased())
+                            },
+                            isPassword: false,
+                            title: "Change your Email"
+                        )
+                    }
+                    
+                    if isPopUpName{
+                        PopUpChangeInfo(
+                            isPresented: $isPopUpName,
+                            onConfirm: { newName in
+                                profileViewModel.updateName(newName: newName)
+                            },
+                            isPassword: false,
+                            title: "Change your Name"
+                        )
                     }
                 }
-                
-                if isPopUpPassword {
-                    PopUpChangeInfo(
-                        isPresented: $isPopUpPassword,
-                        onConfirm: { newPassword in
-                            profileViewModel.updatePassword(newPassword: newPassword)
-                        },
-                        isPassword: true,
-                        title: "Change your Password"
-                    )
-                }
-
-                if isPopUpEmail {
-                    PopUpChangeInfo(
-                        isPresented: $isPopUpEmail,
-                        onConfirm: { newEmail in
-                            profileViewModel.updateEmail(newEmail: newEmail.lowercased())
-                        },
-                        isPassword: false,
-                        title: "Change your Email"
-                    )
-                }
-                
-                if isPopUpName{
-                    PopUpChangeInfo(
-                        isPresented: $isPopUpName,
-                        onConfirm: { newName in
-                            profileViewModel.updateName(newName: newName)
-                        },
-                        isPassword: false,
-                        title: "Change your Name"
-                    )
+                .navigationDestination(isPresented: $navigateToSession) {
+                    if let session = selectedSession {
+                        SessionScreen(sessionId: session.id, nameSession: session.name, creatorUserName: sessionCreatorName, orderType: session.orderType)
+                    }
                 }
             }
-            .navigationDestination(isPresented: $navigateToSession) {
-                if let session = selectedSession {
-                    SessionScreen(sessionId: session.id, nameSession: session.name, creatorUserName: sessionCreatorName, orderType: session.orderType)
-                }
-            }
-
         }
     }
 }
