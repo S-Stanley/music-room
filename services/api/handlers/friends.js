@@ -28,8 +28,27 @@ export const getAllFriendsOfUser = async(userId) => {
   }
 };
 
+export const findFriendRelationship = async (userId, friendId) => {
+  try {
+    return await prisma.friend.findFirst({
+      where: {
+        userId: userId,
+        friendId: friendId,
+      }
+    });
+  } catch (e) {
+    console.error(e);
+    return (null);
+  }
+};
+
 export const createFriendRelationship = async(userId, friendId) => {
   try {
+    const existingRelationship = await findFriendRelationship(userId, friendId);
+    console.log("***", existingRelationship)
+    if (existingRelationship){
+      return (existingRelationship)
+    }
     return await prisma.friend.create({
       data: {
         user: {
@@ -39,7 +58,7 @@ export const createFriendRelationship = async(userId, friendId) => {
         },
         friend: {
           connect: {
-            id: userId,
+            id: friendId,
           }
         },
       }
