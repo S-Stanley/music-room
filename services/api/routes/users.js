@@ -32,6 +32,9 @@ import {
 import {
   checkFacebokToken,
 } from "../providers/facebook.js";
+import {
+  findFriendRelationship
+} from "../handlers/friends.js";
 
 
 const router = express.Router();
@@ -177,11 +180,12 @@ router.get("/:user_id", async(req, res) => {
         error: "Unknow user",
       });
     }
+    const isFriend = await findFriendRelationship(res?.locals?.user?.id, req.params.user_id);
     return res.status(200).send({
       id: user?.id,
-      email: user?.email,
+      email: isFriend ? user?.email : undefined,
       name: user?.name,
-		  musicType: user?.musicPreferences,
+		  musicType: isFriend ? user?.musicPreferences : undefined,
     });
   } catch (e) {
     console.error(e);

@@ -78,6 +78,8 @@ curl localhost:5001/users/f6cb6e9e-7e19-485c-a4b2-fc10128e4b71 -H token:c055fb5c
 
 #### Modifier les info d'un utilisateur [PROTECTED]
 
+Music preference and email will only be returned if users are friends.
+
 * Endpoint: POST `/users/info`
 * Header: token
 * Data:
@@ -86,7 +88,6 @@ curl localhost:5001/users/f6cb6e9e-7e19-485c-a4b2-fc10128e4b71 -H token:c055fb5c
     * musicType: HIP_HOP, HOUSE, REGGEA or RNB
 * Reponse
   * 200 -> Utilisateur modifie
-
 
 ```bash
 curl -X POST localhost:5001/users/info -H token:c055fb5c-7d35-42a8-b4e7-a20a706d999b -d email=test@email.com 

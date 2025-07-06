@@ -45,7 +45,6 @@ export const findFriendRelationship = async (userId, friendId) => {
 export const createFriendRelationship = async(userId, friendId) => {
   try {
     const existingRelationship = await findFriendRelationship(userId, friendId);
-    console.log("***", existingRelationship)
     if (existingRelationship){
       return (existingRelationship)
     }
