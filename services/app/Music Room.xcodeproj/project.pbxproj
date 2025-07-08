@@ -38,6 +38,10 @@
 		E47B1D122D7B04A2000F2758 /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E47B1D112D7B04A2000F2758 /* AuthViewModel.swift */; };
 		E49B31F72E0EBD3D001E39C4 /* FiendsSessionScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = E49B31F62E0EBD3D001E39C4 /* FiendsSessionScreen.swift */; };
 		E49B31F92E0EBE2F001E39C4 /* FriendsScreenViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E49B31F82E0EBE2F001E39C4 /* FriendsScreenViewModel.swift */; };
+		E49B31FB2E17BE6F001E39C4 /* FriendDetailScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = E49B31FA2E17BE6F001E39C4 /* FriendDetailScreen.swift */; };
+		E49B31FD2E17BEAE001E39C4 /* FriendDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E49B31FC2E17BEAE001E39C4 /* FriendDetailViewModel.swift */; };
+		E49B31FF2E17CB8F001E39C4 /* SectionCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E49B31FE2E17CB8F001E39C4 /* SectionCard.swift */; };
+		E49B32012E17E02F001E39C4 /* NonFriendDetailScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = E49B32002E17E02F001E39C4 /* NonFriendDetailScreen.swift */; };
 		E4B84EE62DCA318A00D2DC6B /* ForgotPassword.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4B84EE52DCA318A00D2DC6B /* ForgotPassword.swift */; };
 		E4B84EED2DCCE1F900D2DC6B /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = E4B84EEC2DCCE1F900D2DC6B /* GoogleSignIn */; };
 		E4B84EEF2DCCE1F900D2DC6B /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = E4B84EEE2DCCE1F900D2DC6B /* GoogleSignInSwift */; };
@@ -97,6 +101,10 @@
 		E47B1D112D7B04A2000F2758 /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
 		E49B31F62E0EBD3D001E39C4 /* FiendsSessionScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FiendsSessionScreen.swift; sourceTree = "<group>"; };
 		E49B31F82E0EBE2F001E39C4 /* FriendsScreenViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendsScreenViewModel.swift; sourceTree = "<group>"; };
+		E49B31FA2E17BE6F001E39C4 /* FriendDetailScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendDetailScreen.swift; sourceTree = "<group>"; };
+		E49B31FC2E17BEAE001E39C4 /* FriendDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendDetailViewModel.swift; sourceTree = "<group>"; };
+		E49B31FE2E17CB8F001E39C4 /* SectionCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionCard.swift; sourceTree = "<group>"; };
+		E49B32002E17E02F001E39C4 /* NonFriendDetailScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonFriendDetailScreen.swift; sourceTree = "<group>"; };
 		E4B84EE52DCA318A00D2DC6B /* ForgotPassword.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPassword.swift; sourceTree = "<group>"; };
 		E4B84EF22DCCE80600D2DC6B /* GoogleAuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleAuthViewModel.swift; sourceTree = "<group>"; };
 		E4D904372DCCFBCB00BC190E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -219,6 +227,9 @@
 			isa = PBXGroup;
 			children = (
 				E4D904412DCD378F00BC190E /* Music-Room-Info.plist */,
+				E49B32002E17E02F001E39C4 /* NonFriendDetailScreen.swift */,
+				E49B31FA2E17BE6F001E39C4 /* FriendDetailScreen.swift */,
+				E49B31FC2E17BEAE001E39C4 /* FriendDetailViewModel.swift */,
 				E456F5D52D9EB69A00E1640F /* PlaylistScreen */,
 				E456F5D12D955D1200E1640F /* HomeScreen */,
 				E456F5D02D93EF5600E1640F /* ProfileScreen */,
@@ -236,6 +247,7 @@
 				E4D904372DCCFBCB00BC190E /* Info.plist */,
 				E4D904452DD1DAFC00BC190E /* FaceBookViewModel.swift */,
 				E4D9046E2DDA4EE100BC190E /* AppDelegate.swift */,
+				E49B31FE2E17CB8F001E39C4 /* SectionCard.swift */,
 			);
 			path = "Music Room";
 			sourceTree = "<group>";
@@ -328,6 +340,7 @@
 				E4B84EF32DCCE80600D2DC6B /* GoogleAuthViewModel.swift in Sources */,
 				E456F5D82D9EB73F00E1640F /* PlaylistScreen.swift in Sources */,
 				E43D22022D81C4DD007BB44D /* InformationUser.swift in Sources */,
+				E49B31FD2E17BEAE001E39C4 /* FriendDetailViewModel.swift in Sources */,
 				E47B1D122D7B04A2000F2758 /* AuthViewModel.swift in Sources */,
 				E43D21FD2D81C355007BB44D /* ProfileScreen.swift in Sources */,
 				E4D904462DD1DAFD00BC190E /* FaceBookViewModel.swift in Sources */,
@@ -336,6 +349,7 @@
 				E456F5CA2D9203EF00E1640F /* MusicScreen.swift in Sources */,
 				E43018692D0F6C2700E239AD /* ButtonItem.swift in Sources */,
 				E456F5DE2DAD30C700E1640F /* PlaylistViewModel.swift in Sources */,
+				E49B32012E17E02F001E39C4 /* NonFriendDetailScreen.swift in Sources */,
 				E43ABE0F2D83305A009624E9 /* PopUpChangeInfo.swift in Sources */,
 				E4B84EE62DCA318A00D2DC6B /* ForgotPassword.swift in Sources */,
 				E43ABE0D2D83127D009624E9 /* SessionScreen.swift in Sources */,
@@ -346,6 +360,7 @@
 				E430186D2D0F701000E239AD /* TextFieldItem.swift in Sources */,
 				E43ABE132D844197009624E9 /* ButtonActionItem.swift in Sources */,
 				E4D904712DEF2BB800BC190E /* SettingsScreenViewModel.swift in Sources */,
+				E49B31FB2E17BE6F001E39C4 /* FriendDetailScreen.swift in Sources */,
 				E454FF292D7AFC8C00FAD268 /* HomeScreen.swift in Sources */,
 				E4D9046F2DDA4EE100BC190E /* AppDelegate.swift in Sources */,
 				E47AF0DD2D0B662200C3444F /* Music_RoomApp.swift in Sources */,
@@ -353,6 +368,7 @@
 				E456F5DC2DA693EA00E1640F /* SettingScreen.swift in Sources */,
 				E43ABE112D843D29009624E9 /* CreationSessionScreen.swift in Sources */,
 				E456F5CF2D93EDCE00E1640F /* ProfileViewModel.swift in Sources */,
+				E49B31FF2E17CB8F001E39C4 /* SectionCard.swift in Sources */,
 				E43018652D0F66A400E239AD /* NavigationBar.swift in Sources */,
 				E430186B2D0F6F7700E239AD /* SignUpScreen.swift in Sources */,
 				E43018712D0F73AC00E239AD /* SignInScreen.swift in Sources */,

@@ -46,6 +46,7 @@ class ProfileViewModel: ObservableObject {
 
                     do {
                         // Tu peux faire un `print(String(data: data, encoding: .utf8))` ici pour debugger
+                        print(String(data: data, encoding: .utf8) as Any)
                         if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
                            let musicType = json["musicType"] as? String {
                             self.musicType = musicType.uppercased()
@@ -116,50 +117,6 @@ class ProfileViewModel: ObservableObject {
                     
                     default:
                         self.errorMessage = "Erreur inconnue (\(httpResponse.statusCode))"
-                }
-            }
-        }.resume()
-    }
-    
-    
-    func fetchUserInfo() {
-        guard let user = User.load() else {
-            self.errorMessage = "Utilisateur non authentifié"
-            return
-        }
-
-        guard let url = URL(string: "http://localhost:5001/users/\(user.id)") else {
-            self.errorMessage = "URL invalide"
-            return
-        }
-
-        var request = URLRequest(url: url)
-        request.httpMethod = "GET"
-        request.setValue(user.token, forHTTPHeaderField: "token")
-
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            DispatchQueue.main.async {
-                if let error = error {
-                    self.errorMessage = "Erreur réseau: \(error.localizedDescription)"
-                    return
-                }
-
-                guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-                    self.errorMessage = "Impossible de récupérer les infos utilisateur"
-                    return
-                }
-
-                if let data = data {
-                    do {
-                        let userInfo = try JSONDecoder().decode(UserInfoResponse.self, from: data)
-                        self.musicType = userInfo.musicPreferences // MàJ dans ViewModel uniquement
-                        self.name = userInfo.name
-                        self.email = userInfo.email
-                        print("🎵 musicType chargé depuis l'API :", self.musicType)
-                    } catch {
-                        self.errorMessage = "Erreur de décodage des infos utilisateur"
-                        print("❌ JSON Decode Error:", error)
-                    }
                 }
             }
         }.resume()

@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+
+
 struct FiendsSessionScreen: View {
     @ObservedObject var profileViewModel: ProfileViewModel
     @StateObject private var viewModel = FriendsScreenViewModel()
@@ -18,50 +20,26 @@ struct FiendsSessionScreen: View {
                 VStack(spacing: 24) {
 
                     // MARK: - Utilisateurs Disponibles
+                    // MARK: - Utilisateurs Disponibles (avec état ami/inviter)
                     SectionCard(title: "Utilisateurs disponibles") {
                         ForEach(viewModel.allUsers) { user in
-                            HStack {
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text(user.name)
-                                        .font(.body)
-                                        .fontWeight(.medium)
-                                    Text(user.id)
-                                        .font(.caption)
-                                        .foregroundColor(.gray)
-                                }
-                                Spacer()
-                                Button(action: {
+                            let isFriend = viewModel.friends.contains(where: { $0.id == user.id })
+                            let info = viewModel.userInfos[user.id]
+
+                            UserRowView(
+                                user: user,
+                                isFriend: isFriend,
+                                userInfo: info,
+                                onInvite: {
                                     invitedUserId = user.id
                                     viewModel.sendFriendRequest(to: user.id)
-                                }) {
-                                    Text("Inviter")
-                                        .padding(.horizontal)
-                                        .padding(.vertical, 6)
-                                        .background(Color.blue)
-                                        .foregroundColor(.white)
-                                        .cornerRadius(8)
                                 }
-                            }
+                            )
+
                             Divider()
                         }
                     }
 
-                    // MARK: - Mes Amis
-                    SectionCard(title: "Mes amis") {
-                        ForEach(viewModel.friends) { friend in
-                            NavigationLink(destination: FriendDetailView(friendId: friend.id, profileViewModel: profileViewModel)) {
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text(friend.name)
-                                        .font(.body)
-                                        .fontWeight(.medium)
-                                    Text(friend.email)
-                                        .font(.caption)
-                                        .foregroundColor(.gray)
-                                }
-                            }
-                            Divider()
-                        }
-                    }
 
                     // MARK: - Messages d'erreur
                     if let error = viewModel.errorMessage {
@@ -113,96 +91,54 @@ struct FiendsSessionScreen: View {
     }
 }
 
-struct SectionCard<Content: View>: View {
-    var title: String
-    var content: () -> Content
+struct UserRowView: View {
+    let user: UserSummary
+    let isFriend: Bool
+    let userInfo: UserInfo?
+    let onInvite: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text(title)
-                .font(.headline)
-                .padding(.bottom, 4)
+        HStack {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(user.name)
+                    .font(.body)
+                    .fontWeight(.medium)
 
-            content()
-        }
-        .padding()
-        .background(Color(UIColor.systemGray6))
-        .cornerRadius(12)
-        .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
-    }
-}
+                Text(user.id)
+                    .font(.caption)
+                    .foregroundColor(.gray)
 
-
-
-struct FriendDetailView: View {
-    let friendId: String
-    @State private var selectedGenre = "nothing"
-    @ObservedObject var profileViewModel: ProfileViewModel
-
-    var body: some View {
-        NavigationStack {
-            ZStack {
-                VStack(alignment: .leading, spacing: 20) {
-                    
-                    // Avatar
-                    HStack {
-                        Spacer()
-                        Image(systemName: "person.fill")
-                            .resizable()
-                            .frame(width: 100, height: 100)
-                            .foregroundColor(.black)
-                        Spacer()
+                if isFriend, let info = userInfo {
+                    VStack(alignment: .leading) {
+                        Text("Email : \(info.email)")
+                            .font(.caption)
+                            .foregroundColor(.blue)
+                        Text("Genre : \(info.musicType)")
+                            .font(.caption)
+                            .foregroundColor(.green)
                     }
-                    
-                    Text("Préference musicale")
-                        .font(.title3)
-                        .fontWeight(.semibold)
-                    
-                        Text("Vous avez choisi : \(selectedGenre)")
-                            .padding()
-                    
-                    
-                    //NAME
-                    HStack {
-                        Text("Name")
-                            .font(.title3)
-                            .fontWeight(.semibold)
-                    }
-                    
-                    if profileViewModel.isAuthenticated {
-                        InformationUser(text: profileViewModel.name)
-                    } else {
-                        InformationUser(text: "Chargement...")
-                    }
-                    
-                    // EMAIL
-                    HStack {
-                        Text("Email")
-                            .font(.title3)
-                            .fontWeight(.semibold)
-                    }
-                    
-                    if profileViewModel.isAuthenticated {
-                        InformationUser(text: profileViewModel.email)
-                    } else {
-                        InformationUser(text: "Chargement...")
-                    }
-
                 }
-                .padding(.horizontal, 20)
-                .padding(.top, 40)
-                .background(Color.gray.opacity(0.05).edgesIgnoringSafeArea(.all))
-                .onAppear {
-                    profileViewModel.loadUserInfo()
-                    profileViewModel.fetchInvitations()
-                }
-                .onChange(of: profileViewModel.musicType) { newValue in
-                    if !newValue.isEmpty {
-                        selectedGenre = newValue
-                    }
+            }
+
+            Spacer()
+
+            if isFriend {
+                Text("Ami")
+                    .padding(.horizontal)
+                    .padding(.vertical, 6)
+                    .background(Color.gray.opacity(0.3))
+                    .foregroundColor(.gray)
+                    .cornerRadius(8)
+            } else {
+                Button(action: onInvite) {
+                    Text("Inviter")
+                        .padding(.horizontal)
+                        .padding(.vertical, 6)
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
                 }
             }
         }
     }
 }
-

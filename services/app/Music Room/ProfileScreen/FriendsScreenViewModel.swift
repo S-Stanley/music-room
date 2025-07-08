@@ -22,12 +22,19 @@ struct FriendRelationship: Codable, Identifiable {
     let friend: UserSummary
 }
 
+struct UserInfo: Codable, Identifiable {
+    let id: String
+    let email: String
+    let musicType: String
+}
 
 class FriendsScreenViewModel: ObservableObject {
     @Published var allUsers: [UserSummary] = []
     @Published var receivedRequests: [FriendRequest] = []
     @Published var errorMessage: String?
     @Published var friends: [UserSummary] = []
+    @Published var userInfos: [String: UserInfo] = [:]
+
 
 
     private var baseURL = "http://localhost:5001"
@@ -65,6 +72,47 @@ class FriendsScreenViewModel: ObservableObject {
             }.resume()
         }
     
+    func fetchUserInfo(userId: String) {
+        guard let url = URL(string: "\(baseURL)/users/\(userId)") else { return }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+
+        guard let user = User.load() else {
+            self.errorMessage = "Utilisateur non connecté"
+            return
+        }
+
+        request.setValue(user.token, forHTTPHeaderField: "token")
+
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            DispatchQueue.main.async {
+                if let error = error {
+                    print("❌ Erreur info user: \(error.localizedDescription)")
+                    return
+                }
+
+                guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+                    print("❌ Réponse invalide pour infos utilisateur")
+                    return
+                }
+
+                guard let data = data else {
+                    print("❌ Pas de données pour infos utilisateur")
+                    return
+                }
+
+                do {
+                    let info = try JSONDecoder().decode(UserInfo.self, from: data)
+                    self.userInfos[userId] = info
+                } catch {
+                    print("❌ Erreur de décodage UserInfo: \(error.localizedDescription)")
+                }
+            }
+        }.resume()
+    }
+
+    
     func fetchFriends() {
         guard let url = URL(string: "\(baseURL)/friends") else { return }
 
@@ -90,7 +138,7 @@ class FriendsScreenViewModel: ObservableObject {
                     self.errorMessage = "Réponse invalide du serveur"
                     return
                 }
-
+                
                 guard httpResponse.statusCode == 200 else {
                     self.errorMessage = "Erreur serveur: \(httpResponse.statusCode)"
                     print("❌ Code de statut HTTP:", httpResponse.statusCode)
@@ -107,6 +155,11 @@ class FriendsScreenViewModel: ObservableObject {
                 do {
                     let relationships = try JSONDecoder().decode([FriendRelationship].self, from: data)
                     self.friends = relationships.map { $0.friend }
+
+                    // 🔁 Récupération des infos supplémentaires de chaque ami
+                    for friend in self.friends {
+                        self.fetchUserInfo(userId: friend.id)
+                    }
                 } catch {
                     self.errorMessage = "Erreur de décodage des amis: \(error.localizedDescription)"
                 }
