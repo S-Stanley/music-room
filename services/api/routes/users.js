@@ -180,7 +180,9 @@ router.get("/:user_id", async(req, res) => {
         error: "Unknow user",
       });
     }
-    const isFriend = await findFriendRelationship(res?.locals?.user?.id, req.params.user_id);
+    const isFriend = (req.params.user_id === res?.locals?.user?.id)
+      ? true
+      : await findFriendRelationship(res?.locals?.user?.id, req.params.user_id);
     return res.status(200).send({
       id: user?.id,
       email: isFriend ? user?.email : null,
