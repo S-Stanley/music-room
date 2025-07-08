@@ -183,9 +183,9 @@ router.get("/:user_id", async(req, res) => {
     const isFriend = await findFriendRelationship(res?.locals?.user?.id, req.params.user_id);
     return res.status(200).send({
       id: user?.id,
-      email: isFriend ? user?.email : undefined,
+      email: isFriend ? user?.email : null,
       name: user?.name,
-		  musicType: isFriend ? user?.musicPreferences : undefined,
+		  musicType: isFriend ? user?.musicPreferences : null,
     });
   } catch (e) {
     console.error(e);
