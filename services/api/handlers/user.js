@@ -19,15 +19,20 @@ export const findUserById = async(user_id) => {
 };
 
 export const findUserByEmail = async(user_email) => {
-  const user = await prisma.user.findUnique({
-    where: {
-      email: user_email,
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        email: user_email,
+      }
+    });
+    if (user?.password){
+      user.password = undefined;
     }
-  });
-  if (user?.password){
-    user.password = undefined;
-  }
   return (user);
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
 };
 
 export const getAllUsers = async(take, skip, userId) => {

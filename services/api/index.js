@@ -15,6 +15,13 @@ import { friendRouter } from "./routes/friends.js";
 app.use(express.urlencoded({extended: false}));
 app.set('trust proxy', true);
 
+const _HALF_PROTECTED_ENDPINT = [
+  "/users/gmail/auth",
+  "/users/gmail/auth/",
+  "/users/facebook/auth",
+  "/users/facebook/auth/",
+];
+
 const _UNPROTECTED_ENDPOINT_ = [
   "/up",
   "/up/",
@@ -59,6 +66,15 @@ app.use("/", async(req, res, next) => {
     }
     res.locals.user = user;
     console.log("Connected as", res.locals?.user);
+  }
+  if (_HALF_PROTECTED_ENDPINT.includes(req.originalUrl)){
+    const receivedToken = req.get("token");
+    const user = await prisma.user.findUnique({
+      where: {
+        token: receivedToken,
+      }
+    });
+    res.locals.user = user;
   }
   next();
 });
