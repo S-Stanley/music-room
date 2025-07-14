@@ -141,6 +141,8 @@ router.post("/info", async(req, res) => {
 			email: userUpdated?.email,
 			name: userUpdated?.name,
 		  musicType: userUpdated?.musicPreferences,
+      googleActivated: userUpdated?.googleId ? true : false,
+      facebookActivated: userUpdated?.facebookId ? true : false,
 		});
 	} catch (e) {
 		console.error(e);
@@ -188,6 +190,8 @@ router.get("/:user_id", async(req, res) => {
       email: isFriend ? user?.email : null,
       name: user?.name,
 		  musicType: isFriend ? user?.musicPreferences : null,
+      googleActivated: user?.googleId ? true : false,
+      facebookActivated: userUpdated?.facebookId ? true : false,
     });
   } catch (e) {
     console.error(e);
@@ -244,6 +248,8 @@ router.post("/email/signin", async(req, res) => {
       email: user?.email,
       token: token,
       name: user?.name,
+      googleActivated: user?.googleId ? true : false,
+      facebookActivated: userUpdated?.facebookId ? true : false,
     });
   } catch (e) {
     console.error(e);
@@ -261,14 +267,14 @@ router.post("/gmail/auth", async(req, res) => {
         error: "Google token not provided"
       });
     }
-    const { user_id, email } = await checkGoogleToken(token);
+    const { user_id, email, google_id } = await checkGoogleToken(token);
     if (!user_id || !email){
       return res.status(400).json({
         error: "Error while trying to check user token from google"
       });
     }
     const connectionToken = uuidv4();
-    const userCreated = await createUserWithGoogle(user_id, email, connectionToken);
+    const userCreated = await createUserWithGoogle(user_id, email, connectionToken, google_id);
     return res.status(200).json(userCreated);
   } catch (e) {
     console.error(e);
@@ -287,14 +293,14 @@ router.post("/facebook/auth", async(req, res) => {
         error: "Facebook token not provided"
       });
     }
-    const { email } = await checkFacebokToken(token);
-    if (!email){
+    const { email, user_id } = await checkFacebokToken(token);
+    if (!email || !user_id){
       return res.status(400).json({
         error: "Error while trying to check user token from facebook"
       });
     }
     const connectionToken = uuidv4();
-    const userCreated = await createUserWithFacebook(email, connectionToken);
+    const userCreated = await createUserWithFacebook(email, connectionToken, user_id);
     return res.status(200).json(userCreated);
   } catch (e) {
     console.error(e);

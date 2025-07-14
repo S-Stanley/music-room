@@ -96,10 +96,28 @@ export const checkConfirmationCode = async(user_id, input_confirmation_code) => 
   return (true);
 };
 
-export const createUserWithGoogle = async(user_id, email, token) => {
+export const createUserWithGoogle = async(user_id, email, token, google_id) => {
   const usr = await findUserByEmail(email);
-  if (usr){
+  if (usr && usr.googleId){
     return (usr);
+  }
+  if (usr && !usr.googleId){
+    return await prisma.user.update({
+      where: {
+        id: usr?.id,
+      },
+      data: {
+        googleId: google_id,
+      },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        token: true,
+        googleId: true,
+        facebookId: true,
+      }
+    })
   }
   return await prisma.user.create({
     data: {
@@ -112,14 +130,34 @@ export const createUserWithGoogle = async(user_id, email, token) => {
       email: true,
       name: true,
       token: true,
+      googleId: true,
+      facebookId: true,
     }
   });
 };
 
-export const createUserWithFacebook = async(email, token) => {
+export const createUserWithFacebook = async(email, token, facebook_id) => {
   const usr = await findUserByEmail(email);
-  if (usr){
+  if (usr && usr?.facebookId){
     return (usr);
+  }
+  if (usr && !usr?.facebookId){
+    return await prisma.user.update({
+      where: {
+        id: usr?.id,
+      },
+      data: {
+        facebookId: facebook_id,
+      },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        token: true,
+        googleId: true,
+        facebookId: true,
+      }
+    });
   }
   return await prisma.user.create({
     data: {
@@ -132,6 +170,8 @@ export const createUserWithFacebook = async(email, token) => {
       email: true,
       name: true,
       token: true,
+      googleId: true,
+      facebookId: true,
     }
   });
 };

@@ -35,6 +35,8 @@ model User {
   members           Members[]
   confirmationCode  ConfirmationCode?
   passwordChange    PasswordChange?
+  googleId          String?         @map("google_id")
+  facebookId        String?         @map("facebook_id")
   friends           Friend[]        @relation("friend")
   friendsWith       Friend[]        @relation("user")
   friendRequest     FriendRequest[] @relation("friend_request")
