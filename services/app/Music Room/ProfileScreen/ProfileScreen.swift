@@ -11,6 +11,8 @@ struct ProfileScreen: View {
     @State private var selectedGenre = "nothing"
     @ObservedObject var profileViewModel: ProfileViewModel
     @ObservedObject var homeViewModel: HomeViewModel
+    @StateObject private var googleViewModel = GoogleAuthViewModel()
+    @StateObject private var facebookViewModel = FaceBookViewModel()
     @State private var isPopUpPassword: Bool = false
     @State private var isPopUpEmail: Bool = false
     @State private var isPopUpName: Bool = false
@@ -26,6 +28,17 @@ struct ProfileScreen: View {
                     VStack(alignment: .leading, spacing: 20) {
                         
                         HStack {
+                            Button(action: {
+                                facebookViewModel.signInWithFacebook()
+                            }) {
+                                Text("Lié le compte facebook")
+                            }
+                            
+                            Button(action: {
+                                googleViewModel.signIn()
+                            }) {
+                                Text("Lié le compte google")
+                            }
                             Spacer()
                             NavigationLink(destination: FiendsSessionScreen(profileViewModel: profileViewModel)) {
                                 Text("Friends")
