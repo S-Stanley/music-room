@@ -98,6 +98,7 @@ export const checkConfirmationCode = async(user_id, input_confirmation_code) => 
 
 export const createUserWithGoogle = async(user_id, email, token, google_id) => {
   const usr = await findUserByEmail(email);
+  console.log(usr && user.googleId, usr);
   if (usr && usr.googleId){
     return (usr);
   }
@@ -124,6 +125,7 @@ export const createUserWithGoogle = async(user_id, email, token, google_id) => {
       email: email,
       token: token,
       name: email.split("@")[0],
+      googleId: google_id,
     },
     select: {
       id: true,
@@ -164,6 +166,7 @@ export const createUserWithFacebook = async(email, token, facebook_id) => {
       email: email,
       token: token,
       name: email.split("@")[0],
+      facebookId: facebook_id,
     },
     select: {
       id: true,
