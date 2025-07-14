@@ -103,7 +103,6 @@ export const checkConfirmationCode = async(user_id, input_confirmation_code) => 
 
 export const createUserWithGoogle = async(user_id, email, token, google_id) => {
   const usr = await findUserByEmail(email);
-  console.log(usr && user.googleId, usr);
   if (usr && usr.googleId){
     return (usr);
   }
