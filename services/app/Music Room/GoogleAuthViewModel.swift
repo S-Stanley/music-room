@@ -48,7 +48,7 @@ class GoogleAuthViewModel: ObservableObject {
 
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
 
         let body = "token=\(token)"
         request.httpBody = body.data(using: .utf8)
