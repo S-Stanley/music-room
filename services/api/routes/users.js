@@ -191,7 +191,7 @@ router.get("/:user_id", async(req, res) => {
       name: user?.name,
 		  musicType: isFriend ? user?.musicPreferences : null,
       googleActivated: user?.googleId ? true : false,
-      facebookActivated: userUpdated?.facebookId ? true : false,
+      facebookActivated: user?.facebookId ? true : false,
     });
   } catch (e) {
     console.error(e);
@@ -249,7 +249,7 @@ router.post("/email/signin", async(req, res) => {
       token: token,
       name: user?.name,
       googleActivated: user?.googleId ? true : false,
-      facebookActivated: userUpdated?.facebookId ? true : false,
+      facebookActivated: user?.facebookId ? true : false,
     });
   } catch (e) {
     console.error(e);
