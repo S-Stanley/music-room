@@ -260,6 +260,7 @@ router.post("/email/signin", async(req, res) => {
 });
 
 router.post("/gmail/auth", async(req, res) => {
+  console.info("User is connecting gmail account")
   try {
     const { token } = req.body;
     if (!token){
@@ -274,7 +275,8 @@ router.post("/gmail/auth", async(req, res) => {
       });
     }
     const connectionToken = uuidv4();
-    const userCreated = await createUserWithGoogle(user_id, email, connectionToken, google_id);
+    const userCreated = await createUserWithGoogle(user_id, res?.locals?.user?.email, connectionToken, google_id);
+    console.log(userCreated)
     return res.status(200).json(userCreated);
   } catch (e) {
     console.error(e);
@@ -300,7 +302,7 @@ router.post("/facebook/auth", async(req, res) => {
       });
     }
     const connectionToken = uuidv4();
-    const userCreated = await createUserWithFacebook(email, connectionToken, user_id);
+    const userCreated = await createUserWithFacebook(res?.locals?.user?.email, connectionToken, user_id);
     return res.status(200).json(userCreated);
   } catch (e) {
     console.error(e);
