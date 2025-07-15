@@ -27,19 +27,31 @@ struct ProfileScreen: View {
                 ZStack {
                     VStack(alignment: .leading, spacing: 20) {
                         
-                        HStack {
+                        HStack(spacing: 16) {
                             Button(action: {
-                                facebookViewModel.signInWithFacebook()
+                                facebookViewModel.linkFacebookAccount()
                             }) {
-                                Text("Lié le compte facebook")
+                                Text("Lier avec Facebook")
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 8)
+                                    .background(Color.blue.opacity(0.2))
+                                    .foregroundColor(.blue)
+                                    .cornerRadius(8)
                             }
-                            
+
                             Button(action: {
-                                googleViewModel.signIn()
+                                googleViewModel.link()
                             }) {
-                                Text("Lié le compte google")
+                                Text("Lier avec Google")
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 8)
+                                    .background(Color.red.opacity(0.2))
+                                    .foregroundColor(.red)
+                                    .cornerRadius(8)
                             }
+
                             Spacer()
+
                             NavigationLink(destination: FiendsSessionScreen(profileViewModel: profileViewModel)) {
                                 Text("Friends")
                                     .padding(.horizontal, 12)
@@ -48,8 +60,9 @@ struct ProfileScreen: View {
                                     .foregroundColor(.white)
                                     .cornerRadius(8)
                             }
-                            .padding()
                         }
+                        .padding(.horizontal)
+
                         
                         
                         //NAME
