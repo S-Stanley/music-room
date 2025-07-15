@@ -15,6 +15,8 @@ class ProfileViewModel: ObservableObject {
     @Published var errorMessage: String?
     @Published var isAuthenticated: Bool = false
     @Published var invitations: [Invitation] = []
+    @Published var isGoogleLinked: Bool = false
+    @Published var isFacebookLinked: Bool = false
 
     func loadUserInfo() {
         if let savedUser = User.load() {
@@ -23,7 +25,6 @@ class ProfileViewModel: ObservableObject {
             self.name = savedUser.name
             print("🔄 Utilisateur chargé: \(savedUser.email)")
             
-            // 🔽 Ajout : appel à l’API pour récupérer musicType
             guard let url = URL(string: "http://localhost:5001/users/\(savedUser.id)") else {
                 self.errorMessage = "URL invalide"
                 return
@@ -45,11 +46,30 @@ class ProfileViewModel: ObservableObject {
                     }
 
                     do {
-                        // Tu peux faire un `print(String(data: data, encoding: .utf8))` ici pour debugger
-                        print(String(data: data, encoding: .utf8) as Any)
-                        if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
-                           let musicType = json["musicType"] as? String {
-                            self.musicType = musicType.uppercased()
+                        print(String(data: data, encoding: .utf8) ?? "❌ Réponse vide")
+                        
+                        if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                            
+                            // 🎵 Music type
+                            if let musicType = json["musicType"] as? String {
+                                self.musicType = musicType.uppercased()
+                            }
+
+                            // 🔗 Google linked status
+                            if let googleLinked = json["googleActivated"] as? Bool {
+                                self.isGoogleLinked = googleLinked
+                                print("🔗 Google linked: \(googleLinked)")
+                            } else {
+                                print("ℹ️ googleActivated absent ou invalide")
+                            }
+                            
+                            if let facebookLinked = json["facebookActivated"] as? Bool {
+                                self.isFacebookLinked = facebookLinked
+                                print("🔗 Facebook linked: \(facebookLinked)")
+                            } else {
+                                print("ℹ️ facebookActivated absent ou invalide")
+                            }
+
                         } else {
                             self.errorMessage = "Format de réponse invalide"
                         }
@@ -66,7 +86,6 @@ class ProfileViewModel: ObservableObject {
             print("⚠️ Aucun utilisateur trouvé")
         }
     }
-
 
     
     func updateEmail(newEmail: String) {
