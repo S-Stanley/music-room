@@ -28,19 +28,9 @@ struct ProfileScreen: View {
                     VStack(alignment: .leading, spacing: 20) {
                         
                         HStack(spacing: 16) {
-//                            Button(action: {
-//                                facebookViewModel.linkFacebookAccount()
-//                            }) {
-//                                Text("Lier avec Facebook")
-//                                    .padding(.horizontal, 12)
-//                                    .padding(.vertical, 8)
-//                                    .background(Color.blue.opacity(0.2))
-//                                    .foregroundColor(.blue)
-//                                    .cornerRadius(8)
-//                            }
                             
                             if profileViewModel.isFacebookLinked {
-                                Text("✅ Google est connecté")
+                                Text("✅ Facebook est connecté")
                             } else {
                                 Button("Connecter Google") {
                                     facebookViewModel.linkFacebookAccount()
