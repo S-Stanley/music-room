@@ -118,7 +118,7 @@ const MusicType = {
 router.post("/info", async(req, res) => {
 	try {
     const { email, name, musicType, password } = req.body;
-    if (!Object.keys(MusicType).includes(musicType)){
+    if(musicType && !Object.keys(MusicType).includes(musicType)){
       return res.status(400).json({
         error: "Unknow music type"
       });
