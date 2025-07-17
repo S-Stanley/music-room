@@ -32,7 +32,7 @@ struct ProfileScreen: View {
                             if profileViewModel.isFacebookLinked {
                                 Text("✅ Facebook est connecté")
                             } else {
-                                Button("Connecter Google") {
+                                Button("Connecter Facebook") {
                                     facebookViewModel.linkFacebookAccount()
                                 }
                             }
