@@ -89,6 +89,7 @@ class ProfileViewModel: ObservableObject {
 
     
     func updateEmail(newEmail: String) {
+        print("✅ updateEmail called with: \(newEmail)")
         guard let user = User.load() else {
             self.errorMessage = "Utilisateur non authentifié"
             return
@@ -108,6 +109,7 @@ class ProfileViewModel: ObservableObject {
         request.httpBody = body.data(using: .utf8)
 
         URLSession.shared.dataTask(with: request) { data, response, error in
+            print("📡 Requête envoyée")
             DispatchQueue.main.async {
                 if let error = error {
                     self.errorMessage = "Erreur: \(error.localizedDescription)"

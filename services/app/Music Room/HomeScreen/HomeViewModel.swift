@@ -74,6 +74,7 @@ class HomeViewModel: ObservableObject {
     
     
     func fetchActiveSessions(completion: @escaping (Bool, String?) -> Void) {
+
         guard let user = User.load() else {
             completion(false, "Utilisateur non authentifié")
             return
@@ -89,6 +90,7 @@ class HomeViewModel: ObservableObject {
         request.setValue(user.token, forHTTPHeaderField: "token")
 
         URLSession.shared.dataTask(with: request) { data, response, error in
+            print("In fetchActiveSessions")
             DispatchQueue.main.async {
                 if let error = error {
                     print("❌ Erreur de requête: \(error.localizedDescription)")

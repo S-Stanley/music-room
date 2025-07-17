@@ -11,23 +11,25 @@ struct NavigationScreen: View {
     @StateObject var authViewModel = AuthViewModel()
     @StateObject var profileViewModel = ProfileViewModel()
     @StateObject var homeViewModel = HomeViewModel()
+    @State private var selectedTab = 0
 
     var body: some View {
-        TabView {
-            HomeScreen()
+        TabView(selection: $selectedTab) {
+            HomeScreen(tabSelection: $selectedTab)
+                .tag(0)
                 .tabItem {
                     Image(systemName: "house.fill")
                     Text("Accueil")
                 }
 
             ProfileScreen(profileViewModel: profileViewModel, homeViewModel: homeViewModel)
+                .tag(1)
                 .tabItem {
                     Image(systemName: "person.fill")
                     Text("Profil")
                 }
         }
         .onAppear {
-            // Vérifier si l'utilisateur est authentifié lors du lancement de la vue
             authViewModel.loadUserInfo()
         }
         .navigationBarBackButtonHidden(true)

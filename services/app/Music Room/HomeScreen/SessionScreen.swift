@@ -45,12 +45,6 @@ struct SessionScreen: View {
 
                 Spacer()
 
-                Button(action: {}) {
-                    Image(systemName: "lock.fill")
-                        .foregroundColor(.black)
-                        .font(.system(size: 30))
-                        .padding()
-                }
 
                 NavigationLink(destination: SettingScreen(playlistId: sessionId, creatorUserName: creatorUserName)) {
                     Image(systemName: "gearshape.fill")

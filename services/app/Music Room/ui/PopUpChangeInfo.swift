@@ -99,9 +99,3 @@ extension StatefulPreviewWrapper where Value == Bool {
         self.content = { AnyView(content($0)) }
     }
 }
-
-#Preview {
-    StatefulPreviewWrapper(true) { isPresented in
-        PopUpChangeInfo(isPresented: isPresented, onConfirm: { _ in }, isPassword: false, title: "Change your Email")
-    }
-}

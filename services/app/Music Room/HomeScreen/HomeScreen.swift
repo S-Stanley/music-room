@@ -16,7 +16,7 @@ struct HomeScreen: View {
     @State private var isPasswordCorrect = false
     @State private var navigateToSession = false
     @State private var sessionCreatorName: String = "unknown"
-    
+    @Binding var tabSelection: Int
 
     var body: some View {
         NavigationStack {
@@ -27,6 +27,7 @@ struct HomeScreen: View {
                         .padding()
                     
                     Button(action: {
+                        
                         homeViewModel.fetchActiveSessions { success, error in
                             if !success {
                                 print("Erreur: \(error ?? "Inconnue")")
@@ -94,10 +95,12 @@ struct HomeScreen: View {
                 }
                 .padding()
             }
-            .onAppear {
-                homeViewModel.fetchActiveSessions { success, error in
-                    if !success {
-                        print("Erreur: \(error ?? "Inconnue")")
+            .onChange(of: tabSelection) { newTab in
+                if newTab == 0 { // 0 = HomeScreen
+                    homeViewModel.fetchActiveSessions { success, error in
+                        if !success {
+                            print("Erreur: \(error ?? "Inconnue")")
+                        }
                     }
                 }
             }
@@ -147,8 +150,4 @@ struct HomeScreen: View {
             }
         }
     }
-}
-
-#Preview {
-    HomeScreen()
 }

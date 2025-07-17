@@ -40,6 +40,7 @@ class PlaylistViewModel: ObservableObject {
         request.setValue(user.token, forHTTPHeaderField: "token")
 
         URLSession.shared.dataTask(with: request) { data, response, error in
+            print("In fetchTrackForPlaylist")
             DispatchQueue.main.async {
                 if let error = error {
                     print("❌ Erreur de requête: \(error.localizedDescription)")

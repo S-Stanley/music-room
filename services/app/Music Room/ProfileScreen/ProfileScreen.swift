@@ -193,6 +193,7 @@ struct ProfileScreen: View {
                         PopUpChangeInfo(
                             isPresented: $isPopUpEmail,
                             onConfirm: { newEmail in
+                                isPopUpEmail = false
                                 profileViewModel.updateEmail(newEmail: newEmail.lowercased())
                             },
                             isPassword: false,
