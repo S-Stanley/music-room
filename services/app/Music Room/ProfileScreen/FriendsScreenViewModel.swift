@@ -34,7 +34,7 @@ class FriendsScreenViewModel: ObservableObject {
     @Published var errorMessage: String?
     @Published var friends: [UserSummary] = []
     @Published var userInfos: [String: UserInfo] = [:]
-
+    @Published var invitationStatuses: [String: String] = [:]
 
 
     private var baseURL = "http://localhost:5001"
@@ -63,6 +63,7 @@ class FriendsScreenViewModel: ObservableObject {
                         self.errorMessage = "Erreur serveur"
                         return
                     }
+                    
                     do {
                         self.allUsers = try JSONDecoder().decode([UserSummary].self, from: data)
                     } catch {
@@ -176,29 +177,44 @@ class FriendsScreenViewModel: ObservableObject {
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 
         guard let user = User.load() else {
-            self.errorMessage = "Utilisateur non connecté"
+            DispatchQueue.main.async {
+                self.errorMessage = "Utilisateur non connecté"
+            }
             return
         }
 
         request.setValue(user.token, forHTTPHeaderField: "token")
         request.httpBody = "invitedUserId=\(invitedUserId)".data(using: .utf8)
 
-        URLSession.shared.dataTask(with: request) { _, response, _ in
+        URLSession.shared.dataTask(with: request) { data, response, _ in
             DispatchQueue.main.async {
-                guard let status = (response as? HTTPURLResponse)?.statusCode else { return }
-                switch status {
+                guard let statusCode = (response as? HTTPURLResponse)?.statusCode else { return }
+
+                switch statusCode {
                 case 201:
-                    print("✅ Invitation envoyée")
+                    if let data = data {
+                        do {
+                            let request = try JSONDecoder().decode(FriendRequest.self, from: data)
+                            self.invitationStatuses[request.invitedUserId] = request.state
+                            print("✅ Invitation envoyée avec état : \(request.state)")
+                            self.errorMessage = nil
+                        } catch {
+                            self.errorMessage = "Erreur de décodage"
+                        }
+                    }
+
                 case 400:
                     self.errorMessage = "Utilisateur introuvable"
                 case 500:
                     self.errorMessage = "Erreur serveur"
                 default:
-                    self.errorMessage = "Erreur 1 : \(status)"
+                    self.errorMessage = "Erreur \(statusCode)"
                 }
             }
         }.resume()
     }
+
+
 
     func fetchFriendRequests() {
         guard let url = URL(string: "http://localhost:5001/friends/invitation") else {
@@ -319,4 +335,3 @@ class FriendsScreenViewModel: ObservableObject {
             }.resume()
         }
 }
-

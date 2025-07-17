@@ -7,8 +7,6 @@
 
 import SwiftUI
 
-
-
 struct FiendsSessionScreen: View {
     @ObservedObject var profileViewModel: ProfileViewModel
     @StateObject private var viewModel = FriendsScreenViewModel()
@@ -20,26 +18,29 @@ struct FiendsSessionScreen: View {
                 VStack(spacing: 24) {
 
                     // MARK: - Utilisateurs Disponibles
-                    // MARK: - Utilisateurs Disponibles (avec état ami/inviter)
                     SectionCard(title: "Utilisateurs disponibles") {
                         ForEach(viewModel.allUsers) { user in
-                            let isFriend = viewModel.friends.contains(where: { $0.id == user.id })
-                            let info = viewModel.userInfos[user.id]
+                            VStack {
+                                let status = viewModel.invitationStatuses[user.id] ?? ""
+                                let isFriend = status == "AMI" || viewModel.friends.contains(where: { $0.id == user.id })
+                                let isSend = status == "PENDING"
 
-                            UserRowView(
-                                user: user,
-                                isFriend: isFriend,
-                                userInfo: info,
-                                onInvite: {
-                                    invitedUserId = user.id
-                                    viewModel.sendFriendRequest(to: user.id)
-                                }
-                            )
+                                
+                                UserRowView(
+                                    user: user,
+                                    isFriend: isFriend,
+                                    isSend: isSend,
+                                    userInfo: viewModel.userInfos[user.id],
+                                    onInvite: {
+                                        invitedUserId = user.id
+                                        viewModel.sendFriendRequest(to: user.id)
+                                    }
+                                )
 
-                            Divider()
+                                Divider()
+                            }
                         }
                     }
-
 
                     // MARK: - Messages d'erreur
                     if let error = viewModel.errorMessage {
@@ -91,9 +92,12 @@ struct FiendsSessionScreen: View {
     }
 }
 
+// MARK: - UserRowView
+
 struct UserRowView: View {
     let user: UserSummary
     let isFriend: Bool
+    let isSend: Bool
     let userInfo: UserInfo?
     let onInvite: () -> Void
 
@@ -128,6 +132,13 @@ struct UserRowView: View {
                     .padding(.vertical, 6)
                     .background(Color.gray.opacity(0.3))
                     .foregroundColor(.gray)
+                    .cornerRadius(8)
+            } else if isSend {
+                Text("Envoyé")
+                    .padding(.horizontal)
+                    .padding(.vertical, 6)
+                    .background(Color.blue)
+                    .foregroundColor(.white)
                     .cornerRadius(8)
             } else {
                 Button(action: onInvite) {
