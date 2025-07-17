@@ -69,12 +69,14 @@ app.use("/", async(req, res, next) => {
   }
   if (_HALF_PROTECTED_ENDPINT.includes(req.originalUrl)){
     const receivedToken = req.get("token");
-    const user = await prisma.user.findUnique({
-      where: {
-        token: receivedToken,
-      }
-    });
-    res.locals.user = user;
+    if (receivedToken){
+      const user = await prisma.user.findUnique({
+        where: {
+          token: receivedToken,
+        }
+      });
+      res.locals.user = user;
+    }
   }
   next();
 });

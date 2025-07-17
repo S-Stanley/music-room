@@ -276,7 +276,7 @@ router.post("/gmail/auth", async(req, res) => {
     }
     const connectionToken = uuidv4();
     console.log(res?.locals)
-    const userCreated = await createUserWithGoogle(user_id, res?.locals?.user?.email, connectionToken, google_id);
+    const userCreated = await createUserWithGoogle(user_id, res?.locals?.user?.email ?? email, connectionToken, google_id);
     console.log(userCreated)
     return res.status(200).json(userCreated);
   } catch (e) {
@@ -303,7 +303,7 @@ router.post("/facebook/auth", async(req, res) => {
       });
     }
     const connectionToken = uuidv4();
-    const userCreated = await createUserWithFacebook(res?.locals?.user?.email, connectionToken, user_id);
+    const userCreated = await createUserWithFacebook(res?.locals?.user?.email ?? email, connectionToken, user_id);
     return res.status(200).json(userCreated);
   } catch (e) {
     console.error(e);
