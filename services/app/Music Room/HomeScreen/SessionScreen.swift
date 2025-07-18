@@ -57,6 +57,7 @@ struct SessionScreen: View {
                     audioPlayer.stop()
                     playlistViewModel.stopPlayback()
                     navigateToNavigationScreen = true
+                    
                 }) {
                     Image(systemName: "arrow.forward.square.fill")
                         .foregroundColor(.red)

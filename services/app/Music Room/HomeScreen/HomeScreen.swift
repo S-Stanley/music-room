@@ -95,6 +95,15 @@ struct HomeScreen: View {
                 }
                 .padding()
             }
+            .onAppear {
+                if !homeViewModel.didFetchAlready {
+                    homeViewModel.fetchActiveSessions { success, error in
+                        if !success {
+                            print("Erreur: \(error ?? "Inconnue")")
+                        }
+                    }
+                }
+            }
             .onChange(of: tabSelection) { newTab in
                 if newTab == 0 { // 0 = HomeScreen
                     homeViewModel.fetchActiveSessions { success, error in

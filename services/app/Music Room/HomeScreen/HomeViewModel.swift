@@ -72,9 +72,13 @@ class HomeViewModel: ObservableObject {
         }.resume()
     }
     
-    
-    func fetchActiveSessions(completion: @escaping (Bool, String?) -> Void) {
-
+    var didFetchAlready = false
+    func fetchActiveSessions(force: Bool = false,completion: @escaping (Bool, String?) -> Void) {
+        guard !didFetchAlready || force else {
+                   completion(true, nil)
+                   return
+               }
+        didFetchAlready = true
         guard let user = User.load() else {
             completion(false, "Utilisateur non authentifié")
             return
