@@ -20,31 +20,52 @@ class AudioPlayer: ObservableObject {
             return
         }
 
-        // Supprime observer précédent
+        // 🔁 Supprime observer précédent proprement
         if let currentItem = currentItem {
             NotificationCenter.default.removeObserver(self, name: .AVPlayerItemDidPlayToEndTime, object: currentItem)
         }
 
-        // Crée un nouvel AVPlayerItem
+        // 🛑 Arrête la lecture actuelle
+        player?.pause()
+        player = nil
+
+        // 🎧 Nouveau morceau
         let item = AVPlayerItem(url: url)
         currentItem = item
         player = AVPlayer(playerItem: item)
         player?.play()
 
-        // 👇 Ajoute observer spécifique à ce nouvel item
         NotificationCenter.default.addObserver(
-            forName: .AVPlayerItemDidPlayToEndTime,
-            object: item,
-            queue: .main
-        ) { _ in
-            print("🎧 Fin du morceau détectée par AudioPlayer")
-            onFinished()
-        }
+            self,
+            selector: #selector(playerDidFinishPlaying),
+            name: .AVPlayerItemDidPlayToEndTime,
+            object: item
+        )
+
+        // 👇 Sauvegarde le callback à appeler à la fin
+        self.onFinished = onFinished
     }
 
+    private var onFinished: (() -> Void)?
+
+    @objc private func playerDidFinishPlaying() {
+        print("🎧 Fin du morceau détectée par AudioPlayer")
+        onFinished?()
+        onFinished = nil
+    }
+
+
     func stop() {
+        if let currentItem = currentItem {
+            NotificationCenter.default.removeObserver(self, name: .AVPlayerItemDidPlayToEndTime, object: currentItem)
+        }
+
         player?.pause()
         player = nil
         currentItem = nil
+        onFinished = nil
     }
+    
+    
+
 }

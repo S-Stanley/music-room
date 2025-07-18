@@ -24,7 +24,7 @@ class PlaylistViewModel: ObservableObject {
             self.playlistId = playlistId
         }
     
-    func fetchTracksForPlaylist(playlistId: String, completion: @escaping (Bool, String?) -> Void) {
+    func fetchTracksForPlaylist(playlistId: String, triggerPlayback: Bool = true, completion: @escaping (Bool, String?) -> Void) {
         guard let user = User.load() else {
             completion(false, "Utilisateur non authentifié")
             return
@@ -40,7 +40,6 @@ class PlaylistViewModel: ObservableObject {
         request.setValue(user.token, forHTTPHeaderField: "token")
 
         URLSession.shared.dataTask(with: request) { data, response, error in
-            print("In fetchTrackForPlaylist")
             DispatchQueue.main.async {
                 if let error = error {
                     print("❌ Erreur de requête: \(error.localizedDescription)")
@@ -92,7 +91,9 @@ class PlaylistViewModel: ObservableObject {
 //                        print("Contenu de associatedUUIDs après fetchTracksForPlaylist : \(self.associatedUUIDs)")
 
                         completion(true, nil)
-                        self.startAutomaticPlaybackIfNeeded()
+                        if triggerPlayback {
+                            self.startAutomaticPlaybackIfNeeded()
+                        }
                     } catch {
                         print("❌ Erreur de décodage JSON: \(error.localizedDescription)")
                         completion(false, "Erreur de décodage JSON")
@@ -140,19 +141,6 @@ class PlaylistViewModel: ObservableObject {
                 print("❌ URL de vote invalide")
                 return
             }
-
-//            var request = URLRequest(url: voteURL)
-//            request.httpMethod = "POST"
-//            request.setValue(user.token, forHTTPHeaderField: "token")
-//            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-//
-//            // 🔧 Clé correcte attendue par l’API
-//            let body = ["ip_addr": userIP]
-//            if let bodyData = try? JSONSerialization.data(withJSONObject: body),
-//               let bodyString = String(data: bodyData, encoding: .utf8) {
-//                print("📤 Corps envoyé : \(bodyString)")
-//                request.httpBody = bodyData
-//            }
 
             var request = URLRequest(url: voteURL)
             request.httpMethod = "POST"
@@ -367,16 +355,18 @@ class PlaylistViewModel: ObservableObject {
             self.markTrackAsPlayed(trackId: String(track.id))
 
             // Rafraîchir la playlist avant de jouer le prochain morceau
-            self.fetchTracksForPlaylist(playlistId: self.playlistId) { success, error in
+            self.fetchTracksForPlaylist(playlistId: self.playlistId, triggerPlayback: false) { success, error in
                 if success {
-                    // Playlist mise à jour, passer au morceau suivant
-                    if !self.tracks.isEmpty {
-                        self.playFirstTrack()
-                    } else {
+                    if self.tracks.isEmpty {
                         print("🏁 Fin de la playlist")
+                        self.audioPlayer.stop()
                         self.isPlaying = false
+                        self.hasStartedPlaying = false
+                    } else {
+                        self.playFirstTrack()
                     }
-                } else {
+                }
+                else {
                     print("❌ Erreur lors de la mise à jour de la playlist : \(error ?? "Inconnue")")
                     self.isPlaying = false
                 }
@@ -391,6 +381,13 @@ class PlaylistViewModel: ObservableObject {
             }
         }
     
+    func stopPlayback() {
+        print("🛑 Arrêt de la lecture")
+        audioPlayer.stop()
+        isPlaying = false
+        hasStartedPlaying = false
+    }
+
 }
 
 import CoreLocation

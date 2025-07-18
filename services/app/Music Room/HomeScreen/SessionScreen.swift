@@ -55,6 +55,7 @@ struct SessionScreen: View {
 
                 Button(action: {
                     audioPlayer.stop()
+                    playlistViewModel.stopPlayback()
                     navigateToNavigationScreen = true
                 }) {
                     Image(systemName: "arrow.forward.square.fill")
