@@ -2,6 +2,7 @@ import express from "express";
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import { validate as uuidValidate, v4 as uuidv4 } from 'uuid';
+import { UAParser } from "ua-parser-js";
 
 const app = express();
 const port = process.env.port || 5001;
@@ -42,6 +43,13 @@ const _UNPROTECTED_ENDPOINT_ = [
 ]
 
 app.use("/", async(req, res, next) => {
+  const parser = new UAParser();
+  const ua = parser.setUA(req.headers['user-agent']).getResult();
+
+  console.info({
+    platform: ua?.os?.name,
+    user_agent: req.headers['user-agent'],
+  });
   if (!_UNPROTECTED_ENDPOINT_.includes(req.originalUrl)){
     const receivedToken = req.get("token");
     if (!receivedToken){
