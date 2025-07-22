@@ -128,13 +128,14 @@ struct HomeScreen: View {
 
                     Button("Join Session") {
                         if let session = selectedSession {
-                            homeViewModel.joinSession(session: session, password: password) { success, userId in
+                            homeViewModel.joinSession(session: session, password: password) { success, userName in
                                 if success {
                                     self.showPasswordField = false
                                     self.isPasswordCorrect = true
                                     self.navigateToSession = true
+                                    self.sessionCreatorName = userName ?? "unknown"
                                 }
-                                print("Private Session User ID: \(userId ?? "unknown")")
+//                                print("Private Session User ID: \(userId ?? "unknown")")
                             }
                         }
                     }
