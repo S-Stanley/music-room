@@ -145,6 +145,7 @@ class ProfileViewModel: ObservableObject {
 
     
     func updateMusicType(newMusicType: String) {
+        print(newMusicType)
         guard let user = User.load() else {
             self.errorMessage = "Utilisateur non authentifié"
             return

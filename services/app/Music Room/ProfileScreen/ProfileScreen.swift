@@ -20,7 +20,7 @@ struct ProfileScreen: View {
     @State private var selectedSession: Session? = nil
     @State private var sessionCreatorName: String = "unknown"
 
-    let genres = ["HIP HOP", "HOUSE", "REGGEA", "RNB"   ]
+    let genres = ["HIP_HOP", "HOUSE", "REGGEA", "RNB"   ]
     var body: some View {
         ScrollView {
             NavigationStack {
@@ -190,24 +190,22 @@ struct ProfileScreen: View {
                     }
                     
                     if isPopUpEmail {
-                        PopUpChangeInfo(
+                        PopUpChangeEmail(
                             isPresented: $isPopUpEmail,
                             onConfirm: { newEmail in
                                 isPopUpEmail = false
                                 profileViewModel.updateEmail(newEmail: newEmail.lowercased())
                             },
-                            isPassword: false,
                             title: "Change your Email"
                         )
                     }
                     
                     if isPopUpName{
-                        PopUpChangeInfo(
+                        PopUpChangeName(
                             isPresented: $isPopUpName,
                             onConfirm: { newName in
                                 profileViewModel.updateName(newName: newName)
                             },
-                            isPassword: false,
                             title: "Change your Name"
                         )
                     }
